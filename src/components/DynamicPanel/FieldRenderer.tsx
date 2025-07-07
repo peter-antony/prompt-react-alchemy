@@ -1,10 +1,15 @@
-import React from 'react';
+
+import React, {useState} from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { Search, Calendar, Clock } from 'lucide-react';
+import { Search, Clock } from 'lucide-react';
 import { FieldConfig } from '@/types/dynamicPanel';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
 
 interface FieldRendererProps {
   config: FieldConfig;
@@ -27,6 +32,8 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
     );
   }
 
+  const [orderDate, setOrderDate] = useState<Date>();
+  
   const baseInputClasses = "h-8 text-xs border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500";
 
   switch (fieldType) {
@@ -49,24 +56,6 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
           placeholder={placeholder}
           className="min-h-[60px] text-xs border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
         />
-      );
-
-    case 'radio':
-      return (
-        <RadioGroup
-          value={value || ''}
-          onValueChange={onChange}
-          className="flex gap-4"
-        >
-          {options?.map((option) => (
-            <div key={option.value} className="flex items-center space-x-2">
-              <RadioGroupItem value={option.value} id={`${config.id}-${option.value}`} />
-              <Label htmlFor={`${config.id}-${option.value}`} className="text-xs">
-                {option.label}
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
       );
 
     case 'select':
@@ -94,15 +83,38 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
 
     case 'date':
       return (
-        <div className="relative">
-          <Input
-            type="date"
-            value={value || ''}
-            onChange={(e) => onChange(e.target.value)}
-            className={baseInputClasses}
-          />
-          <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
-        </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-full justify-start text-left font-normal relative",
+                !orderDate && "text-muted-foreground"
+              )}
+            >
+              {orderDate ? format(orderDate, "dd/MM/yyyy") : "Select date"}
+              <CalendarIcon className="mr-2 h-4 w-4 absolute right-1" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={orderDate}
+              onSelect={setOrderDate}
+              initialFocus
+              className="pointer-events-auto"
+            />
+          </PopoverContent>
+        </Popover>
+        // <div className="relative">
+        //   <Input
+        //     type="date"
+        //     value={value || ''}
+        //     onChange={(e) => onChange(e.target.value)}
+        //     className={baseInputClasses}
+        //   />
+        //   <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
+        // </div>
       );
 
     case 'time':
