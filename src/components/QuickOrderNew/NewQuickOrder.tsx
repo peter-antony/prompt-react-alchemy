@@ -5,7 +5,7 @@ import { PanelConfig, PanelSettings } from '@/types/dynamicPanel';
 import { EyeOff } from 'lucide-react';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { AppLayout } from '@/components/AppLayout';
-import OrderForm from '@/components/QuickOrderNew/OrderForm';
+import OrderForm from '@/components/QuickOrderNew/OrderForm/OrderForm';
 import NewResourceGroup from '@/components/QuickOrderNew/NewResourceGroup';
 import { toast } from 'sonner';
 

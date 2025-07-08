@@ -10,10 +10,13 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { SimpleDropDown } from '../Common/SimpleDropDown';
-import { InputDropDown } from '../Common/InputDropDown';
-import { SideDrawer } from '../Common/SideDrawer';
-import { DocDetailsForm } from './DocDetailsForm';
+import { SimpleDropDown } from '../../Common/SimpleDropDown';
+import { InputDropDown } from '../../Common/InputDropDown';
+import { SideDrawer } from '../../Common/SideDrawer';
+import { MoreInfo } from './MoreInfo';
+import Attachments from './Attachments';
+import AmendmentHistory from './AmendmentHistory';
+import LinkedOrders from './LinkedOrders';
 
 
 interface OrderFormProps {
@@ -433,19 +436,34 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
         <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setMoreInfoOpen(true)}>
           <CircleArrowOutUpRight  className="w-5 h-5 text-gray-600" />
         </button>
-        <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100">
+        <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setAttachmentsOpen(true)}>
           <Paperclip   className="w-5 h-5 text-gray-600" />
         </button>
-        <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100">
+        <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setHistoryOpen(true)}>
           <BookX    className="w-5 h-5 text-gray-600" />
         </button>
-        <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100">
+        <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setLinkedOrdersOpen(true)}>
           <Link     className="w-5 h-5 text-gray-600" />
         </button>
       </div>
-       <SideDrawer isOpen={isMoreInfoOpen} onClose={() => setMoreInfoOpen(false)} width="50%" title="More Info" isBack={isBack}>
+       <SideDrawer isOpen={isMoreInfoOpen} onClose={() => setMoreInfoOpen(false)} width="30%" title="More Info" isBack={false}>
           <div className="p-4">
-            <div className="mt-2 text-sm text-gray-600"><DocDetailsForm /></div>
+            <div className="mt-0 text-sm text-gray-600"><MoreInfo /></div>
+          </div>
+        </SideDrawer>
+        <SideDrawer isOpen={isAttachmentsOpen} onClose={() => setAttachmentsOpen(false)} width="80%" title="Attachments" isBack={false} badgeContent="QO/00001/2025" isBadgeRequired={true}>
+          <div className="">
+            <div className="mt-0 text-sm text-gray-600"><Attachments /></div>
+          </div>
+        </SideDrawer>
+        <SideDrawer isOpen={isHistoryOpen} onClose={() => setHistoryOpen(false)} width="40%" title="Amendment History" isBack={false} badgeContent="QO/00001/2025" isBadgeRequired={true}>
+          <div className="">
+            <div className="mt-0 text-sm text-gray-600"><AmendmentHistory /></div>
+          </div>
+        </SideDrawer>
+        <SideDrawer isOpen={isLinkedOrdersOpen} onClose={() => setLinkedOrdersOpen(false)} width="90%" title="Linked Orders" isBack={false} >
+          <div className="">
+            <div className="mt-0 text-sm text-gray-600"><LinkedOrders /></div>
           </div>
         </SideDrawer>
     </div>

@@ -13,6 +13,7 @@ export interface ConfigurableButtonConfig {
   label: string;
   tooltipTitle: string;
   showDropdown: boolean;
+  onClick: () => void;
   dropdownItems?: DropdownItem[];
   tooltipPosition?: 'top' | 'right' | 'bottom' | 'left';
 }

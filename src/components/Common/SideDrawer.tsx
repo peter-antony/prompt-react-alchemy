@@ -9,6 +9,8 @@ interface SideDrawerProps {
     width?: string;
     title: string;
     isBack: boolean;
+    badgeContent?: string;
+    isBadgeRequired?: boolean;
     children: React.ReactNode;
 }
 
@@ -18,6 +20,8 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({
     width = "400px",
     title,
     isBack,
+    badgeContent,
+    isBadgeRequired,
     children,
 }) => {
     return (
@@ -57,6 +61,11 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({
                                 <h2 className={`text-xl font-semibold text-gray-800 ${isBack ? 'ml-4' : ''}`}>
                                     {title}
                                 </h2>
+                                {isBadgeRequired && (
+                                    <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full border border-blue-200 text-sm font-medium ml-4">
+                                        {badgeContent}
+                                    </span>
+                                )}
                             </div>
                             <button
                                 onClick={onClose}
