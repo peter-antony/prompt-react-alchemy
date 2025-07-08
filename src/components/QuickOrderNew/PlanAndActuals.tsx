@@ -183,7 +183,7 @@ export default function PlanAndActuals() {
   return (
     <div className="flex min-h-screen bg-[#f8fafd]">
       {/* Left Stepper */}
-      <VerticalStepper steps={steps} activeStep={1} />
+      {/* <VerticalStepper steps={steps} activeStep={1} /> */}
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
