@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { SmartGrid } from '@/components/SmartGrid';
-import { GridColumnConfig } from '@/types/smartGrid';
+import { GridColumnConfig } from '@/types/smartgrid';
 import { Button } from '@/components/ui/button';
 import { Printer, MoreHorizontal, User, Train, UserCheck, Container, Plus, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -633,7 +633,7 @@ const QuickOrderManagement = () => {
       },
       dropdownItems: [
         {
-          label: "Create Quick Order",
+          label: "Add New",
           icon: <Plus className="h-4 w-4" />,
           onClick: () => {
             navigate('/create-quick-order');
@@ -727,7 +727,6 @@ const QuickOrderManagement = () => {
               gridTitle="Quick Order"
               recordCount={gridState.gridData.length > 0 ? gridState.gridData.length : processedData.length}
               showCreateButton={true}
-              createButtonLabel="Create New Quick Order"
               searchPlaceholder="Search all columns..."
             />
             

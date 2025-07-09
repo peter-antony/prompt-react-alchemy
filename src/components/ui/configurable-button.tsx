@@ -54,11 +54,17 @@ export const ConfigurableButton: React.FC<ConfigurableButtonProps> = ({
   }, [showDropdown]);
 
   const handleMainButtonClick = () => {
-    if (hasDropdown) {
-      setShowDropdown(!showDropdown);
+    if (!hasDropdown) {
+      onClick?.();
     } else {
+      // Only navigate if the user clicks the label, not the arrow
       onClick?.();
     }
+  };
+
+  const handleChevronClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowDropdown(!showDropdown);
   };
 
   const handleDropdownItemClick = (item: DropdownItem) => {
@@ -89,18 +95,32 @@ export const ConfigurableButton: React.FC<ConfigurableButtonProps> = ({
           "border border-blue-500 text-blue-500 hover:bg-blue-50 rounded px-3 py-1 flex items-center transition-colors duration-200",
           className
         )}
-        onClick={handleMainButtonClick}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
+        type="button"
       >
-        <span>{label}</span>
+        <span
+          onClick={config.onClick}
+          style={{ cursor: 'pointer', userSelect: 'none' }}
+          className="select-none"
+        >
+          {label}
+        </span>
         {hasDropdown && (
-          <ChevronDown 
-            className={cn(
-              "h-4 w-4 ml-2 transition-transform duration-200",
-              showDropdown ? "rotate-180" : ""
-            )} 
-          />
+          <span
+            onClick={handleChevronClick}
+            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+            tabIndex={0}
+            role="button"
+            aria-label="Show dropdown"
+          >
+            <ChevronDown
+              className={cn(
+                "h-4 w-4 ml-2 transition-transform duration-200",
+                showDropdown ? "rotate-180" : ""
+              )}
+            />
+          </span>
         )}
       </button>
 
