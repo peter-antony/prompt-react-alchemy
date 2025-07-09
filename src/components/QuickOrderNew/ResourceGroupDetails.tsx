@@ -24,6 +24,8 @@ import { Card } from '@/components/ui/card';
 import { BillingDetailsPanel } from './BillingDetails';
 import { toast } from 'sonner';
 import PlanActIcon from './../../assets/images/planAct.png';
+import { SideDrawer } from '../Common/SideDrawer';
+import { PlanAndActualDetails } from './PlanAndActualDetails';
 
 // interface ResourceGroupDetailsFormProps {
 //   open: boolean;
@@ -33,6 +35,8 @@ import PlanActIcon from './../../assets/images/planAct.png';
 // const ResourceGroupDetailsForm = ({ open, onClose }: ResourceGroupDetailsFormProps) => {
 export const ResourceGroupDetailsForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isPlanActualsOpen, setIsPlanActualsOpen] = useState(false);
+
 
   const handleProceedToNext = () => {
     setCurrentStep(2);
@@ -629,7 +633,8 @@ export const ResourceGroupDetailsForm = () => {
                     <div className="flex items-center justify-between px-8 pt-8">
                       <div className="text-lg font-semibold text-gray-800">Plan and Actuals</div>
                       <div className="flex items-center gap-2">
-                        <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700">
+                        <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700"
+                          onClick={() => setIsPlanActualsOpen(true)}>
                           <Plus className="w-4 h-4 mr-2" /> Add New
                           <ChevronDown className="w-4 h-4 ml-1" />
                         </button>
@@ -794,6 +799,13 @@ export const ResourceGroupDetailsForm = () => {
           Save Details
         </Button>
       </div>
+
+      {/* SideDrawer component */}
+      <SideDrawer isOpen={isPlanActualsOpen} onClose={() => setIsPlanActualsOpen(false)} width='85%' title="Plan and Actual Details" isBack={false}>
+        <div>
+          <PlanAndActualDetails onCloseDrawer={() => setIsPlanActualsOpen(false)}></PlanAndActualDetails>
+        </div>
+      </SideDrawer>
     </div>
   );
 };
