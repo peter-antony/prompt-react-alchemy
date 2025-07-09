@@ -28,7 +28,7 @@ export const VerticalStepper: React.FC<VerticalStepperProps> = ({ steps, activeS
             </div>
             {/* Connecting line except for last step */}
             {idx !== steps.length - 1 && (
-              <div className="mt-4 mb-3 w-0.5 flex-1 bg-green-500" style={{ minHeight: '32px', marginTop: '-2px' }} />
+              <div className="mt-4 mb-3 w-0.5 flex-1 bg-blue-500" style={{ minHeight: '32px', marginTop: '-2px' }} />
             )}
           </div>
           <div className="pt-1">
@@ -41,7 +41,7 @@ export const VerticalStepper: React.FC<VerticalStepperProps> = ({ steps, activeS
             {step.subLabel && (
               <div className={
                 `text-xs ` +
-                (idx === activeStep ? "text-blue-400 underline" : "text-gray-400")
+                (idx === activeStep ? "text-blue-400" : "text-gray-400")
               }>
                 {step.subLabel}
               </div>

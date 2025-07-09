@@ -119,6 +119,14 @@ export const CellRenderer: React.FC<CellRendererProps> = ({
     return 'bg-gray-50 text-gray-600 border border-gray-200';
   };
 
+  const handleLinkClick = () => {
+    if (onLinkClick) {
+      onLinkClick(row, column.key);
+    } else if (column.onClick) {
+      column.onClick(row);
+    }
+  };
+
   // Link renderer
   const renderLink = () => {
     const handleClick = () => {
@@ -148,6 +156,33 @@ export const CellRenderer: React.FC<CellRendererProps> = ({
       <div className="text-sm min-w-0">
         <div className="text-gray-900 font-medium truncate">{date}</div>
         <div className="text-gray-500 text-xs truncate">{time}</div>
+      </div>
+    );
+  };
+
+  const renderTextWithTwoRow = () => {
+    const [id, type] = String(value).split(' ');
+    return (
+      <div className="text-sm min-w-0">
+        <div className="text-gray-900 font-medium truncate">{id}</div>
+        <div className="text-gray-500 text-xs truncate">{type}</div>
+      </div>
+    );
+  };
+
+  const renderLinkWithText = () => {
+    const [wagID, type] = String(value).split(' ');
+    return (
+      <div className="text-sm min-w-0">
+        <button
+        onClick={handleLinkClick}
+        className="text-blue-600 hover:text-blue-800 cursor-pointer font-medium hover:underline transition-colors duration-150 truncate max-w-full"
+        disabled={loading}
+        title={String(wagID)}
+      >
+        {wagID}
+      </button>
+        <div className="text-gray-500 text-xs truncate">{type}</div>
       </div>
     );
   };
@@ -300,6 +335,10 @@ export const CellRenderer: React.FC<CellRendererProps> = ({
         return renderLink();
       case 'Badge':
         return renderBadge();
+      case 'LinkWithText':
+        return renderLinkWithText();
+      case 'TextWithTwoRow':
+        return renderTextWithTwoRow();
       case 'DateTimeRange':
         return renderDateTimeRange();
       case 'TextWithTooltip':

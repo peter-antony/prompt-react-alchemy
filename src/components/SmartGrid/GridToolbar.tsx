@@ -18,22 +18,22 @@ import { GridColumnConfig, GridPreferences } from '@/types/smartgrid';
 import { ConfigurableButton, ConfigurableButtonConfig } from '@/components/ui/configurable-button';
 
 interface GridToolbarProps {
-  globalFilter: string;
-  setGlobalFilter: (value: string) => void;
-  showColumnFilters: boolean;
-  setShowColumnFilters: (show: boolean) => void;
-  showCheckboxes: boolean;
-  setShowCheckboxes: (show: boolean) => void;
-  viewMode: 'table' | 'card';
-  setViewMode: (mode: 'table' | 'card') => void;
+  globalFilter?: string;
+  setGlobalFilter?: (value: string) => void;
+  showColumnFilters?: boolean;
+  setShowColumnFilters?: (show: boolean) => void;
+  showCheckboxes?: boolean;
+  setShowCheckboxes?: (show: boolean) => void;
+  viewMode?: 'table' | 'card';
+  setViewMode?: (mode: 'table' | 'card') => void;
   loading: boolean;
   filters: any[];
   columns: GridColumnConfig[];
   preferences: GridPreferences;
-  onColumnVisibilityToggle: (columnId: string) => void;
-  onColumnHeaderChange: (columnId: string, header: string) => void;
-  onResetToDefaults: () => void;
-  onExport: (format: 'csv') => void;
+  onColumnVisibilityToggle?: (columnId: string) => void;
+  onColumnHeaderChange?: (columnId: string, header: string) => void;
+  onResetToDefaults?: () => void;
+  onExport?: (format: 'csv') => void;
   onSubRowToggle?: (columnKey: string) => void;
   configurableButtons?: ConfigurableButtonConfig[];
   showDefaultConfigurableButton?: boolean;
@@ -96,7 +96,7 @@ export function GridToolbar({
             <span className="text-gray-900 font-semibold text-lg">
               {gridTitle}
             </span>
-            {recordCount !== undefined && (
+            {recordCount !== undefined && gridTitle !== 'Plan List' && (
               <span 
                 className="inline-flex items-center justify-center rounded-full bg-blue-50 text-blue-500 text-xs px-2 py-1 ml-3 border font-medium border-blue-200"
                 aria-label={`${gridTitle} count ${recordCount}`}
@@ -168,23 +168,25 @@ export function GridToolbar({
           <CheckSquare className="h-4 w-4 text-gray-600" />
         </Button>
 
-        <Button 
-          variant="ghost"
-          size="sm" 
-          onClick={() => setViewMode(viewMode === 'table' ? 'card' : 'table')}
-          disabled={loading}
-          title={`Switch to ${viewMode === 'table' ? 'Card' : 'Table'} View`}
-          className={cn(
-            "w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 p-0 border border-gray-300",
-            viewMode === 'card' && "bg-blue-50 text-blue-600"
+          {gridTitle !== 'Plan List' && (
+            <Button 
+              variant="ghost"
+              size="sm" 
+              onClick={() => setViewMode(viewMode === 'table' ? 'card' : 'table')}
+              disabled={loading}
+              title={`Switch to ${viewMode === 'table' ? 'Card' : 'Table'} View`}
+              className={cn(
+                "w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 p-0 border border-gray-300",
+                viewMode === 'card' && "bg-blue-50 text-blue-600"
+              )}
+            >
+              {viewMode === 'table' ? (
+                <Grid2x2 className="h-4 w-4 text-gray-600" />
+              ) : (
+                <List className="h-4 w-4 text-gray-600" />
+              )}
+            </Button>
           )}
-        >
-          {viewMode === 'table' ? (
-            <Grid2x2 className="h-4 w-4 text-gray-600" />
-          ) : (
-            <List className="h-4 w-4 text-gray-600" />
-          )}
-        </Button>
 
         {/* Column Visibility Manager */}
         <ColumnVisibilityManager
@@ -196,16 +198,18 @@ export function GridToolbar({
           onSubRowToggle={onSubRowToggle}
         />
 
-        <Button 
-          variant="ghost"
-          size="sm" 
-          onClick={onResetToDefaults} 
-          disabled={loading}
-          title="Reset All"
-          className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 p-0 border border-gray-300"
-        >
-          <RotateCcw className="h-4 w-4 text-gray-600" />
-        </Button>
+        {gridTitle !== 'Plan List' && (
+          <Button 
+            variant="ghost"
+            size="sm" 
+            onClick={onResetToDefaults} 
+            disabled={loading}
+            title="Reset All"
+            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 p-0 border border-gray-300"
+          >
+            <RotateCcw className="h-4 w-4 text-gray-600" />
+          </Button>
+        )}
         
         <Button 
           variant="ghost"

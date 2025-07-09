@@ -5,6 +5,8 @@ import { ConfigurableButtonConfig } from '@/components/ui/configurable-button';
 export type GridColumnType =
   | 'Link'                 // Clickable cell with optional onClick or URL
   | 'Badge'                // Color-coded label based on value
+  | 'LinkWithText'        // Clickable cell with text and optional onClick or URL
+  | 'TextWithTwoRow'       // Text with two rows, useful for displaying more information
   | 'DateTimeRange'        // Two date-time values in a vertical stack
   | 'TextWithTooltip'      // Text with an info icon showing a tooltip
   | 'ExpandableCount'      // "+N" style count, expandable to view details

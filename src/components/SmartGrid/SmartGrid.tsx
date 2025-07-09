@@ -681,8 +681,8 @@ export function SmartGrid({
         setShowColumnFilters={setShowColumnFilters}
         showCheckboxes={showCheckboxes}
         setShowCheckboxes={setShowCheckboxes}
-        viewMode={viewMode}
-        setViewMode={setViewMode}
+        // viewMode={viewMode}
+        // setViewMode={setViewMode}
         loading={loading}
         filters={filters}
         columns={currentColumns}
@@ -700,21 +700,27 @@ export function SmartGrid({
       />
 
        {/* Advanced Filter System */}
-      <FilterSystem
-        columns={orderedColumns}
-        subRowColumns={subRowColumns}
-        showFilterRow={showFilterRow}
-        onToggleFilterRow={() => setShowFilterRow(!showFilterRow)}
-        onFiltersChange={handleFiltersChange}
-        gridId="smart-grid"
-        userId="demo-user"
-        api={mockFilterAPI}
-      />
+       {gridTitle === "Plan List" ? (
+        <></>
+       ) : (
+        <div className="">
+          <FilterSystem
+            columns={orderedColumns}
+            subRowColumns={subRowColumns}
+            showFilterRow={showFilterRow}
+            onToggleFilterRow={() => setShowFilterRow(!showFilterRow)}
+            onFiltersChange={handleFiltersChange}
+            gridId="smart-grid"
+            userId="demo-user"
+            api={mockFilterAPI}
+          />
+        </div>
+       )}
       
       {/* Table Container with horizontal scroll prevention */}
-      <div className="bg-white rounded-lg border shadow-sm">
+      <div className="bg-white rounded-lg border shadow-sm m-0">
         <ScrollArea className="w-full">
-          <div className="min-w-full">
+          <div className="w-full">
             <Table className="w-full">
               <TableHeader className="sticky top-0 z-20 bg-white shadow-sm border-b-2 border-gray-100">
                 <TableRow className="hover:bg-transparent">
@@ -745,7 +751,7 @@ export function SmartGrid({
                       <TableHead 
                         key={column.key}
                         className={cn(
-                          "relative group bg-gray-50/80 backdrop-blur-sm font-semibold text-gray-900 px-2 py-3 border-r border-gray-100 last:border-r-0",
+                          "relative group bg-gray-50/80 backdrop-blur-sm font-semibold text-gray-900 px-1 py-3 border-r border-gray-100 last:border-r-0",
                           draggedColumn === column.key && "opacity-50",
                           dragOverColumn === column.key && "bg-blue-100 border-blue-300",
                           resizingColumn === column.key && "bg-blue-50",
@@ -970,7 +976,7 @@ export function SmartGrid({
                           return (
                             <TableCell 
                               key={column.key} 
-                              className="relative px-3 py-3 border-r border-gray-50 last:border-r-0 align-top"
+                              className="relative px-6 py-3 border-r border-gray-50 last:border-r-0 align-middle"
                               style={{ 
                                 width: `${widthPercentage}%`,
                                 minWidth: `${Math.max(80, column.width * 0.8)}px`,
@@ -1005,7 +1011,7 @@ export function SmartGrid({
                             className="p-0 border-b border-gray-200"
                           >
                             <div className="bg-gradient-to-r from-gray-50/50 to-white border-l-4 border-blue-500">
-                              <div className="p-6 pl-12">
+                              <div className="">
                                 {effectiveNestedRowRenderer(row, rowIndex)}
                               </div>
                             </div>
@@ -1023,14 +1029,14 @@ export function SmartGrid({
 
       {/* Pagination */}
       {paginationMode === 'pagination' && totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg border shadow-sm">
-          <div className="text-sm text-gray-600 order-2 sm:order-1">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white px-4 py-2 m-0 rounded-lg border shadow-sm">
+          <div className="text-sm text-gray-600 order-2 sm:order-1 w-full">
             Showing {(currentPage - 1) * pageSize + 1} to{' '}
             {Math.min(currentPage * pageSize, processedData.length)} of{' '}
             {processedData.length} entries
           </div>
           
-          <Pagination className="order-1 sm:order-2">
+          <Pagination className="order-1 sm:order-2 justify-end">
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
