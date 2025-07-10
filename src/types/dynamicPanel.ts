@@ -2,7 +2,7 @@
 export interface FieldConfig {
   id: string;
   label: string;
-  fieldType: 'text' | 'select' | 'search' | 'currency' | 'date' | 'time' | 'textarea' | 'radio';
+  fieldType: 'text' | 'select' | 'search' | 'currency' | 'date' | 'time' | 'textarea' | 'radio' | 'combo';
   value: any;
   mandatory: boolean;
   visible: boolean;
@@ -11,6 +11,7 @@ export interface FieldConfig {
   width?: 'third' | 'two-thirds' | 'full'; // Field width configuration
   options?: { label: string; value: string }[]; // For select and radio fields
   placeholder?: string;
+  inputType?: any;
 }
 
 export interface PanelConfig {
