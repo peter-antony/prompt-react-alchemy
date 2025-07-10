@@ -681,8 +681,8 @@ export function SmartGrid({
         setShowColumnFilters={setShowColumnFilters}
         showCheckboxes={showCheckboxes}
         setShowCheckboxes={setShowCheckboxes}
-        // viewMode={viewMode}
-        // setViewMode={setViewMode}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
         loading={loading}
         filters={filters}
         columns={currentColumns}
@@ -718,9 +718,9 @@ export function SmartGrid({
        )}
       
       {/* Table Container with horizontal scroll prevention */}
-      <div className="bg-white rounded-lg border shadow-sm m-0">
+      <div className="bg-white rounded shadow-sm m-0">
         <ScrollArea className="w-full">
-          <div className="w-full">
+          {/* <div className="w-9/12"> */}
             <Table className="w-full">
               <TableHeader className="sticky top-0 z-20 bg-white shadow-sm border-b-2 border-gray-100">
                 <TableRow className="hover:bg-transparent">
@@ -751,7 +751,7 @@ export function SmartGrid({
                       <TableHead 
                         key={column.key}
                         className={cn(
-                          "relative group bg-gray-50/80 backdrop-blur-sm font-semibold text-gray-900 px-1 py-3 border-r border-gray-100 last:border-r-0",
+                          "relative group bg-gray-200 backdrop-blur-sm font-semibold text-gray-900 px-1 py-3 border-r border-gray-100 last:border-r-0",
                           draggedColumn === column.key && "opacity-50",
                           dragOverColumn === column.key && "bg-blue-100 border-blue-300",
                           resizingColumn === column.key && "bg-blue-50",
@@ -976,7 +976,7 @@ export function SmartGrid({
                           return (
                             <TableCell 
                               key={column.key} 
-                              className="relative px-6 py-3 border-r border-gray-50 last:border-r-0 align-middle"
+                              className="relative px-3 py-3 border-r border-gray-50 last:border-r-0 align-middle"
                               style={{ 
                                 width: `${widthPercentage}%`,
                                 minWidth: `${Math.max(80, column.width * 0.8)}px`,
@@ -1023,13 +1023,13 @@ export function SmartGrid({
                 )}
               </TableBody>
             </Table>
-          </div>
+          {/* </div> */}
         </ScrollArea>
       </div>
 
       {/* Pagination */}
       {paginationMode === 'pagination' && totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white px-4 py-2 m-0 rounded-lg border shadow-sm">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white px-4 py-2 m-0 rounded border-t shadow-sm">
           <div className="text-sm text-gray-600 order-2 sm:order-1 w-full">
             Showing {(currentPage - 1) * pageSize + 1} to{' '}
             {Math.min(currentPage * pageSize, processedData.length)} of{' '}

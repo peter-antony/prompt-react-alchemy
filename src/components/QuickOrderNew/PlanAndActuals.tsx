@@ -16,6 +16,11 @@ import {
 } from "lucide-react";
 import { VerticalStepper } from "../Common/VerticalStepper";
 import React from "react";
+import { SmartGrid } from '@/components/SmartGrid';
+import { GridColumnConfig } from '@/types/smartgrid';
+import { useSmartGridState } from '@/hooks/useSmartGridState';
+import { useToast } from '@/hooks/use-toast';
+
 
 const summaryStats = [
   {
@@ -161,9 +166,14 @@ const actualData = [
     draftBill: "DB/0000234",
   },
 ];
-export default function PlanAndActuals() {
-  const [view, setView] = useState<"grid" | "list">("grid");
+interface PlanAndActualsProps {
+  view: "grid" | "list";
+}
+
+const PlanAndActuals: React.FC<PlanAndActualsProps> = ({ view }) => {
   const [tab, setTab] = useState<"planned" | "actuals">("planned");
+  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+  const { toast } = useToast();
 
   const steps = [
     {
@@ -179,6 +189,187 @@ export default function PlanAndActuals() {
       completed: false,
     },
   ];
+
+  const gridState = useSmartGridState();
+
+  // Initialize columns and data in the grid state
+  useEffect(() => {
+    console.log('Initializing columns in QuickOrderManagement');
+    gridState.setColumns(initialColumns);
+    gridState.setGridData(processedData);
+  }, []);
+
+  // Log when columns change
+  useEffect(() => {
+    console.log('Columns changed in QuickOrderManagement:', gridState.columns);
+    console.log('Sub-row columns:', gridState.columns.filter(col => col.subRow).map(col => col.key));
+  }, [gridState.columns, gridState.forceUpdate]);
+
+  const initialColumns: GridColumnConfig[] = [
+    {
+      key: 'id',
+      label: 'Wagon Id Type',
+      type: 'LinkWithText',
+      sortable: true,
+      editable: false,
+      mandatory: true,
+      subRow: false
+    },
+    {
+      key: 'containerID',
+      label: 'Container Id Type',
+      type: 'TextWithTwoRow',
+      sortable: true,
+      editable: false,
+      subRow: false
+    },
+    {
+      key: 'hazardousGoods',
+      label: 'Hazardous Goods',
+      type: 'Badge',
+      sortable: true,
+      editable: false,
+      subRow: false
+    },
+    {
+      key: 'departureAndArrival',
+      label: 'Departure and Arrival',
+      type: 'Text',
+      sortable: true,
+      editable: false,
+      subRow: false
+    },    
+    {
+      key: 'planFromToDate',
+      label: 'Plan From & To Date',
+      type: 'Text',
+      // type: 'TextWithTooltip',
+      sortable: true,
+      editable: false,
+      subRow: false
+    },
+    {
+      key: 'price',
+      label: 'Price',
+      type: 'Text',
+      sortable: true,
+      editable: false,
+      // infoTextField: 'arrivalPointDetails',
+      subRow: false
+    },
+    {
+      key: 'draftBill',
+      label: 'Draft Bill',
+      type: 'Text',
+      sortable: true,
+      editable: false,
+      subRow: false
+    },    
+  ];
+
+  interface PlanAndActualListData {
+    id: string;
+    containerID: string;
+    departureAndArrival: string;
+    hazardousGoods: string;
+    planFromToDate: string;
+    price: string;
+    draftBill: string;    
+  }
+
+  const planAndActualListData: PlanAndActualListData[] = [
+    {
+      id: 'WAG00000001 Habbins',
+      containerID: 'CONT10001 Container-A',
+      hazardousGoods: '-',
+      departureAndArrival: 'Frankfurt Station A - Frankfurt Station B',
+      planFromToDate: '12-Mar-2025 to 12-Mar-2025',
+      price: '$ 1395.00',
+      draftBill: 'DB/0000234',
+    },
+    {
+      id: 'WAG00000001 Habbins',
+      containerID: 'CONT10001 Container-A',
+      hazardousGoods: '-',
+      departureAndArrival: 'Frankfurt Station A - Frankfurt Station B',
+      planFromToDate: '12-Mar-2025 to 12-Mar-2025',
+      price: '$ 1395.00',
+      draftBill: 'DB/0000234',
+    },
+    {
+      id: 'WAG00000001 Habbins',
+      containerID: 'CONT10001 Container-A',
+      hazardousGoods: '-',
+      departureAndArrival: 'Frankfurt Station A - Frankfurt Station B',
+      planFromToDate: '12-Mar-2025 to 12-Mar-2025',
+      price: '$ 1395.00',
+      draftBill: 'DB/0000234',
+    },
+    {
+      id: 'WAG00000001 Habbins',
+      containerID: 'CONT10001 Container-A',
+      hazardousGoods: '-',
+      departureAndArrival: 'Frankfurt Station A - Frankfurt Station B',
+      planFromToDate: '12-Mar-2025 to 12-Mar-2025',
+      price: '$ 1395.00',
+      draftBill: 'DB/0000234',
+    },
+    {
+      id: 'WAG00000001 Habbins',
+      containerID: 'CONT10001 Container-A',
+      hazardousGoods: '-',
+      departureAndArrival: 'Frankfurt Station A - Frankfurt Station B',
+      planFromToDate: '12-Mar-2025 to 12-Mar-2025',
+      price: '$ 1395.00',
+      draftBill: 'DB/0000234',
+    },
+    {
+      id: 'WAG00000001 Habbins',
+      containerID: 'CONT10001 Container-A',
+      hazardousGoods: '-',
+      departureAndArrival: 'Frankfurt Station A - Frankfurt Station B',
+      planFromToDate: '12-Mar-2025 to 12-Mar-2025',
+      price: '$ 1395.00',
+      draftBill: 'DB/0000234',
+    },
+  ];
+
+  const handleLinkClick = (value: any, row: any) => {
+    console.log('Link clicked:', value, row);
+  };
+
+  const handleUpdate = async (updatedRow: any) => {
+    console.log('Updating row:', updatedRow);
+    // Update the grid data
+    gridState.setGridData(prev => 
+      prev.map((row, index) => 
+        index === updatedRow.index ? { ...row, ...updatedRow } : row
+      )
+    );
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    toast({
+      title: "Success",
+      description: "Trip plan updated successfully"
+    });
+  };
+
+  const handleRowSelection = (selectedRowIndices: Set<number>) => {
+    console.log('Selected rows changed:', selectedRowIndices);
+    setSelectedRows(selectedRowIndices);
+  };
+
+  const processedData = useMemo(() => {
+      return planAndActualListData.map(row => ({
+        ...row,
+        status: {
+          value: row.hazardousGoods,
+          // variant: getStatusColor(row.status)
+        }
+      }));
+    }, []);
 
   return (
     <div className="flex min-h-screen bg-[#f8fafd]">
@@ -210,25 +401,25 @@ export default function PlanAndActuals() {
             </div>
           </div>
           <div className="">
-          <div className="bg-white rounded-xl shadow-sm flex items-center px-4  py-4 mb-2 border border-gray-100">
-            {summaryStats.map((stat, i) => (
-              <React.Fragment key={i}>
-                <div className="flex items-center w-1/4 gap-4">
-                  <div className={`w-14 h-14 rounded-lg flex items-center justify-center ${stat.bg}`}>
-                    <span className={stat.iconColor}>{stat.icon}</span>
-                 </div>
-                  <div className="flex flex-col justify-center">
-                    <div className="font-bold text-gray-900 text-base leading-tight">{stat.value}</div>
-                    <div className="text-xs text-gray-400 leading-tight">{stat.label}</div>
-                 </div>
-                </div>
-                {i !== summaryStats.length - 1 && (
-                  <div className="h-12 w-px bg-gray-200 mx-8" />
-                )}
-              </React.Fragment>
-            ))}
+            <div className="bg-white rounded-xl shadow-sm flex items-center px-4  py-4 mb-2 border border-gray-100">
+              {summaryStats.map((stat, i) => (
+                <React.Fragment key={i}>
+                  <div className="flex items-center w-1/4 gap-4">
+                    <div className={`w-14 h-14 rounded-lg flex items-center justify-center ${stat.bg}`}>
+                      <span className={stat.iconColor}>{stat.icon}</span>
+                  </div>
+                    <div className="flex flex-col justify-center">
+                      <div className="font-bold text-gray-900 text-base leading-tight">{stat.value}</div>
+                      <div className="text-xs text-gray-400 leading-tight">{stat.label}</div>
+                  </div>
+                  </div>
+                  {i !== summaryStats.length - 1 && (
+                    <div className="h-12 w-px bg-gray-200 mx-8" />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
           </div>
-        </div>
         </div>
 
         {/* Card/List Content */}
@@ -272,44 +463,33 @@ export default function PlanAndActuals() {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col gap-4">
-              {plannedData.map((card, idx) => (
-                <div key={idx} className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex items-center max-w-2xl">
-                  <div className="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center mr-6">{card.icon}</div>
-                  <div className="flex-1">
-                    <div className="font-bold text-gray-900 text-base">{card.code}</div>
-                    <div className="text-xs text-gray-400 font-medium mt-0.5 flex items-center">
-                      {card.name}
-                      {card.warning && (
-                        <AlertTriangle className="w-5 h-5 text-orange-400 ml-2" />
-                      )}
-                      <MoreVertical className="w-5 h-5 text-gray-400 ml-2" />
-                    </div>
-                    <div className="flex items-center text-gray-700 text-sm font-medium mt-2">
-                      <Camera className="w-5 h-5 text-gray-400 mr-2" />
-                      {card.amount}
-                    </div>
-                    <div className="flex items-center text-gray-700 text-sm font-medium mt-2">
-                      <MapPin className="w-5 h-5 text-gray-400 mr-2" />
-                      {card.location}
-                    </div>
-                    <div className="flex items-center text-gray-700 text-sm font-medium mt-2">
-                      <Calendar className="w-5 h-5 text-gray-400 mr-2" />
-                      {card.date}
-                    </div>
-                    <div className="flex items-center text-blue-600 text-sm font-medium mt-2">
-                      <LinkIcon className="w-5 h-5 text-blue-400 mr-2" />
-                      <span className="underline cursor-pointer">Draft Bill : {card.draftBill}</span>
-                    </div>
-                  </div>
-                  <div>
-                    {card.warning && (
-                      <AlertTriangle className="w-5 h-5 text-orange-400 mb-2" />
-                    )}
-                    <MoreVertical className="w-5 h-5 text-gray-400" />
+            <div className="w-full">
+              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-0 py-3 w-full">
+                <div className="overflow-x-auto w-full">
+                  <div className="min-w-[900px]"> {/* Adjust min-width as needed for your columns */}
+                    <SmartGrid
+                      key={`grid-${gridState.forceUpdate}`}
+                      columns={gridState.columns}
+                      data={gridState.gridData.length > 0 ? gridState.gridData : processedData}
+                      editableColumns={['customerSub']}
+                      paginationMode="pagination"
+                      onLinkClick={handleLinkClick}
+                      onUpdate={handleUpdate}
+                      onSubRowToggle={gridState.handleSubRowToggle}
+                      selectedRows={selectedRows}
+                      onSelectionChange={handleRowSelection}
+                      rowClassName={(row: any, index: number) =>
+                        selectedRows.has(index) ? 'smart-grid-row-selected' : ''
+                      }
+                      showDefaultConfigurableButton={false}
+                      gridTitle="Plan List"
+                      recordCount={gridState.gridData.length > 0 ? gridState.gridData.length : processedData.length}
+                      showCreateButton={true}
+                      searchPlaceholder="Search"
+                    />
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
           )}
         </div>
@@ -318,3 +498,5 @@ export default function PlanAndActuals() {
     </div>
   );
 } 
+
+export default PlanAndActuals;

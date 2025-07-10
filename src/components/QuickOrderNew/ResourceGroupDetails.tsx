@@ -432,7 +432,7 @@ export const ResourceGroupDetailsForm = () => {
           </div> */}
 
           {/* Main Content */}
-          <div className="flex-1 bg-gray-50 px-6 py-4 h-full overflow-y-auto">
+          <div className="flex-1 bg-gray-50 px-6 py-4 w-4/5 h-full overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               {currentStep === 1 && (
                 <>
@@ -544,8 +544,8 @@ export const ResourceGroupDetailsForm = () => {
                 </div> */}
 
                 <div className="">
-                  <PlanAndActuals />
-                  {/* <PlanAndActuals view={view} /> */}
+                  {/* <PlanAndActuals /> */}
+                  <PlanAndActuals view={view} />
                 </div>
               </>
             )}
@@ -553,7 +553,7 @@ export const ResourceGroupDetailsForm = () => {
         </div>
       </div>
       {/* Action Buttons */}
-      <div className="mt-2 w-full bg-white border-t flex justify-end space-x-3 absolute bottom-0 px-8">
+      <div className="mt-2 w-full z-50 bg-white border-t flex justify-end space-x-3 absolute bottom-0 px-8">
         {currentStep === 1 && (
           <Button variant="outline" onClick={handleProceedToNext} className="h-8 my-2 rounded border-blue-600 text-blue-600 hover:bg-blue-50">
             Proceed to Next
