@@ -25,7 +25,7 @@ export const SimpleDropDown = ({ list, value, onValueChange }: SimpleDropDownPro
       >
         <option value="">Select Item</option>
         {list.map(item => (
-          <option key={item.id} value={item.description}>{item.name}</option>
+           <option key={item.id} value={item.id}>{item.name}</option>
         ))}
       </select>
       <span className="pointer-events-none absolute right-3 top-1/2 transform -translate-y-1/2">

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { CalendarIcon, Search, CircleArrowOutUpRight, Paperclip, BookX , Link } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { CalendarIcon, Search, CircleArrowOutUpRight, Paperclip, BookX, Link, Copy, CircleX, CheckCircle, AlertCircle, X  } from 'lucide-react';import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -17,7 +16,10 @@ import { MoreInfo } from './MoreInfo';
 import Attachments from './Attachments';
 import AmendmentHistory from './AmendmentHistory';
 import LinkedOrders from './LinkedOrders';
-
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import jsonStore from '@/stores/jsonStore';
+import { useEffect } from 'react';
+import Toast  from '../../Common/Toast';
 
 interface OrderFormProps {
   onSaveDraft: () => void;
@@ -42,9 +44,56 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
     remarks: '',
     summary: ''
   });
+  const [toastOpen, setToastOpen] = useState(false);
   onConfirm = () => {
     console.log("FORM DATA : ", formData);
+    console.log("ORder Date : ",orderDate)
+    // Update QuickOrder in jsonStore
+    const oldQuickOrder = jsonStore.getQuickOrder();
+    if (oldQuickOrder) {
+      const newQuickOrder = {
+        ...oldQuickOrder,
+        OrderType: orderType,
+        QuickOrderDate: orderDate ? format(orderDate, 'dd/MM/yyyy') : '',
+        Contract: formData.contract,
+        Customer: formData.customer,
+        Cluster: formData.cluster,
+        CustomerQuickOrderNo: formData.customerOrderNo,
+        Customer_Supplier_RefNo: formData.customerRefNo,
+        QCUserDefined1: formData.qcUserDefined,
+        Remark1: formData.remarks,
+        Summary: formData.summary,
+        // Preserve existing nested objects
+        ResourceGroup: oldQuickOrder.ResourceGroup || [],
+        AmendmentHistory: oldQuickOrder.AmendmentHistory || [],
+        Attachments: oldQuickOrder.Attachments || {},
+        // Add more mappings as needed
+      };
+      jsonStore.setQuickOrder(newQuickOrder);
+      setCopyModalOpen(false);
+      setToastOpen(true); // <-- Show toast
+    }
   }
+  useEffect(() => {
+    const quickOrder = jsonStore.getQuickOrder();
+    if (quickOrder) {
+      console.log("OR-DATA:: ",quickOrder.orderType)
+      setFormData(prev => ({
+        ...prev,
+        quickOrderNo: quickOrder.QuickOrderNo || '',
+        orderDate: setOrderDate(parseDDMMYYYY(quickOrder.QuickOrderDate)),
+        contract: quickOrder.Contract || '',
+        customer: quickOrder.Customer || '',
+        cluster: quickOrder.Cluster || '',
+        orderType: setOrderType(quickOrder.OrderType),
+        customerOrderNo: quickOrder.CustomerQuickOrderNo || '',
+        customerRefNo: quickOrder.Customer_Supplier_RefNo || '',
+        qcUserDefined: quickOrder.QCUserDefined1 || '',
+        remarks: quickOrder.Remark1 || '',
+        summary: quickOrder.Summary || '',
+      }));
+    }
+  }, []);
   //Contracts Array
   const contracts = [
     {
@@ -179,6 +228,12 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
   const isFormValid = () => {
     return orderDate && formData.contract && formData.customer;
   };
+  const parseDDMMYYYY=(dateStr)=> {
+    // Expects dateStr in 'DD/MM/YYYY'
+    const [day, month, year] = dateStr.split('/').map(Number);
+    // JS Date: months are 0-based
+    return new Date(year, month - 1, day);
+  }
 
   // Local array of order IDs for suggestions
   const orderIds = [
@@ -205,6 +260,8 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
   const [isAttachmentsOpen, setAttachmentsOpen] = useState(false);
   const [isHistoryOpen, setHistoryOpen] = useState(false);
   const [isLinkedOrdersOpen, setLinkedOrdersOpen] = useState(false);
+  const [isCopyModalOpen, setCopyModalOpen] = useState(false);
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6">
       <h2 className="text-xl font-semibold text-gray-900 mb-6">Order Details</h2>
@@ -373,19 +430,19 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
               />
               <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                {/* Suggestions dropdown */}
-               {showCustomerRefSuggestions && suggestions.length > 0 && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto">
-                      {suggestions.map((suggestion, index) => (
-                        <div
-                          key={index}
-                          className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                          onClick={() => handleCustomerRefSuggestionClick(suggestion)}
-                        >
-                          {suggestion}
-                        </div>
-                      ))}
+              {showCustomerRefSuggestions && suggestions.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto">
+                  {suggestions.map((suggestion, index) => (
+                    <div
+                      key={index}
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                      onClick={() => handleCustomerRefSuggestionClick(suggestion)}
+                    >
+                      {suggestion}
                     </div>
-                  )}
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <div >
@@ -445,6 +502,9 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
         <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setLinkedOrdersOpen(true)}>
           <Link     className="w-5 h-5 text-gray-600" />
         </button>
+        <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setCopyModalOpen(true)}>
+          <Copy className="w-5 h-5 text-gray-600" />
+        </button>
       </div>
        <SideDrawer isOpen={isMoreInfoOpen} onClose={() => setMoreInfoOpen(false)} width="30%" title="More Info" isBack={false}>
           <div className="p-4">
@@ -466,6 +526,41 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
             <div className="mt-0 text-sm text-gray-600"><LinkedOrders /></div>
           </div>
         </SideDrawer>
+         {/* Copy Modal */}
+      <Dialog open={isCopyModalOpen} onOpenChange={setCopyModalOpen}>
+        <DialogContent className="max-w-sm w-full p-0 rounded-xl text-xs">
+          <div className="flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 pt-6 pb-2 border-b">
+              <div className="flex items-center gap-2">
+                <span className="bg-blue-100 p-2 rounded-full"><Copy className="w-5 h-5 text-blue-500" /></span>
+                <span className="font-semibold text-lg">Copy</span>
+              </div>
+              {/* <CircleX  onClick={() => setCopyModalOpen(false)} className="text-gray-400 hover:text-gray-600" /> */}
+             
+            </div>
+            {/* Resource Group */}
+            <div className="px-6 py-4">
+              <div className="text-sm font-medium mb-2">Resource Group</div>
+              <div className="flex flex-wrap gap-2">
+                <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 border border-blue-200">R01 - Wagon Rentals <span className="ml-1 cursor-pointer">×</span></span>
+                <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 border border-blue-200">R02 - ... <span className="ml-1 cursor-pointer">×</span></span>
+                <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 border border-gray-200">+1</span>
+              </div>
+            </div>
+            {/* Copy Details Button */}
+            <div className="px-6 pb-6">
+              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition" onClick={(e)=>onConfirm()}>Copy Details</button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <Toast
+        message="Order No:QO/00001/2025 has been saved successfully."
+        isError={false}
+        open={toastOpen}
+        onClose={() => setToastOpen(false)}
+      />
     </div>
   );
 };

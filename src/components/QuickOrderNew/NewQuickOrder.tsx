@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { DynamicPanel } from '@/components/DynamicPanel';
 import { PanelVisibilityManager } from '@/components/DynamicPanel/PanelVisibilityManager';
 import { PanelConfig, PanelSettings } from '@/types/dynamicPanel';
@@ -8,10 +8,14 @@ import { AppLayout } from '@/components/AppLayout';
 import OrderForm from '@/components/QuickOrderNew/OrderForm/OrderForm';
 import NewResourceGroup from '@/components/QuickOrderNew/NewResourceGroup';
 import { toast } from 'sonner';
-
+import jsonStore from '@/stores/jsonStore';
 
 const NewCreateQuickOrder = () => {
-    
+  useEffect(() => {
+    const jsonData = jsonStore.getQuickOrder();
+    console.log('QUICK ORDER  JSON data:', jsonData);
+    // You can now use jsonData as needed (e.g., set state, prefill form, etc.)
+  }, []);
   const handleSaveDraft = () => {
     toast.success('Order saved as draft successfully!');
     console.log('Save draft clicked');
