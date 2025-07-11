@@ -944,8 +944,8 @@ export function SmartGrid({
                   </TableRow>
                 ) : (
                   paginatedData.map((row, rowIndex) => (
-                    <React.Fragment key={rowIndex}>
-                      <TableRow 
+                    <>
+                      <TableRow key={rowIndex}
                         className={cn(
                           "hover:bg-gray-50/50 transition-colors duration-150 border-b border-gray-100",
                           rowClassName ? rowClassName(row, rowIndex) : ''
@@ -1018,7 +1018,7 @@ export function SmartGrid({
                           </TableCell>
                         </TableRow>
                       )}
-                    </React.Fragment>
+                    </>
                   ))
                 )}
               </TableBody>

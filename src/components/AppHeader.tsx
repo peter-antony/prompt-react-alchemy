@@ -25,6 +25,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onToggleSidebar }) => {
         {/* Search */}
         <div className="relative">
           <input
+            name='global-search-input'
             type="text"
             placeholder="Search"
             className="w-64 h-10 pl-4 pr-4 searchBG font-color-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
