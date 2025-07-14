@@ -32,6 +32,7 @@ import { cn } from '@/lib/utils';
 export function SmartGrid({
   columns,
   data,
+  parentPage,
   editableColumns = true,
   mandatoryColumns = [],
   onInlineEdit,

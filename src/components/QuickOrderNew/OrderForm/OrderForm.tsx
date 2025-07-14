@@ -25,9 +25,10 @@ interface OrderFormProps {
   onSaveDraft: () => void;
   onConfirm: () => void;
   onCancel: () => void;
+  isEditQuickOrder?: boolean;
 }
 
-const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
+const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: OrderFormProps) => {
   const [orderType, setOrderType] = useState('buy');
   const [orderDate, setOrderDate] = useState<Date>();
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -42,17 +43,23 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
     qcUserDefined: '',
     qcValue: '',
     remarks: '',
-    summary: ''
+    summary: '',
+    quickOrderNo: '',
+    status: ''
   });
   const [toastOpen, setToastOpen] = useState(false);
+  const [errorToastOpen, setErrorToastOpen] = useState(false);
+  const [quickOrder, setQuickOrder] = useState<any>(null);
   onConfirm = () => {
     console.log("FORM DATA : ", formData);
-    console.log("ORder Date : ",orderDate)
     // Update QuickOrder in jsonStore
     const oldQuickOrder = jsonStore.getQuickOrder();
-    if (oldQuickOrder) {
+    const uniqueId=oldQuickOrder.QuickUniqueID;
+    const parts = uniqueId.split('/');
+    if (oldQuickOrder.QuickUniqueID) {
       const newQuickOrder = {
         ...oldQuickOrder,
+        QuickUniqueID:uniqueId,
         OrderType: orderType,
         QuickOrderDate: orderDate ? format(orderDate, 'dd/MM/yyyy') : '',
         Contract: formData.contract,
@@ -63,6 +70,7 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
         QCUserDefined1: formData.qcUserDefined,
         Remark1: formData.remarks,
         Summary: formData.summary,
+        Status:"Confirmed",
         // Preserve existing nested objects
         ResourceGroup: oldQuickOrder.ResourceGroup || [],
         AmendmentHistory: oldQuickOrder.AmendmentHistory || [],
@@ -71,29 +79,58 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
       };
       jsonStore.setQuickOrder(newQuickOrder);
       setCopyModalOpen(false);
-      setToastOpen(true); // <-- Show toast
+      setToastOpen(true); // <-- Show success toast
+    }else{
+      const uniqueId=1;
+      const newQuickOrder = {
+        ...oldQuickOrder,
+        QuickUniqueID:'QO/0000'+(uniqueId+1)+'/2025',
+        OrderType: orderType,
+        QuickOrderDate: orderDate ? format(orderDate, 'dd/MM/yyyy') : '',
+        Contract: formData.contract,
+        Customer: formData.customer,
+        Cluster: formData.cluster,
+        CustomerQuickOrderNo: formData.customerOrderNo,
+        Customer_Supplier_RefNo: formData.customerRefNo,
+        QCUserDefined1: formData.qcUserDefined,
+        Remark1: formData.remarks,
+        Summary: formData.summary,
+        Status:"Confirmed",
+        // Preserve existing nested objects
+        ResourceGroup: oldQuickOrder.ResourceGroup || [],
+        AmendmentHistory: oldQuickOrder.AmendmentHistory || [],
+        Attachments: oldQuickOrder.Attachments || {},
+        // Add more mappings as needed
+      };
+      jsonStore.setQuickOrder(newQuickOrder);
+      setCopyModalOpen(false);
+      setToastOpen(true);
+      // setErrorToastOpen(true); <-- show error toast
     }
   }
   useEffect(() => {
-    const quickOrder = jsonStore.getQuickOrder();
-    if (quickOrder) {
-      console.log("OR-DATA:: ",quickOrder.orderType)
+    const qo = jsonStore.getQuickOrder();
+    console.log("qo >> > >",qo)
+    if (qo.QuickUniqueID != '' && isEditQuickOrder) {
+      alert("Inside If")
+      setQuickOrder(qo);
       setFormData(prev => ({
         ...prev,
-        quickOrderNo: quickOrder.QuickOrderNo || '',
-        orderDate: setOrderDate(parseDDMMYYYY(quickOrder.QuickOrderDate)),
-        contract: quickOrder.Contract || '',
-        customer: quickOrder.Customer || '',
-        cluster: quickOrder.Cluster || '',
-        orderType: setOrderType(quickOrder.OrderType),
-        customerOrderNo: quickOrder.CustomerQuickOrderNo || '',
-        customerRefNo: quickOrder.Customer_Supplier_RefNo || '',
-        qcUserDefined: quickOrder.QCUserDefined1 || '',
-        remarks: quickOrder.Remark1 || '',
-        summary: quickOrder.Summary || '',
+        quickOrderNo: qo.QuickOrderNo || '',
+        orderDate: setOrderDate(parseDDMMYYYY(qo.QuickOrderDate)),
+        contract: qo.Contract || '',
+        customer: qo.Customer || '',
+        cluster: qo.Cluster || '',
+        orderType: setOrderType(qo.OrderType),
+        customerOrderNo: qo.CustomerQuickOrderNo || '',
+        customerRefNo: qo.Customer_Supplier_RefNo || '',
+        qcUserDefined: qo.QCUserDefined1 || '',
+        remarks: qo.Remark1 || '',
+        summary: qo.Summary || '',
+        status: qo.Status || 'Confirmed'
       }));
     }
-  }, []);
+  }, [isEditQuickOrder]);
   //Contracts Array
   const contracts = [
     {
@@ -264,7 +301,19 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-6">Order Details</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
+        Order Details
+        {isEditQuickOrder && quickOrder && (
+          <>
+            <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-700 text-xs font-semibold border border-blue-200">
+              {quickOrder.QuickUniqueID || "QO/00001/2025"}
+            </span>
+            <span className="px-2 py-0.5 rounded bg-green-100 text-green-700 text-xs font-semibold border border-green-200">
+              {quickOrder.Status || "Confirmed"}
+            </span>
+          </>
+        )}
+      </h2>
 
       <div className="space-y-6">
         {/* Order Type */}
@@ -496,15 +545,19 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
         <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setAttachmentsOpen(true)}>
           <Paperclip   className="w-5 h-5 text-gray-600" />
         </button>
-        <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setHistoryOpen(true)}>
+        <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={(e)=>onConfirm()}>
           <BookX    className="w-5 h-5 text-gray-600" />
         </button>
         <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setLinkedOrdersOpen(true)}>
           <Link     className="w-5 h-5 text-gray-600" />
         </button>
-        <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setCopyModalOpen(true)}>
-          <Copy className="w-5 h-5 text-gray-600" />
-        </button>
+         {
+           isEditQuickOrder?
+            <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setCopyModalOpen(true)}>
+            <Copy className="w-5 h-5 text-gray-600" />
+         </button>:' '
+         }
+        
       </div>
         <SideDrawer isOpen={isMoreInfoOpen} onClose={() => setMoreInfoOpen(false)} width="35%" title="More Info" isBack={false}>
           <div className="">
@@ -559,6 +612,12 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
         message="Order No:QO/00001/2025 has been saved successfully."
         isError={false}
         open={toastOpen}
+        onClose={() => setToastOpen(false)}
+      />
+      <Toast
+        message="Error in saving Order details."
+        isError={true}
+        open={errorToastOpen}
         onClose={() => setToastOpen(false)}
       />
     </div>

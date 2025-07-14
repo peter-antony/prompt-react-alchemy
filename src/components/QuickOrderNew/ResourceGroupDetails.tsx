@@ -33,6 +33,8 @@ import { useNavigate } from 'react-router-dom';
 import { DropdownButton } from '@/components/ui/dropdown-button';
 import PlanAndActuals from './PlanAndActuals';
 import BulkUpload from '@/components/QuickOrderNew/BulkUpload';
+import jsonStore from '@/stores/jsonStore';
+import { format } from 'date-fns';
 
 // interface ResourceGroupDetailsFormProps {
 //   open: boolean;
@@ -79,9 +81,53 @@ export const ResourceGroupDetailsForm = () => {
     console.log('Save details clicked');
   };
 
-  const [basicDetailsData, setBasicDetailsData] = useState({});
-  const [operationalDetailsData, setOperationalDetailsData] = useState({});
-  const [billingDetailsData, setBillingDetailsData] = useState({});
+  // Declare initialBasicDetails before using it in useState
+  // Utility to normalize keys from store to config field IDs
+  function normalizeBasicDetails(data) {
+    return {
+      resource: data.Resource,
+      resourceType: data.ResourceType,
+      serviceType: data.ServiceType,
+      subservice: data.SubSericeType, // fix typo if needed
+    };
+  }
+
+  function normalizeOperationalDetails(data) {
+    return {
+      operationalLocation: data.OperationalLocation,
+      departPoint: data.DepartPoint,
+      arrivalPoint: data.ArrivalPoint,
+      fromDate:parseDDMMYYYY(data.FromDate)  ,
+      fromTime: data.FromTime,
+      toDate: parseDDMMYYYY(data.ToDate) ,
+      toTime: data.ToTime,
+      remarks: data.Remarks,
+    };
+  }
+  const parseDDMMYYYY=(dateStr)=> {
+    // Expects dateStr in 'DD/MM/YYYY'
+    const [day, month, year] = dateStr.split('/').map(Number);
+    // JS Date: months are 0-based
+    return new Date(year, month - 1, day);
+  }
+
+  function normalizeBillingDetails(data) {
+    return {
+      totalAmount: data.TotalAmount,
+      taxAmount: data.TaxAmount,
+      discountAmount: data.DiscountAmount,
+      billingStatus: data.BillingStatus,
+      paymentTerms: data.PaymentTerms,
+      invoiceDate: data.InvoiceDate,
+    };
+  }
+
+  const initialBasicDetails = normalizeBasicDetails(jsonStore.getBasicDetails() || {});
+  const [basicDetailsData, setBasicDetailsData] = useState(initialBasicDetails);
+  const initialOperationalDetails = normalizeOperationalDetails(jsonStore.getOperationalDetails() || {});
+  const [operationalDetailsData, setOperationalDetailsData] = useState(initialOperationalDetails);
+  const initialBillingDetails = normalizeBillingDetails(jsonStore.getBillingDetails() || {});
+  const [billingDetailsData, setBillingDetailsData] = useState(initialBillingDetails);
 
   // Panel titles state
   const [basicDetailsTitle, setBasicDetailsTitle] = useState('Basic Details');
@@ -101,7 +147,7 @@ export const ResourceGroupDetailsForm = () => {
   // Basic Details Panel Configuration
   const basicDetailsConfig: PanelConfig = {
     resource: {
-      id: 'resource',
+      id: 'Resource',
       label: 'Resource',
       fieldType: 'select',
       width: 'third',
@@ -111,14 +157,14 @@ export const ResourceGroupDetailsForm = () => {
       editable: true,
       order: 2,
       options: [
-        { label: 'Vehicle', value: 'vehicle' },
-        { label: 'Equipment', value: 'equipment' },
-        { label: 'Material', value: 'material' },
-        { label: 'Other', value: 'other' }
+        { label: 'Vehicle', value: 'Vehicle' },
+        { label: 'Equipment', value: 'Equipment' },
+        { label: 'Material', value: 'Material' },
+        { label: 'Other', value: 'Other' }
       ]
     },
     resourceType: {
-      id: 'resourceType',
+      id: 'ResourceType',
       label: 'Resource Type',
       fieldType: 'select',
       width: 'third',
@@ -128,13 +174,13 @@ export const ResourceGroupDetailsForm = () => {
       editable: true,
       order: 3,
       options: [
-        { label: 'Truck 4.2', value: 'truck-4.2' },
-        { label: 'Truck 4.5', value: 'truck-4.5' },
+        { label: 'Truck 4.2', value: 'Truck 4.2' },
+        { label: 'Truck 4.5', value: 'Truck 4.5' },
         { label: 'Truck 5.2', value: 'truck-5.2' },
       ]
     },
     serviceType: {
-      id: 'serviceType',
+      id: 'ServiceType',
       label: 'Service Type',
       fieldType: 'select',
       width: 'third',
@@ -149,7 +195,7 @@ export const ResourceGroupDetailsForm = () => {
       ]
     },
     subservice: {
-      id: 'sub-service',
+      id: 'SubSericeType',
       label: 'Sub-Service',
       fieldType: 'select',
       width: 'third',
@@ -159,9 +205,9 @@ export const ResourceGroupDetailsForm = () => {
       editable: true,
       order: 5,
       options: [
-        { label: 'Repair', value: 'repair' },
-        { label: 'Maintenance', value: 'maintenance' },
-        { label: 'Other', value: 'other' }
+        { label: 'Repair', value: 'Repair' },
+        { label: 'Maintenance', value: 'Maintenance' },
+        { label: 'Other', value: 'Other' }
       ]
     }
   };
@@ -169,7 +215,7 @@ export const ResourceGroupDetailsForm = () => {
   // Operational Details Panel Configuration
   const operationalDetailsConfig: PanelConfig = {
     operationalLocation: {
-      id: 'operationalLocation',
+      id: 'OperationalLocation',
       label: 'Operational Location',
       fieldType: 'search',
       width: 'third',
@@ -180,8 +226,8 @@ export const ResourceGroupDetailsForm = () => {
       order: 1,
       placeholder: 'Search operational location...'
     },
-    departurePoint: {
-      id: 'departurePoint',
+    departPoint: {
+      id: 'DepartPoint',
       label: 'Departure Point',
       fieldType: 'select',
       width: 'third',
@@ -197,7 +243,7 @@ export const ResourceGroupDetailsForm = () => {
       ]
     },
     arrivalPoint: {
-      id: 'arrivalPoint',
+      id: 'ArrivalPoint',
       label: 'Arrival Point',
       fieldType: 'select',
       width: 'third',
@@ -213,7 +259,7 @@ export const ResourceGroupDetailsForm = () => {
       ]
     },
     fromDate: {
-      id: 'fromDate',
+      id: 'FromDate',
       label: 'From Date',
       fieldType: 'date',
       width: 'third',
@@ -224,7 +270,7 @@ export const ResourceGroupDetailsForm = () => {
       order: 4
     },
     fromTime: {
-      id: 'fromTime',
+      id: 'FromTime',
       label: 'From Time',
       fieldType: 'time',
       width: 'third',
@@ -235,7 +281,7 @@ export const ResourceGroupDetailsForm = () => {
       order: 5
     },
     toDate: {
-      id: 'toDate',
+      id: 'ToDate',
       label: 'To Date',
       fieldType: 'date',
       width: 'third',
@@ -246,7 +292,7 @@ export const ResourceGroupDetailsForm = () => {
       order: 6
     },
     toTime: {
-      id: 'toTime',
+      id: 'ToTime',
       label: 'To Time',
       fieldType: 'time',
       width: 'third',
@@ -257,7 +303,7 @@ export const ResourceGroupDetailsForm = () => {
       order: 7
     },
     remarks: {
-      id: 'remarks',
+      id: 'Remarks',
       label: 'Remarks',
       fieldType: 'text',
       width: 'two-thirds',
@@ -368,7 +414,14 @@ export const ResourceGroupDetailsForm = () => {
     localStorage.setItem(`panel-config-${userId}-${panelId}`, JSON.stringify(settings));
     console.log(`Saved config for panel ${panelId}:`, settings);
   };
-
+  useEffect(() => {
+    const rawBasic = jsonStore.getBasicDetails() || {};
+    setBasicDetailsData(normalizeBasicDetails(rawBasic));
+    const rawOperational = jsonStore.getOperationalDetails() || {};
+    setOperationalDetailsData(normalizeOperationalDetails(rawOperational));
+    const rawBilling = jsonStore.getBillingDetails() || {};
+    setBillingDetailsData(normalizeBillingDetails(rawBilling));
+  }, []);
   const steps = [
     {
       label: "Resource Group Creation",

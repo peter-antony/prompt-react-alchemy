@@ -10,7 +10,11 @@ import NewResourceGroup from '@/components/QuickOrderNew/NewResourceGroup';
 import { toast } from 'sonner';
 import jsonStore from '@/stores/jsonStore';
 
-const NewCreateQuickOrder = () => {
+interface NewCreateQuickOrderProps {
+  isEditQuickOrder?: boolean;
+}
+
+const NewCreateQuickOrder = ({ isEditQuickOrder }: NewCreateQuickOrderProps) => {
   useEffect(() => {
     const jsonData = jsonStore.getQuickOrder();
     console.log('QUICK ORDER  JSON data:', jsonData);
@@ -44,6 +48,7 @@ const NewCreateQuickOrder = () => {
             onSaveDraft={handleSaveDraft}
             onConfirm={handleConfirm}
             onCancel={handleCancel}
+            isEditQuickOrder={isEditQuickOrder}
         />
         </div>
         

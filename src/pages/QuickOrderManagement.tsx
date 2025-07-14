@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { SideDrawer } from '@/components/Common/SideDrawer';
 import BulkUpload from '@/components/QuickOrderNew/BulkUpload';
 import { PlanAndActualDetails } from '@/components/QuickOrderNew/PlanAndActualDetails';
+import jsonStore from '@/stores/jsonStore';
 
 interface SampleData {
   id: string;
@@ -247,6 +248,8 @@ const QuickOrderManagement = () => {
   // Log when columns change
   useEffect(() => {
     console.log('Columns changed in QuickOrderManagement:', gridState.columns);
+    const oldQuickOrder = jsonStore.getQuickOrder();
+    console.log("QUICK ORDER OBJECT IN LIST PAGE : ",oldQuickOrder)
     console.log('Sub-row columns:', gridState.columns.filter(col => col.subRow).map(col => col.key));
   }, [gridState.columns, gridState.forceUpdate]);
   
@@ -654,8 +657,11 @@ const QuickOrderManagement = () => {
     }
   ];
 
-  const handleLinkClick = (value: any, row: any) => {
-    console.log('Link clicked:', value, row);
+  const handleLinkClick = (row: any, columnKey: string) => {
+    // Only navigate if the clicked column is the Quick Order No. (id)
+    if (columnKey === 'id' && row.id) {
+      navigate(`/create-quick-order?id=${encodeURIComponent(row.id)}`);
+    }
   };
 
   const handleUpdate = async (updatedRow: any) => {
@@ -712,6 +718,7 @@ const QuickOrderManagement = () => {
           <div className="rounded-lg shadow-sm mt-4">
             <SmartGrid
               key={`grid-${gridState.forceUpdate}`}
+              parentPage="quickOrder"
               columns={gridState.columns}
               data={gridState.gridData.length > 0 ? gridState.gridData : processedData}
               editableColumns={['customerSub']}

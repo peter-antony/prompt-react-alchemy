@@ -6,9 +6,14 @@ import { EyeOff } from 'lucide-react';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { AppLayout } from '@/components/AppLayout';
 import NewCreateQuickOrder from '@/components/QuickOrderNew/NewQuickOrder';
+import { useSearchParams } from "react-router-dom";
 
 
 const CreateQuickOrder = () => {
+  const [searchParams] = useSearchParams();
+  const isEditQuickOrder = !!searchParams.get("id");
+  //here to store the id
+  
   //BreadCrumb data
   const breadcrumbItems = [
     { label: 'Home', href: '/dashboard', active: false },
@@ -25,7 +30,7 @@ const CreateQuickOrder = () => {
         </div>
         
         <div className="">
-            <NewCreateQuickOrder />
+            <NewCreateQuickOrder isEditQuickOrder={isEditQuickOrder} />
             
         </div>
 

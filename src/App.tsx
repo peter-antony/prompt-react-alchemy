@@ -26,7 +26,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="" element={<QuickOrderManagement />} />
+          <Route path="" element={<JsonCreater />} />
           <Route path={ROUTES.HOME} element={<QuickOrderManagement />} />
           <Route path="/quick-order" element={<QuickOrderManagement />} />
           <Route path="/trip-plans-search-hub" element={<TripPlansSearchHub />} />

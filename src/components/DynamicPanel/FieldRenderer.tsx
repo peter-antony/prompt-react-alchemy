@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -36,7 +36,9 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
       </div>
     );
   }
-
+useEffect(()=>{
+  console.log("VALUE IN FIELD RENDER : ",value)
+})
   const [orderDate, setOrderDate] = useState<Date>();
 
   const baseInputClasses = "h-8 text-xs border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500";
@@ -82,16 +84,17 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
       );
 
     case 'select':
+     const selectValue = value !== undefined && value !== null ? String(value).trim() : "";
       return (
         <div className="relative">
           <select
-            value={value || ''}
+            value={selectValue}
             onChange={(e) => onChange(e.target.value)}
             className="w-full h-8 px-3 text-xs rounded-md border border-gray-300 bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none"
           >
             <option value="">Select...</option>
             {options?.map((option) => (
-              <option key={option.value} value={option.value}>
+              <option key={option.value} value={String(option.value).trim()}>
                 {option.label}
               </option>
             ))}
@@ -112,17 +115,17 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
               variant="outline"
               className={cn(
                 "w-full justify-start text-left font-normal relative",
-                !orderDate && "text-muted-foreground"
+                !value && "text-muted-foreground"
               )}
             >
-              {orderDate ? format(orderDate, "dd/MM/yyyy") : "Select date"}
+              {value ? format(value, "dd/MM/yyyy") : "Select date"}
               <CalendarIcon className="mr-2 h-4 w-4 absolute right-1" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
             <Calendar
               mode="single"
-              selected={orderDate}
+              selected={value}
               onSelect={setOrderDate}
               initialFocus
               className="pointer-events-auto"

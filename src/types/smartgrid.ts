@@ -112,6 +112,7 @@ export interface GridPlugin {
 export interface SmartGridProps {
   columns: GridColumnConfig[];
   data: any[];
+  parentPage?: string;
   editableColumns?: string[] | boolean;
   mandatoryColumns?: string[];
   onInlineEdit?(rowIndex: number, updatedRow: any): void;

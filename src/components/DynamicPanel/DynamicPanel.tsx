@@ -41,6 +41,7 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
 
   // Load user configuration on mount
   useEffect(() => {
+    console.log("USE EFFECT FORM : ",formData)
     const loadUserConfig = async () => {
       if (getUserPanelConfig) {
         try {
@@ -72,12 +73,18 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
     loadUserConfig();
   }, [getUserPanelConfig, userId, panelId]);
 
+  // Sync formData with initialData when initialData changes
+  useEffect(() => {
+    setFormData(initialData || {});
+  }, [initialData]);
+
   // Get visible fields sorted by order
   const visibleFields = Object.entries(panelConfig)
     .filter(([_, config]) => config.visible)
     .sort(([_, a], [__, b]) => a.order - b.order);
 
   const handleFieldChange = (fieldId: string, value: any) => {
+    console.log("FORM DATA IN DYNMAIC FORM :: ",formData)
     const updatedData = { ...formData, [fieldId]: value };
     setFormData(updatedData);
     onDataChange?.(updatedData);
