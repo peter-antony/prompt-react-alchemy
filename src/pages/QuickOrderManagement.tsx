@@ -10,6 +10,8 @@ import { ConfigurableButtonConfig } from '@/components/ui/configurable-button';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { AppLayout } from '@/components/AppLayout';
 import { useNavigate } from 'react-router-dom';
+import { SideDrawer } from '@/components/Common/SideDrawer';
+import { PlanAndActualDetails } from '@/components/QuickOrderNew/PlanAndActualDetails';
 
 interface SampleData {
   id: string;
@@ -39,6 +41,7 @@ interface SampleData {
 const QuickOrderManagement = () => {
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
   const gridState = useSmartGridState();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
   const initialColumns: GridColumnConfig[] = [
     {
@@ -636,8 +639,7 @@ const QuickOrderManagement = () => {
           label: "Add New",
           icon: <Plus className="h-4 w-4" />,
           onClick: () => {
-            navigate('/create-quick-order');
-            
+            setIsDrawerOpen(true);
           }
         },
         {
@@ -729,7 +731,16 @@ const QuickOrderManagement = () => {
               showCreateButton={true}
               searchPlaceholder="Search all columns..."
             />
-            
+            {/* SideDrawer for PlanAndActualDetails */}
+            <SideDrawer
+              isOpen={isDrawerOpen}
+              onClose={() => setIsDrawerOpen(false)}
+              title="Plan and Actual Details"
+              isBack={false}
+              width='85%'
+            >
+              <PlanAndActualDetails onCloseDrawer={() => setIsDrawerOpen(false)} />
+            </SideDrawer>
             {/* Footer with action buttons matching the screenshot style */}
             <div className="flex items-center justify-between p-4 border-t bg-gray-50/50">
               <div className="flex items-center space-x-3">
