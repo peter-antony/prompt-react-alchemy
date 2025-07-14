@@ -16,16 +16,16 @@ import { PlanAndActualDetails } from '@/components/QuickOrderNew/PlanAndActualDe
 import jsonStore from '@/stores/jsonStore';
 
 interface SampleData {
-  id: string;
-  quickOrderDate: string;
-  customerSub: string;
-  status: string;
-  tripBillingStatus: string;
-  customerSubRefNo: string;
-  contract: string;
-  customer: string;
-  orderType: string;
-  totalNet: string
+  QuickUniqueID: any;
+  QuickOrderNo: any;
+  QuickOrderDate: string;
+  Status: string;
+  CustomerOrVendor: any;
+      Customer_Supplier_RefNo: any;
+      Contract: string;
+      OrderType: string;
+      TotalNet: number;
+  tripBillingStatus?: string;  
   departurePointDetails?: string;
   arrivalPointDetails?: string;
   customerDetails?: Array<{
@@ -47,7 +47,7 @@ const QuickOrderManagement = () => {
   
   const initialColumns: GridColumnConfig[] = [
     {
-      key: 'id',
+      key: 'QuickOrderNo',
       label: 'Quick Order No.',
       type: 'Link',
       sortable: true,
@@ -56,15 +56,15 @@ const QuickOrderManagement = () => {
       subRow: false
     },
     {
-      key: 'quickOrderDate',
+      key: 'QuickOrderDate',
       label: 'Quick Order Date',
-      type: 'DateTimeRange',
+      type: 'DateFormat',
       sortable: true,
       editable: false,
       subRow: false
     },
     {
-      key: 'status',
+      key: 'Status',
       label: 'Status',
       type: 'Badge',
       sortable: true,
@@ -72,7 +72,7 @@ const QuickOrderManagement = () => {
       subRow: false
     },
     {
-      key: 'customerSub',
+      key: 'CustomerOrVendor',
       label: 'Customer/Supplier',
       type: 'EditableText',
       sortable: true,
@@ -80,7 +80,7 @@ const QuickOrderManagement = () => {
       subRow: false
     },    
     {
-      key: 'customerSubRefNo',
+      key: 'Customer_Supplier_RefNo',
       label: 'Cust/Sup.Ref.No.',
       type: 'Text',
       // type: 'TextWithTooltip',
@@ -89,7 +89,7 @@ const QuickOrderManagement = () => {
       subRow: false
     },
     {
-      key: 'contract',
+      key: 'Contract',
       label: 'Contract',
       type: 'Text',
       sortable: true,
@@ -98,7 +98,7 @@ const QuickOrderManagement = () => {
       subRow: false
     },
     {
-      key: 'orderType',
+      key: 'OrderType',
       label: 'Order Type',
       type: 'Text',
       sortable: true,
@@ -106,7 +106,7 @@ const QuickOrderManagement = () => {
       subRow: false
     },
     {
-      key: 'totalNet',
+      key: 'TotalNet',
       label: 'Total Net',
       type: 'Text',
       sortable: true,
@@ -257,340 +257,345 @@ const QuickOrderManagement = () => {
 
   const sampleData: SampleData[] = [
     {
-      id: 'QQ/0001/2025',
-      status: 'Released',
-      tripBillingStatus: 'Draft Bill Raised',
-      customerSub: 'Oitis Group',
-      quickOrderDate: '25-Mar-2025',
-      customerSubRefNo: 'CSR/111/2024',
-      contract: 'AO Intertrans',
-      customer: '+3',
-      orderType: 'Buy',
-      totalNet: '$1395.00',
-      departurePointDetails: 'VQL-705\nVolla\n\nAddress\nSardar Patel Rd, Sriram Nagar, Tharamani, Chennai, Tamil Nadu 600113',
-      arrivalPointDetails: 'Currency details for CUR-25',
-      customerDetails: [
-        { name: 'DB Cargo', id: 'CUS00000123', type: 'customer' },
-        { name: 'ABC Rail Goods', id: 'CUS00003214', type: 'customer' },
-        { name: 'Wave Cargo', id: 'CUS00012345', type: 'customer' }
-      ],
-      resourceDetails: [
-        { name: 'Train ID', id: 'TR000213', type: 'train' },
-        { name: 'AGN01', id: 'Agent-0000001', type: 'agent' },
-        { name: '20FT CT', id: '20 Feet Container', type: 'container' }
-      ]
+      "QuickUniqueID": 99,
+      "QuickOrderNo": "",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Save",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "Hire",
+      "TotalNet": 284.52
     },
     {
-      id: 'QQ/0001/2026',
-      status: 'Under Execution',
-      tripBillingStatus: 'Not Eligible',
-      customerSub: 'Oitis Group',
-      quickOrderDate: '25-Mar-2025',
-      customerSubRefNo: 'CSR/111/2024',
-      contract: 'AO Intertrans',
-      customer: '+3',
-      orderType: 'Sell',
-      totalNet: '$1395.00',
-      departurePointDetails: 'VQL-705\nVolla\n\nAddress\nSardar Patel Rd, Sriram Nagar, Tharamani, Chennai, Tamil Nadu 600113',
-      arrivalPointDetails: 'Currency details for CUR-25',
-      customerDetails: [
-        { name: 'DB Cargo', id: 'CUS00000123', type: 'customer' },
-        { name: 'ABC Rail Goods', id: 'CUS00003214', type: 'customer' },
-        { name: 'Wave Cargo', id: 'CUS00012345', type: 'customer' }
-      ],
-      resourceDetails: [
-        { name: 'Train ID', id: 'TR000213', type: 'train' },
-        { name: 'AGN01', id: 'Agent-0000001', type: 'agent' },
-        { name: '20FT CT', id: '20 Feet Container', type: 'container' }
-      ]
+      "QuickUniqueID": 104,
+      "QuickOrderNo": "-1/BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Save",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
     },
     {
-      id: 'QQ/0001/2027',
-      status: 'Initiated',
-      tripBillingStatus: 'Revenue Leakage',
-      customerSub: 'Oitis Group',
-      quickOrderDate: '25-Mar-2025',
-      customerSubRefNo: 'CSR/111/2024',
-      contract: 'AO Intertrans',
-      customer: '+3',
-      orderType: 'Buy',
-      totalNet: '$1395.00',
-      departurePointDetails: 'VQL-705\nVolla\n\nAddress\nSardar Patel Rd, Sriram Nagar, Tharamani, Chennai, Tamil Nadu 600113',
-      arrivalPointDetails: 'Currency details for CUR-25',
-      customerDetails: [
-        { name: 'DB Cargo', id: 'CUS00000123', type: 'customer' },
-        { name: 'ABC Rail Goods', id: 'CUS00003214', type: 'customer' },
-        { name: 'Wave Cargo', id: 'CUS00012345', type: 'customer' }
-      ],
-      resourceDetails: [
-        { name: 'Train ID', id: 'TR000213', type: 'train' },
-        { name: 'AGN01', id: 'Agent-0000001', type: 'agent' },
-        { name: '20FT CT', id: '20 Feet Container', type: 'container' }
-      ]
+      "QuickUniqueID": 109,
+      "QuickOrderNo": "109/BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Save",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
     },
     {
-      id: 'QQ/0001/2028',
-      status: 'Cancelled',
-      tripBillingStatus: 'Invoice Created',
-      customerSub: 'Oitis Group',
-      quickOrderDate: '25-Mar-2025',
-      customerSubRefNo: 'CSR/111/2024',
-      contract: 'AO Intertrans',
-      customer: '+3',
-      orderType: 'Sell',
-      totalNet: '$1395.00',
-      departurePointDetails: 'VQL-705\nVolla\n\nAddress\nSardar Patel Rd, Sriram Nagar, Tharamani, Chennai, Tamil Nadu 600113',
-      arrivalPointDetails: 'Currency details for CUR-25',
-      customerDetails: [
-        { name: 'DB Cargo', id: 'CUS00000123', type: 'customer' },
-        { name: 'ABC Rail Goods', id: 'CUS00003214', type: 'customer' },
-        { name: 'Wave Cargo', id: 'CUS00012345', type: 'customer' }
-      ],
-      resourceDetails: [
-        { name: 'Train ID', id: 'TR000213', type: 'train' },
-        { name: 'AGN01', id: 'Agent-0000001', type: 'agent' },
-        { name: '20FT CT', id: '20 Feet Container', type: 'container' }
-      ]
+      "QuickUniqueID": 110,
+      "QuickOrderNo": "110/BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
     },
     {
-      id: 'QQ/0001/2029',
-      status: 'Deleted',
-      tripBillingStatus: 'Invoice Approved',
-      customerSub: 'Oitis Group',
-      quickOrderDate: '25-Mar-2025',
-      customerSubRefNo: 'CSR/111/2024',
-      contract: 'AO Intertrans',
-      customer: '+3',
-      orderType: 'Buy',
-      totalNet: '$1395.00',
-      departurePointDetails: 'VQL-705\nVolla\n\nAddress\nSardar Patel Rd, Sriram Nagar, Tharamani, Chennai, Tamil Nadu 600113',
-      arrivalPointDetails: 'Currency details for CUR-25',
-      customerDetails: [
-        { name: 'DB Cargo', id: 'CUS00000123', type: 'customer' },
-        { name: 'ABC Rail Goods', id: 'CUS00003214', type: 'customer' },
-        { name: 'Wave Cargo', id: 'CUS00012345', type: 'customer' }
-      ],
-      resourceDetails: [
-        { name: 'Train ID', id: 'TR000213', type: 'train' },
-        { name: 'AGN01', id: 'Agent-0000001', type: 'agent' },
-        { name: '20FT CT', id: '20 Feet Container', type: 'container' }
-      ]
+      "QuickUniqueID": 111,
+      "QuickOrderNo": "111/BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
     },
     {
-      id: 'QQ/0001/2030',
-      status: 'Confirmed',
-      tripBillingStatus: 'Not Eligible',
-      customerSub: 'Oitis Group',
-      quickOrderDate: '25-Mar-2025',
-      customerSubRefNo: 'CSR/111/2024',
-      contract: 'AO Intertrans',
-      customer: '+3',
-      orderType: 'Sell',
-      totalNet: '$1395.00',
-      departurePointDetails: 'VQL-705\nVolla\n\nAddress\nSardar Patel Rd, Sriram Nagar, Tharamani, Chennai, Tamil Nadu 600113',
-      arrivalPointDetails: 'Currency details for CUR-25',
-      customerDetails: [
-        { name: 'DB Cargo', id: 'CUS00000123', type: 'customer' },
-        { name: 'ABC Rail Goods', id: 'CUS00003214', type: 'customer' },
-        { name: 'Wave Cargo', id: 'CUS00012345', type: 'customer' }
-      ],
-      resourceDetails: [
-        { name: 'Train ID', id: 'TR000213', type: 'train' },
-        { name: 'AGN01', id: 'Agent-0000001', type: 'agent' },
-        { name: '20FT CT', id: '20 Feet Container', type: 'container' }
-      ]
+      "QuickUniqueID": 112,
+      "QuickOrderNo": "112/BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
     },
     {
-      id: 'QQ/0001/2031',
-      status: 'Under Execution',
-      tripBillingStatus: 'Revenue Leakage',
-      customerSub: 'Oitis Group',
-      quickOrderDate: '25-Mar-2025',
-      customerSubRefNo: 'CSR/111/2024',
-      contract: 'AO Intertrans',
-      customer: '+3',
-      orderType: 'Buy',
-      totalNet: '$1395.00',
-      departurePointDetails: 'VQL-705\nVolla\n\nAddress\nSardar Patel Rd, Sriram Nagar, Tharamani, Chennai, Tamil Nadu 600113',
-      arrivalPointDetails: 'Currency details for CUR-25',
-      customerDetails: [
-        { name: 'DB Cargo', id: 'CUS00000123', type: 'customer' },
-        { name: 'ABC Rail Goods', id: 'CUS00003214', type: 'customer' },
-        { name: 'Wave Cargo', id: 'CUS00012345', type: 'customer' }
-      ],
-      resourceDetails: [
-        { name: 'Train ID', id: 'TR000213', type: 'train' },
-        { name: 'AGN01', id: 'Agent-0000001', type: 'agent' },
-        { name: '20FT CT', id: '20 Feet Container', type: 'container' }
-      ]
+      "QuickUniqueID": 113,
+      "QuickOrderNo": "113/BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
     },
     {
-      id: 'QQ/0001/2033',
-      status: 'Released',
-      tripBillingStatus: 'Draft Bill Raised',
-      customerSub: 'Oitis Group',
-      quickOrderDate: '25-Mar-2025',
-      customerSubRefNo: 'CSR/111/2024',
-      contract: 'AO Intertrans',
-      customer: '+3',
-      orderType: 'Buy',
-      totalNet: '$1395.00',
-      departurePointDetails: 'VQL-705\nVolla\n\nAddress\nSardar Patel Rd, Sriram Nagar, Tharamani, Chennai, Tamil Nadu 600113',
-      arrivalPointDetails: 'Currency details for CUR-25',
-      customerDetails: [
-        { name: 'DB Cargo', id: 'CUS00000123', type: 'customer' },
-        { name: 'ABC Rail Goods', id: 'CUS00003214', type: 'customer' },
-        { name: 'Wave Cargo', id: 'CUS00012345', type: 'customer' }
-      ],
-      resourceDetails: [
-        { name: 'Train ID', id: 'TR000213', type: 'train' },
-        { name: 'AGN01', id: 'Agent-0000001', type: 'agent' },
-        { name: '20FT CT', id: '20 Feet Container', type: 'container' }
-      ]
+      "QuickUniqueID": 114,
+      "QuickOrderNo": "114-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
     },
     {
-      id: 'QQ/0001/2034',
-      status: 'Under Execution',
-      tripBillingStatus: 'Not Eligible',
-      customerSub: 'Oitis Group',
-      quickOrderDate: '25-Mar-2025',
-      customerSubRefNo: 'CSR/111/2024',
-      contract: 'AO Intertrans',
-      customer: '+3',
-      orderType: 'Sell',
-      totalNet: '$1395.00',
-      departurePointDetails: 'VQL-705\nVolla\n\nAddress\nSardar Patel Rd, Sriram Nagar, Tharamani, Chennai, Tamil Nadu 600113',
-      arrivalPointDetails: 'Currency details for CUR-25',
-      customerDetails: [
-        { name: 'DB Cargo', id: 'CUS00000123', type: 'customer' },
-        { name: 'ABC Rail Goods', id: 'CUS00003214', type: 'customer' },
-        { name: 'Wave Cargo', id: 'CUS00012345', type: 'customer' }
-      ],
-      resourceDetails: [
-        { name: 'Train ID', id: 'TR000213', type: 'train' },
-        { name: 'AGN01', id: 'Agent-0000001', type: 'agent' },
-        { name: '20FT CT', id: '20 Feet Container', type: 'container' }
-      ]
+      "QuickUniqueID": 115,
+      "QuickOrderNo": "115-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
     },
     {
-      id: 'QQ/0001/2035',
-      status: 'Initiated',
-      tripBillingStatus: 'Revenue Leakage',
-      customerSub: 'Oitis Group',
-      quickOrderDate: '25-Mar-2025',
-      customerSubRefNo: 'CSR/111/2024',
-      contract: 'AO Intertrans',
-      customer: '+3',
-      orderType: 'Buy',
-      totalNet: '$1395.00',
-      departurePointDetails: 'VQL-705\nVolla\n\nAddress\nSardar Patel Rd, Sriram Nagar, Tharamani, Chennai, Tamil Nadu 600113',
-      arrivalPointDetails: 'Currency details for CUR-25',
-      customerDetails: [
-        { name: 'DB Cargo', id: 'CUS00000123', type: 'customer' },
-        { name: 'ABC Rail Goods', id: 'CUS00003214', type: 'customer' },
-        { name: 'Wave Cargo', id: 'CUS00012345', type: 'customer' }
-      ],
-      resourceDetails: [
-        { name: 'Train ID', id: 'TR000213', type: 'train' },
-        { name: 'AGN01', id: 'Agent-0000001', type: 'agent' },
-        { name: '20FT CT', id: '20 Feet Container', type: 'container' }
-      ]
+      "QuickUniqueID": 116,
+      "QuickOrderNo": "116-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
     },
     {
-      id: 'QQ/0001/2036',
-      status: 'Cancelled',
-      tripBillingStatus: 'Invoice Created',
-      customerSub: 'Oitis Group',
-      quickOrderDate: '25-Mar-2025',
-      customerSubRefNo: 'CSR/111/2024',
-      contract: 'AO Intertrans',
-      customer: '+3',
-      orderType: 'Sell',
-      totalNet: '$1395.00',
-      departurePointDetails: 'VQL-705\nVolla\n\nAddress\nSardar Patel Rd, Sriram Nagar, Tharamani, Chennai, Tamil Nadu 600113',
-      arrivalPointDetails: 'Currency details for CUR-25',
-      customerDetails: [
-        { name: 'DB Cargo', id: 'CUS00000123', type: 'customer' },
-        { name: 'ABC Rail Goods', id: 'CUS00003214', type: 'customer' },
-        { name: 'Wave Cargo', id: 'CUS00012345', type: 'customer' }
-      ],
-      resourceDetails: [
-        { name: 'Train ID', id: 'TR000213', type: 'train' },
-        { name: 'AGN01', id: 'Agent-0000001', type: 'agent' },
-        { name: '20FT CT', id: '20 Feet Container', type: 'container' }
-      ]
+      "QuickUniqueID": 117,
+      "QuickOrderNo": "117-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
     },
     {
-      id: 'QQ/0001/2037',
-      status: 'Deleted',
-      tripBillingStatus: 'Invoice Approved',
-      customerSub: 'Oitis Group',
-      quickOrderDate: '25-Mar-2025',
-      customerSubRefNo: 'CSR/111/2024',
-      contract: 'AO Intertrans',
-      customer: '+3',
-      orderType: 'Buy',
-      totalNet: '$1395.00',
-      departurePointDetails: 'VQL-705\nVolla\n\nAddress\nSardar Patel Rd, Sriram Nagar, Tharamani, Chennai, Tamil Nadu 600113',
-      arrivalPointDetails: 'Currency details for CUR-25',
-      customerDetails: [
-        { name: 'DB Cargo', id: 'CUS00000123', type: 'customer' },
-        { name: 'ABC Rail Goods', id: 'CUS00003214', type: 'customer' },
-        { name: 'Wave Cargo', id: 'CUS00012345', type: 'customer' }
-      ],
-      resourceDetails: [
-        { name: 'Train ID', id: 'TR000213', type: 'train' },
-        { name: 'AGN01', id: 'Agent-0000001', type: 'agent' },
-        { name: '20FT CT', id: '20 Feet Container', type: 'container' }
-      ]
+      "QuickUniqueID": 118,
+      "QuickOrderNo": "118-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
     },
     {
-      id: 'WW/0001/2038',
-      status: 'Confirmed',
-      tripBillingStatus: 'Not Eligible',
-      customerSub: 'Oitis Group',
-      quickOrderDate: '25-Mar-2025',
-      customerSubRefNo: 'CSR/111/2024',
-      contract: 'AO Intertrans',
-      customer: '+3',
-      orderType: 'Sell',
-      totalNet: '$1395.00',
-      departurePointDetails: 'VQL-705\nVolla\n\nAddress\nSardar Patel Rd, Sriram Nagar, Tharamani, Chennai, Tamil Nadu 600113',
-      arrivalPointDetails: 'Currency details for CUR-25',
-      customerDetails: [
-        { name: 'DB Cargo', id: 'CUS00000123', type: 'customer' },
-        { name: 'ABC Rail Goods', id: 'CUS00003214', type: 'customer' },
-        { name: 'Wave Cargo', id: 'CUS00012345', type: 'customer' }
-      ],
-      resourceDetails: [
-        { name: 'Train ID', id: 'TR000213', type: 'train' },
-        { name: 'AGN01', id: 'Agent-0000001', type: 'agent' },
-        { name: '20FT CT', id: '20 Feet Container', type: 'container' }
-      ]
+      "QuickUniqueID": 119,
+      "QuickOrderNo": "119-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
     },
     {
-      id: 'WW/0001/2039',
-      status: 'Under Execution',
-      tripBillingStatus: 'Revenue Leakage',
-      customerSub: 'Oitis Group',
-      quickOrderDate: '25-Mar-2025',
-      customerSubRefNo: 'CSR/111/2024',
-      contract: 'AO Intertrans',
-      customer: '+3',
-      orderType: 'Buy',
-      totalNet: '$1395.00',
-      departurePointDetails: 'VQL-705\nVolla\n\nAddress\nSardar Patel Rd, Sriram Nagar, Tharamani, Chennai, Tamil Nadu 600113',
-      arrivalPointDetails: 'Currency details for CUR-25',
-      customerDetails: [
-        { name: 'DB Cargo', id: 'CUS00000123', type: 'customer' },
-        { name: 'ABC Rail Goods', id: 'CUS00003214', type: 'customer' },
-        { name: 'Wave Cargo', id: 'CUS00012345', type: 'customer' }
-      ],
-      resourceDetails: [
-        { name: 'Train ID', id: 'TR000213', type: 'train' },
-        { name: 'AGN01', id: 'Agent-0000001', type: 'agent' },
-        { name: '20FT CT', id: '20 Feet Container', type: 'container' }
-      ]
+      "QuickUniqueID": 120,
+      "QuickOrderNo": "120-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 121,
+      "QuickOrderNo": "121-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 122,
+      "QuickOrderNo": "122-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 123,
+      "QuickOrderNo": "123-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 124,
+      "QuickOrderNo": "124-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 126,
+      "QuickOrderNo": "126-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 129,
+      "QuickOrderNo": "129-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 130,
+      "QuickOrderNo": "130-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 131,
+      "QuickOrderNo": "131-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 132,
+      "QuickOrderNo": "132-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 133,
+      "QuickOrderNo": "133-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 134,
+      "QuickOrderNo": "134-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 135,
+      "QuickOrderNo": "135-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 136,
+      "QuickOrderNo": "136-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 137,
+      "QuickOrderNo": "137-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 138,
+      "QuickOrderNo": "138-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 139,
+      "QuickOrderNo": "139-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
+    },
+    {
+      "QuickUniqueID": 140,
+      "QuickOrderNo": "140-BUY",
+      "QuickOrderDate": "2022-06-16T00:00:00",
+      "Status": "Fresh",
+      "CustomerOrVendor": "",
+      "Customer_Supplier_RefNo": "",
+      "Contract": "CON000000116",
+      "OrderType": "BUY",
+      "TotalNet": 284.52
     }
   ];
 
@@ -599,13 +604,13 @@ const QuickOrderManagement = () => {
       // Status column colors
       'Released': 'bg-yellow-100 text-yellow-800 border-yellow-300',
       'Under Execution': 'bg-purple-100 text-purple-800 border-purple-300',
-      'Initiated': 'bg-blue-100 text-blue-800 border-blue-300',
+      'Fresh': 'bg-blue-100 text-blue-800 border-blue-300 rounded-2xl',
       'Cancelled': 'bg-red-100 text-red-800 border-red-300',
       'Deleted': 'bg-red-100 text-red-800 border-red-300',
-      'Confirmed': 'bg-green-100 text-green-800 border-green-300',
+      'Save': 'bg-green-100 text-green-800 border-green-300 rounded-2xl',
       
       // Trip Billing Status colors
-      'Draft Bill Raised': 'bg-orange-100 text-orange-800 border-orange-300',
+      'Confirmed': 'bg-orange-100 text-orange-800 border-orange-300',
       'Not Eligible': 'bg-red-100 text-red-800 border-red-300',
       'Revenue Leakage': 'bg-red-100 text-red-800 border-red-300',
       'Invoice Created': 'bg-blue-100 text-blue-800 border-blue-300',
@@ -617,9 +622,9 @@ const QuickOrderManagement = () => {
   const processedData = useMemo(() => {
     return sampleData.map(row => ({
       ...row,
-      status: {
-        value: row.status,
-        variant: getStatusColor(row.status)
+      Status: {
+        value: row.Status,
+        variant: getStatusColor(row.Status)
       },
       tripBillingStatus: {
         value: row.tripBillingStatus,
@@ -715,7 +720,7 @@ const QuickOrderManagement = () => {
           </div>
 
           {/* Grid Container */}
-          <div className="rounded-lg shadow-sm mt-4">
+          <div className="rounded-lg mt-4">
             <SmartGrid
               key={`grid-${gridState.forceUpdate}`}
               parentPage="quickOrder"

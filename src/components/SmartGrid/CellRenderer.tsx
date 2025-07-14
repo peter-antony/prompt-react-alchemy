@@ -80,7 +80,7 @@ export const CellRenderer: React.FC<CellRendererProps> = ({
   const getDefaultStatusColor = (status: any, columnKey: string) => {
     // Safely convert to string and handle non-string inputs
     const statusString = String(status || '').toLowerCase();
-    
+
     if (columnKey.toLowerCase().includes('status')) {
       switch (statusString) {
         case 'released':
@@ -149,6 +149,23 @@ export const CellRenderer: React.FC<CellRendererProps> = ({
     );
   };
 
+  // render DateFormat
+
+  const renderDateFormat = () => {
+    const [date] = String(value).split(' ');
+    const dateObj = new Date(value);
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const month = dateObj.toLocaleString('en-US', { month: 'short' }); // Mar
+    const year = dateObj.getFullYear();
+    const formattedDate = `${day}-${month}-${year}`;
+
+    return (
+      <div className="text-sm min-w-0">
+        <div className="text-gray-900 font-medium truncate">{formattedDate}</div>
+      </div>
+    );
+  }
+
   // DateTimeRange renderer
   const renderDateTimeRange = () => {
     const [date, time] = String(value).split(' ');
@@ -175,13 +192,13 @@ export const CellRenderer: React.FC<CellRendererProps> = ({
     return (
       <div className="text-sm min-w-0">
         <button
-        onClick={handleLinkClick}
-        className="text-blue-600 hover:text-blue-800 cursor-pointer font-medium hover:underline transition-colors duration-150 truncate max-w-full"
-        disabled={loading}
-        title={String(wagID)}
-      >
-        {wagID}
-      </button>
+          onClick={handleLinkClick}
+          className="text-blue-600 hover:text-blue-800 cursor-pointer font-medium hover:underline transition-colors duration-150 truncate max-w-full"
+          disabled={loading}
+          title={String(wagID)}
+        >
+          {wagID}
+        </button>
         <div className="text-gray-500 text-xs truncate">{type}</div>
       </div>
     );
@@ -190,7 +207,7 @@ export const CellRenderer: React.FC<CellRendererProps> = ({
   // TextWithTooltip renderer
   const renderTextWithTooltip = () => {
     const tooltipText = column.infoTextField ? row[column.infoTextField] : `More info about ${value}`;
-    
+
     return (
       <div className="flex items-center gap-2 min-w-0">
         <span className="text-gray-900 font-medium truncate flex-1" title={String(value)}>
@@ -207,7 +224,7 @@ export const CellRenderer: React.FC<CellRendererProps> = ({
                 <Info className="h-3 w-3 text-blue-600" />
               </button>
             </TooltipTrigger>
-            <TooltipContent 
+            <TooltipContent
               className="max-w-xs p-3 text-sm bg-white border border-gray-200 shadow-lg z-50"
               sideOffset={5}
             >
@@ -236,7 +253,7 @@ export const CellRenderer: React.FC<CellRendererProps> = ({
         </DialogTrigger>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto bg-white">
           <DialogHeader className="pb-4 border-b border-gray-200">
-            <DialogTitle className="text-lg font-semibold text-gray-900">
+            <DialogTitle className="text-lg font-medium text-gray-900">
               Details
             </DialogTitle>
           </DialogHeader>
@@ -318,7 +335,7 @@ export const CellRenderer: React.FC<CellRendererProps> = ({
   // Date renderer
   const renderDate = () => {
     if (!value) return <span className="text-gray-400">-</span>;
-    
+
     try {
       const date = new Date(value);
       const formattedDate = date.toLocaleDateString();
@@ -339,6 +356,8 @@ export const CellRenderer: React.FC<CellRendererProps> = ({
         return renderLinkWithText();
       case 'TextWithTwoRow':
         return renderTextWithTwoRow();
+      case 'DateFormat':
+        return renderDateFormat();
       case 'DateTimeRange':
         return renderDateTimeRange();
       case 'TextWithTooltip':

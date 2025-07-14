@@ -481,7 +481,7 @@ const TripPlansSearchHub = () => {
             </div>
 
             {/* Grid Container */}
-            <div className="rounded-lg shadow-sm mt-4">
+            <div className="rounded-lg mt-4">
               <SmartGrid
                 key={`grid-${gridState.forceUpdate}`}
                 columns={gridState.columns}

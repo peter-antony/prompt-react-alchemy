@@ -13,7 +13,8 @@ export type GridColumnType =
   | 'Text'                 // Standard text cell
   | 'Date'                 // Formatted date
   | 'Dropdown'             // Selectable value from list (for edit or filter)
-  | 'EditableText';        // Inline editable text
+  | 'EditableText'        // Inline editable text
+  | 'DateFormat';
 
 export interface GridColumnConfig {
   key: string;
