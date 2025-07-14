@@ -32,6 +32,7 @@ import { ConfigurableButtonConfig } from '@/components/ui/configurable-button';
 import { useNavigate } from 'react-router-dom';
 import { DropdownButton } from '@/components/ui/dropdown-button';
 import PlanAndActuals from './PlanAndActuals';
+import BulkUpload from '@/components/QuickOrderNew/BulkUpload';
 
 // interface ResourceGroupDetailsFormProps {
 //   open: boolean;
@@ -409,12 +410,14 @@ export const ResourceGroupDetailsForm = () => {
           label: "Bulk Upload",
           icon: <CloudUpload  className="h-4 w-4" />,
           onClick: () => {
-            navigate('/bulk-upload');
+            setMoreInfoOpen(true);
           }
         }
       ]
     }
   ];
+
+  const [isMoreInfoOpen, setMoreInfoOpen] = useState(false);
 
   return (
     <div className="">
@@ -551,7 +554,7 @@ export const ResourceGroupDetailsForm = () => {
             {currentStep === 2 && (
               <>
                 {!isPlanActualsVisible && (
-                  <div className="rounded-lg p-8 flex flex-col items-center justify-center">
+                  <div className="rounded-lg px-8 py-10 flex flex-col items-center justify-center">
                     <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                       <img src={PlanActIcon} alt='Add' className="w-20 h-20" />
                     </div>
@@ -559,7 +562,7 @@ export const ResourceGroupDetailsForm = () => {
                       There are no items of plan and actuals available. Please click 'Add' instead.
                     </p>
                     <div className="flex gap-4">
-                      <Button variant="outline" onClick={bulkUploadFiles} className="h-8 my-2 rounded border-blue-600 text-blue-600 hover:bg-blue-50">
+                      <Button variant="outline" onClick={() => setMoreInfoOpen(true)} className="h-8 my-2 rounded border-blue-600 text-blue-600 hover:bg-blue-50">
                         Bulk Upload
                       </Button>
                       <Button onClick={() => setIsPlanActualsOpen(true)} className="h-8 my-2 bg-blue-600 rounded hover:bg-blue-700">
@@ -579,7 +582,7 @@ export const ResourceGroupDetailsForm = () => {
         </div>
       </div>
       {/* Action Buttons */}
-      <div className="mt-2 w-full z-50 bg-white border-t flex justify-end space-x-3 absolute bottom-0 px-8">
+      <div className="mt-2 w-full z-50 bg-white border-t border-gray-300 flex justify-end space-x-3 absolute bottom-0 px-8">
         {currentStep === 1 && (
           <Button variant="outline" onClick={handleProceedToNext} className="h-8 my-2 rounded border-blue-600 text-blue-600 hover:bg-blue-50">
             Proceed to Next
@@ -599,6 +602,13 @@ export const ResourceGroupDetailsForm = () => {
       <SideDrawer isOpen={isPlanActualsOpen} onClose={() => setIsPlanActualsOpen(false)} width='85%' title="Plan and Actual Details" isBack={false}>
         <div>
           <PlanAndActualDetails onCloseDrawer={() => setIsPlanActualsOpen(false)}></PlanAndActualDetails>
+        </div>
+      </SideDrawer>
+
+      {/* Bulk upload component */}
+      <SideDrawer isOpen={isMoreInfoOpen} onClose={() => setMoreInfoOpen(false)} width="50%" title="Add Files" isBack={false}>
+        <div className="">
+          <div className="mt-0 text-sm text-gray-600"><BulkUpload /></div>
         </div>
       </SideDrawer>
     </div>

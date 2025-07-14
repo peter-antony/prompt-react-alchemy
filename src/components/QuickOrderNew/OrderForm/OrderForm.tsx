@@ -506,7 +506,7 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
           <Copy className="w-5 h-5 text-gray-600" />
         </button>
       </div>
-       <SideDrawer isOpen={isMoreInfoOpen} onClose={() => setMoreInfoOpen(false)} width="35%" title="More Info" isBack={false}>
+        <SideDrawer isOpen={isMoreInfoOpen} onClose={() => setMoreInfoOpen(false)} width="35%" title="More Info" isBack={false}>
           <div className="">
             <div className="mt-0 text-sm text-gray-600"><MoreInfo /></div>
           </div>

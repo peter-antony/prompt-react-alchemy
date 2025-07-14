@@ -11,6 +11,7 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { AppLayout } from '@/components/AppLayout';
 import { useNavigate } from 'react-router-dom';
 import { SideDrawer } from '@/components/Common/SideDrawer';
+import BulkUpload from '@/components/QuickOrderNew/BulkUpload';
 import { PlanAndActualDetails } from '@/components/QuickOrderNew/PlanAndActualDetails';
 
 interface SampleData {
@@ -646,10 +647,7 @@ const QuickOrderManagement = () => {
           label: "Bulk Upload",
           icon: <Upload className="h-4 w-4" />,
           onClick: () => {
-            toast({
-              title: "Bulk Upload",
-              description: "Opening bulk upload dialog..."
-            });
+            setMoreInfoOpen(true);
           }
         }
       ]
@@ -698,6 +696,9 @@ const QuickOrderManagement = () => {
       />
     );
   };
+
+   const [isMoreInfoOpen, setMoreInfoOpen] = useState(false);
+
 
   return (
     <AppLayout>
@@ -772,7 +773,14 @@ const QuickOrderManagement = () => {
               </Button>
             </div>
           </div>
+
+          
         </div>
+        <SideDrawer isOpen={isMoreInfoOpen} onClose={() => setMoreInfoOpen(false)} width="50%" title="Add Files" isBack={false}>
+          <div className="">
+            <div className="mt-0 text-sm text-gray-600"><BulkUpload /></div>
+          </div>
+        </SideDrawer>
       </div>
     </AppLayout>
   );
