@@ -1034,7 +1034,7 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       <SideDrawer
         isOpen={isBulkUpdateOpen}
         onClose={() => setIsBulkUpdateOpen(false)}
-        width="35%"
+        width="40%"
         title="Bulk Update"
         isBack={false}
       >

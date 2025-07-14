@@ -43,7 +43,7 @@ const NewCreateQuickOrder = ({ isEditQuickOrder }: NewCreateQuickOrderProps) => 
   return (
     <div className="flex gap-6">
         {/* Left Column - Order Form */}
-        <div className="lg:col-span-1 w-2/5">
+        <div className="lg:col-span-1 w-2/6">
         <OrderForm
             onSaveDraft={handleSaveDraft}
             onConfirm={handleConfirm}
@@ -53,7 +53,7 @@ const NewCreateQuickOrder = ({ isEditQuickOrder }: NewCreateQuickOrderProps) => 
         </div>
         
         {/* Right Column - Resource Group Panel */}
-        <div className="lg:col-span-1 w-3/5">
+        <div className="lg:col-span-1 w-4/6">
         <NewResourceGroup onAddResource={handleAddResource} />
         </div>
     </div>

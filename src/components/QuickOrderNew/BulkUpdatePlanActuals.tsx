@@ -84,7 +84,7 @@ export const BulkUpdatePlanActuals: React.FC<{
   return (
     <>
       <form className="flex flex-col h-full">
-        <div className="flex-1 grid grid-cols-2 gap-x-6 gap-y-4 bg-gray-50 px-6 py-4">
+        <div className="flex-1 grid grid-cols-2 gap-x-6 gap-y-4 bg-gray-50 px-4 py-4">
           {/* Planned Date and Time */}
           <div>
             <Label>Planned Date and Time</Label>
@@ -267,7 +267,12 @@ export const BulkUpdatePlanActuals: React.FC<{
             />
           </div>
         </div>
-        <div className="w-full bg-white border-t flex justify-end space-x-3 absolute bottom-0 px-6 py-2">
+        <div className="flex bg-white justify-end w-full px-4 border-t border-gray-300">
+          <Button type="button" onClick={() => onClose()} className="bg-blue-600 my-2 text-white px-6 py-2 rounded font-medium">
+            Default Details
+          </Button>
+        </div>
+        {/* <div className="w-full bg-white border-t flex justify-end space-x-3 absolute bottom-0 px-6 py-2">
           <Button
             type="button"
             className="bg-blue-600 text-white rounded my-2 hover:bg-blue-700"
@@ -275,7 +280,7 @@ export const BulkUpdatePlanActuals: React.FC<{
           >
             Default Details
           </Button>
-        </div>
+        </div> */}
       </form>
     </>
   );
