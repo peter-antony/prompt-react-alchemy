@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Search, Calendar, Clock, Bookmark, Banknote, Wrench, ArrowLeft, 
   FileText, BookmarkCheck,
   Plus,
@@ -42,6 +42,13 @@ import PlanAndActuals from './PlanAndActuals';
 export const ResourceGroupDetailsForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isPlanActualsOpen, setIsPlanActualsOpen] = useState(false);
+  const [isPlanActualsVisible, setIsPlanActualsVisible] = useState(false);
+
+  useEffect(() => {
+    // Check localStorage for planActualsSaved flag
+    const saved = localStorage.getItem('planActualsSaved');
+    setIsPlanActualsVisible(saved === 'true');
+  }, [currentStep, isPlanActualsOpen]);
 
   const handleProceedToNext = () => {
     setCurrentStep(2);
@@ -49,6 +56,9 @@ export const ResourceGroupDetailsForm = () => {
 
   const handleFirstStep = () => {
     setCurrentStep(1);
+    // Clear the flag so user can re-add plan/actuals
+    localStorage.removeItem('planActualsSaved');
+    setIsPlanActualsVisible(false);
   };
 
   const handleSecondStep = () => {
@@ -462,12 +472,14 @@ export const ResourceGroupDetailsForm = () => {
               {currentStep === 2 && (
                 <>
                   <h2 className="text-lg font-semibold">Plan and Actuals</h2>
-                  <div className="flex items-center gap-2">
+                    { isPlanActualsVisible && 
+                      (<div className="flex items-center gap-2">
                     {/* Create Order Button with Dropdown */}
                     <DropdownButton config={configurableButtons[0]} />
                     <button className={`p-2 rounded ${view === "grid" ? "bg-blue-50" : ""}`} onClick={() => setView("grid")}> <LayoutGrid className={`w-5 h-5 ${view === "grid" ? "text-blue-600" : "text-gray-400"}`} /> </button>
                     <button className={`p-2 rounded ${view === "list" ? "bg-blue-50" : ""}`} onClick={() => setView("list")}> <List className={`w-5 h-5 ${view === "list" ? "text-blue-600" : "text-gray-400"}`} /> </button>
-                  </div>
+                    </div>
+                    )}
                 </>
               )}
 
@@ -538,27 +550,29 @@ export const ResourceGroupDetailsForm = () => {
 
             {currentStep === 2 && (
               <>
-                {/* <div className="rounded-lg p-8 flex flex-col items-center justify-center">
-                  <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                    <img src={PlanActIcon} alt='Add' className="w-20 h-20" />
+                {!isPlanActualsVisible && (
+                  <div className="rounded-lg p-8 flex flex-col items-center justify-center">
+                    <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                      <img src={PlanActIcon} alt='Add' className="w-20 h-20" />
+                    </div>
+                    <p className="text-gray-500 text-center mb-6 text-sm">
+                      There are no items of plan and actuals available. Please click 'Add' instead.
+                    </p>
+                    <div className="flex gap-4">
+                      <Button variant="outline" onClick={bulkUploadFiles} className="h-8 my-2 rounded border-blue-600 text-blue-600 hover:bg-blue-50">
+                        Bulk Upload
+                      </Button>
+                      <Button onClick={() => setIsPlanActualsOpen(true)} className="h-8 my-2 bg-blue-600 rounded hover:bg-blue-700">
+                        Add Plan or Actuals
+                      </Button>
+                    </div>
                   </div>
-                  <p className="text-gray-500 text-center mb-6 text-sm">
-                    There are no items of plan and actuals available. Please click 'Add' instead.
-                  </p>
-                  <div className="flex gap-4">
-                    <Button variant="outline" onClick={bulkUploadFiles} className="h-8 my-2 rounded border-blue-600 text-blue-600 hover:bg-blue-50">
-                      Bulk Upload
-                    </Button>
-                    <Button onClick={addPlanActuals} className="h-8 my-2 bg-blue-600 rounded hover:bg-blue-700">
-                      Add Plan or Actuals
-                    </Button>
+                )}
+                {isPlanActualsVisible && (
+                  <div className="">
+                    <PlanAndActuals view={view} />
                   </div>
-                </div> */}
-
-                <div className="">
-                  {/* <PlanAndActuals /> */}
-                  <PlanAndActuals view={view} />
-                </div>
+                )}
               </>
             )}
           </div>

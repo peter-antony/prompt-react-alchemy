@@ -101,6 +101,7 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
   };
 
   const handleSavePlanActuals = () => {
+    localStorage.setItem('planActualsSaved', 'true'); // Set flag for ResourceGroupDetails
     onCloseDrawer();
   };
   const [billingData, setBillingData] = useState({
