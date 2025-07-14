@@ -42,7 +42,7 @@ export default function AmendmentHistory() {
             {/* Content */}
             <div>
               <div className="flex items-center gap-1">
-                <span className="font-semibold text-gray-800 text-lg" >
+                <span className="font-semibold text-gray-800 text-lg" style={{ fontSize: "15px" }}>
                   {item.user}
                 </span>
                 <Info className="w-4 h-4 text-gray-400" />
@@ -50,7 +50,7 @@ export default function AmendmentHistory() {
               <div className="text-sm text-gray-500 ">
                 {item.date} <span className="ml-2">{item.time}</span>
               </div>
-              <div className="text-sm text-gray-400 " style={{ fontSize: "15px" }}>
+              <div className="text-sm text-gray-400 ">
                 {item.status}
               </div>
             </div>

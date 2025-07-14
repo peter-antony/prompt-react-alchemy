@@ -32,10 +32,12 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
   const [currentPanelWidth, setCurrentPanelWidth] = useState<'full' | 'half' | 'third' | 'quarter' | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12>(panelWidth);
   const [isCollapsible, setIsCollapsible] = useState(collapsible);
   const [panelVisible, setPanelVisible] = useState(true);
-  const [showStatusIndicator, setShowStatusIndicator] = useState(false);
+  const [showStatusIndicator, setShowStatusIndicator] = useState(true);
+  const [showHeader, setShowHeader] = useState(true);
   const [isOpen, setIsOpen] = useState(true);
   const [formData, setFormData] = useState(initialData);
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   // Load user configuration on mount
   useEffect(() => {
@@ -55,8 +57,10 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
               setIsCollapsible(userSettings.collapsible);
             }
             if (userSettings.showStatusIndicator !== undefined) {
-              setShowStatusIndicator(false);
-              // setShowStatusIndicator(userSettings.showStatusIndicator);
+              setShowStatusIndicator(userSettings.showStatusIndicator);
+            }
+            if (userSettings.showHeader !== undefined) {
+              setShowHeader(userSettings.showHeader);
             }
           }
         } catch (error) {
@@ -84,7 +88,8 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
     newTitle?: string, 
     newWidth?: 'full' | 'half' | 'third' | 'quarter' | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12,
     newCollapsible?: boolean,
-    newPanelVisible?: boolean
+    newPanelVisible?: boolean,
+    newShowHeader?: boolean
   ) => {
     setPanelConfig(updatedConfig);
     
@@ -106,6 +111,10 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
     if (newPanelVisible !== undefined) {
       setPanelVisible(newPanelVisible);
     }
+
+    if (newShowHeader !== undefined) {
+      setShowHeader(newShowHeader);
+    }
     
     if (saveUserPanelConfig) {
       try {
@@ -114,6 +123,7 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
           width: newWidth || currentPanelWidth,
           collapsible: newCollapsible !== undefined ? newCollapsible : isCollapsible,
           showStatusIndicator: showStatusIndicator,
+          showHeader: newShowHeader !== undefined ? newShowHeader : showHeader,
           fields: updatedConfig
         };
         await saveUserPanelConfig(userId, panelId, settings);
@@ -143,11 +153,25 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
     }
   };
 
+  const getFieldWidthClass = (fieldWidth?: 'third' | 'two-thirds' | 'two-two' | 'full') => {
+    switch (fieldWidth) {
+      case 'third':
+        return 'col-span-1 md:col-span-1';
+      case 'two-thirds':
+        return 'col-span-2 md:col-span-2';
+      case 'two-two':
+        return 'col-span-6 md:col-span-6';
+      case 'full':
+      default:
+        return 'col-span-3 md:col-span-3';
+    }
+  };
+
   const PanelContent = () => (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         {visibleFields.map(([fieldId, fieldConfig]) => (
-          <div key={fieldId} className="space-y-1">
+          <div key={fieldId} className={`space-y-1 ${getFieldWidthClass(fieldConfig.width)}`}>
             <label className="text-xs font-medium text-gray-600 block">
               {fieldConfig.label}
               {fieldConfig.mandatory && (
@@ -182,54 +206,72 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
         panelWidth={currentPanelWidth}
         collapsible={isCollapsible}
         panelVisible={panelVisible}
+        showHeader={showHeader}
         onSave={handleConfigSave}
       />
     );
   }
 
+  const SettingsButton = () => (
+    !showPreview && isHovered && (
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsConfigModalOpen(true);
+        }}
+        className="h-6 w-6 text-gray-400 hover:text-gray-600"
+      >
+        <Settings className="h-3 w-3" />
+      </Button>
+    )
+  );
+
   if (isCollapsible) {
     return (
-      <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`${getWidthClass()}`}>
-        <Card className="border border-gray-200 shadow-sm mb-6">
-          <CollapsibleTrigger asChild>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 px-4 py-4 border-b mb-4 cursor-pointer hover:bg-gray-50">
-              <div className="flex items-center gap-2">
-                <div className="">{panelIcon}</div>
-                <CardTitle className="text-sm font-semibold text-gray-700">{panelTitle}</CardTitle>
-                <PanelStatusIndicator 
-                  panelConfig={panelConfig}
-                  formData={formData}
-                  showStatus={showStatusIndicator}
-                />
-                {showPreview && (
-                  <span className="text-xs text-blue-600 font-medium">DB000023/42</span>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                {!showPreview && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsConfigModalOpen(true);
-                    }}
-                    className="h-6 w-6 text-gray-400 hover:text-gray-600"
-                  >
-                    <Settings className="h-3 w-3" />
-                  </Button>
-                )}
-                {isOpen ? (
-                  <ChevronUp className="h-4 w-4 text-gray-400" />
-                ) : (
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
-                )}
-              </div>
-            </CardHeader>
-          </CollapsibleTrigger>
+      <Collapsible 
+        open={isOpen} 
+        onOpenChange={setIsOpen} 
+        className={`${getWidthClass()}`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <Card className="border border-gray-200 shadow-sm">
+          {showHeader ? (
+            <CollapsibleTrigger asChild>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 px-4 pt-4 cursor-pointer hover:bg-gray-50">
+                <div className="flex items-center gap-2">
+                  {/* <div className="w-5 h-5 border-2 border-purple-500 rounded"></div> */}
+                  <div className="">{panelIcon}</div>
+                  <CardTitle className="text-sm font-medium text-gray-700">{panelTitle}</CardTitle>
+                  <PanelStatusIndicator 
+                    panelConfig={panelConfig}
+                    formData={formData}
+                    showStatus={showStatusIndicator}
+                  />
+                  {showPreview && (
+                    <span className="text-xs text-blue-600 font-medium">DB000023/42</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <SettingsButton />
+                  {isOpen ? (
+                    <ChevronUp className="h-4 w-4 text-gray-400" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 text-gray-400" />
+                  )}
+                </div>
+              </CardHeader>
+            </CollapsibleTrigger>
+          ) : (
+            <div className="absolute top-2 right-2 z-10">
+              <SettingsButton />
+            </div>
+          )}
           
           <CollapsibleContent>
-            <CardContent className="px-4 pb-4">
+            <CardContent className={`px-4 pb-4 ${!showHeader ? 'pt-8' : ''}`}>
               <PanelContent />
             </CardContent>
           </CollapsibleContent>
@@ -243,6 +285,7 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
               panelWidth={currentPanelWidth}
               collapsible={isCollapsible}
               panelVisible={panelVisible}
+              showHeader={showHeader}
               onSave={handleConfigSave}
             />
           )}
@@ -252,33 +295,35 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
   }
 
   return (
-    <Card className={`${getWidthClass()} border border-gray-200 shadow-sm mb-6`}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 px-4 py-4 border-b mb-4">
-        <div className="flex items-center gap-2">
-          <div className="">{panelIcon}</div>
-          <CardTitle className="text-sm font-semibold text-gray-700">{panelTitle}</CardTitle>
-          <PanelStatusIndicator 
-            panelConfig={panelConfig}
-            formData={formData}
-            showStatus={showStatusIndicator}
-          />
-          {showPreview && (
-            <span className="text-xs text-blue-600 font-medium">DB000023/42</span>
-          )}
+    <Card 
+      className={`${getWidthClass()} border border-gray-200 shadow-sm relative mb-6`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {showHeader ? (
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 px-4 pt-4">
+          <div className="flex items-center gap-2">
+            {/* <div className="w-5 h-5 border-2 border-purple-500 rounded"></div> */}
+            <div className="">{panelIcon}</div>
+            <CardTitle className="text-sm font-medium text-gray-700">{panelTitle}</CardTitle>
+            <PanelStatusIndicator 
+              panelConfig={panelConfig}
+              formData={formData}
+              showStatus={showStatusIndicator}
+            />
+            {showPreview && (
+              <span className="text-xs text-blue-600 font-medium">DB000023/42</span>
+            )}
+          </div>
+          <SettingsButton />
+        </CardHeader>
+      ) : (
+        <div className="absolute top-2 right-2 z-10">
+          <SettingsButton />
         </div>
-        {!showPreview && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsConfigModalOpen(true)}
-            className="h-6 w-6 text-gray-400 hover:text-gray-600"
-          >
-            <Settings className="h-3 w-3" />
-          </Button>
-        )}
-      </CardHeader>
+      )}
       
-      <CardContent className="px-4 pb-4">
+      <CardContent className={`px-4 pb-4 ${!showHeader ? 'pt-8' : ''}`}>
         <PanelContent />
       </CardContent>
 
@@ -291,6 +336,7 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
           panelWidth={currentPanelWidth}
           collapsible={isCollapsible}
           panelVisible={panelVisible}
+          showHeader={showHeader}
           onSave={handleConfigSave}
         />
       )}

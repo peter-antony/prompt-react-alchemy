@@ -8,7 +8,7 @@ export interface FieldConfig {
   visible: boolean;
   editable: boolean;
   order: number;
-  width?: 'third' | 'two-thirds' | 'full'; // Field width configuration
+  width?: 'third' | 'two-thirds' | 'two-two' | 'full'; // Field width configuration
   options?: { label: string; value: string }[]; // For select and radio fields
   placeholder?: string;
   inputType?: any;
@@ -30,7 +30,7 @@ export interface PanelSettings {
 export interface DynamicPanelProps {
   panelId: string;
   panelTitle: string;
-  panelIcon: React.ReactNode;
+  panelIcon?: React.ReactNode;
   panelConfig: PanelConfig;
   initialData?: Record<string, any>;
   onDataChange?: (updatedData: Record<string, any>) => void;

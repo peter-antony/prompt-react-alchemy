@@ -10,8 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Label } from '@/components/ui/label';
 
-
-
 export const MoreInfo = () => {
   const [primaryDocType, setPrimaryDocType] = useState('');
   const [primaryDocNo, setPrimaryDocNo] = useState('');
@@ -74,7 +72,8 @@ export const MoreInfo = () => {
     console.log("FORM DATA : ", formData);
   }
   return (
-    <form className="space-y-4 w-full text-sm">
+    <>
+    <form className="space-y-4 p-4 w-full text-sm">
       {/* Primary Doc Type and No. */}
       <div className="flex gap-2 w-full">
         <div className="flex-1">
@@ -108,7 +107,7 @@ export const MoreInfo = () => {
         </div>
       </div>
       {/* Primary and Secondary Doc Dates */}
-      <div className="flex gap-2 w-full">
+      <div className="flex gap-4 w-full">
         <div className="flex-1">
           <Label htmlFor="primary-date" className="text-sm font-medium text-gray-700 mb-2 block">
             Primary Doc Date
@@ -118,7 +117,7 @@ export const MoreInfo = () => {
               <Button
                 variant="outline"
                 className={cn(
-                  "w-full justify-start text-left font-normal relative",
+                  "w-full justify-start text-left font-normal relative border-gray-300",
                   !primaryDocDate && "text-muted-foreground"
                 )}
               >
@@ -146,7 +145,7 @@ export const MoreInfo = () => {
               <Button
                 variant="outline"
                 className={cn(
-                  "w-full justify-start text-left font-normal relative",
+                  "w-full justify-start text-left font-normal relative border-gray-300",
                   !secondaryDocDate && "text-muted-foreground"
                 )}
               >
@@ -175,8 +174,8 @@ export const MoreInfo = () => {
           placeholder="DE17FRE001" className="w-full" />
       </div>
       {/* QC Userdefined 2 and 3 */}
-      <div className="flex gap-2 w-full">
-        <div className="flex-1">
+      <div className="flex gap-4 w-full">
+        <div className="flex-1 w-5/12">
           <Label className="text-sm font-medium text-gray-700 mb-2 block">
             QC Userdefined 2
           </Label>
@@ -189,7 +188,7 @@ export const MoreInfo = () => {
             onValueChange={val => handleQc2Change(qc2Dropdown, val)}
           />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 w-5/12">
           <Label className="text-sm font-medium text-gray-700 mb-2 block">
             QC Userdefined 3
           </Label>
@@ -223,12 +222,13 @@ export const MoreInfo = () => {
 
         </div>
       </div>
-      {/* Save Button */}
-      <div className="flex justify-end w-full">
-        <button type="button" className="bg-blue-600 text-white px-6 py-2 rounded-md font-medium" onClick={onSave}>
-          Save Details
-        </button>
-      </div>
     </form>
+    {/* Save Button */}
+    <div className="flex bg-white justify-end w-full px-4 border-t border-gray-300">
+      <button type="button" className="bg-blue-600 my-2 text-white px-6 py-2 rounded font-medium" onClick={onSave}>
+        Save Details
+      </button>
+    </div>
+    </>
   );
 };

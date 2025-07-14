@@ -269,7 +269,7 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
       <div className="space-y-6">
         {/* Order Type */}
         <div>
-          <Label className="text-sm font-medium text-gray-700 mb-3 block">Order Type</Label>
+          {/* <Label className="text-sm font-medium text-gray-700 mb-3 block">Order Type</Label> */}
           <RadioGroup
             value={orderType}
             onValueChange={setOrderType}
@@ -506,8 +506,8 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel }: OrderFormProps) => {
           <Copy className="w-5 h-5 text-gray-600" />
         </button>
       </div>
-       <SideDrawer isOpen={isMoreInfoOpen} onClose={() => setMoreInfoOpen(false)} width="30%" title="More Info" isBack={false}>
-          <div className="p-4">
+       <SideDrawer isOpen={isMoreInfoOpen} onClose={() => setMoreInfoOpen(false)} width="35%" title="More Info" isBack={false}>
+          <div className="">
             <div className="mt-0 text-sm text-gray-600"><MoreInfo /></div>
           </div>
         </SideDrawer>

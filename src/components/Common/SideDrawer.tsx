@@ -47,7 +47,7 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({
                         transition={{ type: "tween", duration: 0.7 }}
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between px-4 py-3 border-b">
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-300">
                             <div className="flex items-center">
                                 {isBack && (
                                     <button
@@ -58,21 +58,21 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({
                                         <ArrowLeft className="w-5 h-5 text-gray-500" />
                                     </button>
                                 )}
-                                <h2 className={`text-xl font-semibold text-gray-800 ${isBack ? 'ml-4' : ''}`}>
+                                <h2 className={`text-lg font-semibold text-gray-800 ${isBack ? 'ml-4' : ''}`}>
                                     {title}
                                 </h2>
                                 {isBadgeRequired && (
-                                    <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full border border-blue-200 text-sm font-medium ml-4">
+                                    <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full border border-blue-200 text-xs font-medium ml-4">
                                         {badgeContent}
                                     </span>
                                 )}
                             </div>
                             <button
                                 onClick={onClose}
-                                className="p-2 rounded-full border hover:bg-gray-100 focus:outline-none"
+                                className="p-2 rounded-full border hover:bg-gray-100 border-gray-200"
                                 aria-label="Close"
                             >
-                                <X className="w-5 h-5 text-gray-500" />
+                                <X className="w-4 h-4 text-gray-500" />
                             </button>
                         </div>
                         {/* Content */}

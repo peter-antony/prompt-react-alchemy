@@ -42,9 +42,9 @@ body{
 .justify-end{
   justify-content: flex-end;
 }
-.text-sm{
+/* .text-sm{
     font-size: 13px;
-}
+} */
 .text-lg{
     font-size: 16px;
 }

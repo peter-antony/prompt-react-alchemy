@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Search, Clock } from "lucide-react";
-import { FieldConfig } from "@/types/dynamicPanel";
+import React, { useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Search, Clock } from 'lucide-react';
+import { FieldConfig } from '@/types/dynamicPanel';
 import {
   Popover,
   PopoverContent,
@@ -23,50 +25,67 @@ interface FieldRendererProps {
 export const FieldRenderer: React.FC<FieldRendererProps> = ({
   config,
   value,
-  onChange,
+  onChange
 }) => {
   const { fieldType, editable, placeholder, options, inputType } = config;
 
   if (!editable) {
     return (
       <div className="text-xs text-gray-700 bg-gray-50 p-2 rounded border min-h-[32px] flex items-center">
-        {value || "-"}
+        {value || '-'}
       </div>
     );
   }
 
   const [orderDate, setOrderDate] = useState<Date>();
 
-  const baseInputClasses =
-    "h-8 text-xs border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500";
+  const baseInputClasses = "h-8 text-xs border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500";
 
   switch (fieldType) {
-    case "text":
+    case 'text':
       return (
         <Input
           type="text"
-          value={value || ""}
+          value={value || ''}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           className={baseInputClasses}
         />
       );
 
-    case "textarea":
+    case 'textarea':
       return (
         <Textarea
-          value={value || ""}
+          value={value || ''}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           className="min-h-[60px] text-xs border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
         />
       );
 
-    case "select":
+    case 'radio':
+      return (
+        <RadioGroup
+          value={value || ''}
+          onValueChange={onChange}
+          className="flex gap-4"
+        >
+          {options?.map((option) => (
+            <div key={option.value} className="flex items-center space-x-2">
+              <RadioGroupItem value={option.value} id={`${config.id}-${option.value}`} />
+              <Label htmlFor={`${config.id}-${option.value}`} className="text-xs">
+                {option.label}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
+      );
+
+    case 'select':
       return (
         <div className="relative">
           <select
-            value={value || ""}
+            value={value || ''}
             onChange={(e) => onChange(e.target.value)}
             className="w-full h-8 px-3 text-xs rounded-md border border-gray-300 bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none"
           >
@@ -78,18 +97,8 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
             ))}
           </select>
           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            <svg
-              className="w-3 h-3 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
+            <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </div>
         </div>
@@ -131,12 +140,12 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
         // </div>
       );
 
-    case "time":
+    case 'time':
       return (
         <div className="relative">
           <Input
             type="time"
-            value={value || ""}
+            value={value || ''}
             onChange={(e) => onChange(e.target.value)}
             className={baseInputClasses}
           />
@@ -144,7 +153,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
         </div>
       );
 
-    case "currency":
+    case 'currency':
       return (
         <div className="relative">
           <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">
@@ -152,7 +161,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
           </span>
           <Input
             type="number"
-            value={value || ""}
+            value={value || ''}
             onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
             placeholder="0.00"
             className={`${baseInputClasses} pl-6`}
@@ -161,27 +170,14 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
         </div>
       );
 
-    case "search":
+    case 'search':
       return (
         <div className="relative">
           <Input
             type="search"
-            value={value || ""}
+            value={value || ''}
             onChange={(e) => onChange(e.target.value)}
-            placeholder={placeholder || "Search..."}
-            className={`${baseInputClasses} pr-8`}
-          />
-          <Search className="absolute right-2 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
-        </div>
-      );
-    case "search":
-      return (
-        <div className="relative">
-          <Input
-            type="search"
-            value={value || ""}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder={placeholder || "Search..."}
+            placeholder={placeholder || 'Search...'}
             className={`${baseInputClasses} pr-8`}
           />
           <Search className="absolute right-2 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
@@ -225,7 +221,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
       return (
         <Input
           type="text"
-          value={value || ""}
+          value={value || ''}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           className={baseInputClasses}

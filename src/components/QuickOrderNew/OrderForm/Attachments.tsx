@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Paperclip, Trash2, CircleCheck, FileText, BookPlus , FileImage , BookA , UploadCloud, Search, Filter } from "lucide-react";
+import { Paperclip, Trash , CircleCheck, FileText, BookPlus , FileImage , BookA , UploadCloud, Search, Filter } from "lucide-react";
 
 const fileIcons = {
   pdf: <FileText className="text-red-500 w-6 h-6" />,
@@ -58,9 +58,12 @@ export default function Attachments() {
         <div>
           <label className="block text-sm font-medium mb-1">Attachment <span className="text-red-500">*</span></label>
           <div className="border-2 border-dashed border-blue-200 rounded-lg p-4 flex flex-col items-center justify-center text-center bg-blue-50 cursor-pointer mb-3">
-            <UploadCloud className="w-8 h-8 text-blue-400 mb-2" />
-            <span className="text-blue-600 font-medium">Click to Upload</span>
-            <span className="text-xs text-gray-500 mt-1">or drag and drop<br />SVG, PNG, JPG, GIF or PDF (Maximum File Size 2 MB)</span>
+            <div className="bg-white w-10 h-10 rounded-full flex items-center justify-center">
+              <UploadCloud className="w-7 h-7 p-1 text-gray-500 bg-gray-300 rounded-full" />
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              <span className="text-blue-600 font-medium">Click to Upload </span>or drag and drop<br />SVG, PNG, JPG, GIF or PDF (Maximum File Size 2 MB)
+            </div>
           </div>
           {/* Uploaded file preview */}
           <div className="flex items-center gap-3 border rounded-lg p-3 bg-white shadow-sm">
@@ -69,14 +72,14 @@ export default function Attachments() {
               <div className="font-medium text-gray-800">Routine Check.pdf</div>
               <div className="text-xs text-gray-500">20 Sep, 2023 at 11:30 • 1.5 Mb</div>
             </div>
-            <CircleCheck  className="w-5 h-5 text-green-500" />
+            <CircleCheck  className="w-5 h-5 text-white" fill="green" />
             <button className="p-1 hover:bg-gray-100 rounded">
-              <Trash2 className="w-5 h-5 text-red-500" />
+              <Trash className="w-5 h-5 text-red-500" />
             </button>
           </div>
         </div>
         {/* Save Button */}
-        <button className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold mt-2 hover:bg-blue-700 transition">Save</button>
+        <button className="w-full bg-blue-600 text-white py-2 rounded font-medium mt-2 hover:bg-blue-700 transition">Save</button>
       </div>
 
       {/* Right Attachments List */}
