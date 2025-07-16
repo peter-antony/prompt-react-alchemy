@@ -10,7 +10,7 @@ import { GripVertical, Eye, EyeOff } from 'lucide-react';
 import { PanelConfig, FieldVisibilityConfig } from '@/types/dynamicPanel';
 
 interface EnhancedFieldVisibilityConfig extends FieldVisibilityConfig {
-  width?: 'third' | 'two-thirds' | 'two-two' | 'full';
+  width?: 'third' | 'half' | 'two-thirds' | 'full';
 }
 
 interface EnhancedFieldVisibilityModalProps {
@@ -121,7 +121,7 @@ export const EnhancedFieldVisibilityModal: React.FC<EnhancedFieldVisibilityModal
     setDraggedIndex(null);
   };
 
-  const handleWidthChange = (fieldId: string, width: 'third' | 'two-thirds' | 'two-two' | 'full') => {
+  const handleWidthChange = (fieldId: string, width: 'third' | 'half' | 'two-thirds' | 'full') => {
     setFieldConfigs(prev => 
       prev.map(config => 
         config.fieldId === fieldId ? { ...config, width } : config
@@ -185,6 +185,7 @@ export const EnhancedFieldVisibilityModal: React.FC<EnhancedFieldVisibilityModal
       'select': 'Select',
       'search': 'Search',
       'currency': 'Currency',
+      'inputDropdown': 'InputDropdown',
       'date': 'Date',
       'time': 'Time',
       'textarea': 'Textarea'
@@ -357,7 +358,7 @@ export const EnhancedFieldVisibilityModal: React.FC<EnhancedFieldVisibilityModal
                         <Label className="text-xs text-gray-600">Field Width:</Label>
                         <Select 
                           value={fieldConfig.width || 'full'} 
-                          onValueChange={(value: 'third' | 'two-thirds' | 'two-two' | 'full') => 
+                          onValueChange={(value: 'third' | 'half' | 'two-thirds' | 'full') => 
                             handleWidthChange(fieldConfig.fieldId, value)
                           }
                         >
@@ -366,7 +367,7 @@ export const EnhancedFieldVisibilityModal: React.FC<EnhancedFieldVisibilityModal
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="third">1/3 Width</SelectItem>
-                            <SelectItem value="two-two">2/2 Width</SelectItem>
+                            <SelectItem value="half">1/2 Width</SelectItem>
                             <SelectItem value="two-thirds">2/3 Width</SelectItem>
                             <SelectItem value="full">Full Width</SelectItem>
                           </SelectContent>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { InputDropDown } from '../Common/InputDropDown';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Search, Clock } from 'lucide-react';
@@ -41,7 +42,7 @@ useEffect(()=>{
 })
   const [orderDate, setOrderDate] = useState<Date>();
 
-  const baseInputClasses = "h-8 text-xs border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500";
+  const baseInputClasses = "h-10 text-xs border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500";
 
   switch (fieldType) {
     case 'text':
@@ -90,7 +91,7 @@ useEffect(()=>{
           <select
             value={selectValue}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full h-8 px-3 text-xs rounded-md border border-gray-300 bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none"
+            className="w-full h-10 px-3 text-xs rounded-md border border-gray-300 bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none"
           >
             <option value="">Select...</option>
             {options?.map((option) => (
@@ -114,7 +115,7 @@ useEffect(()=>{
             <Button
               variant="outline"
               className={cn(
-                "w-full justify-start text-left font-normal relative",
+                "w-full justify-start text-left font-normal border-gray-300 relative",
                 !value && "text-muted-foreground"
               )}
             >
@@ -173,6 +174,22 @@ useEffect(()=>{
         </div>
       );
 
+      case 'inputDropdown':
+        return (
+          <InputDropDown
+            label={config.label}
+            dropdownOptions={options?.map(opt => opt.label) || []}
+            selectedOption={value?.dropdown || ''}
+            onOptionChange={dropdown =>
+              onChange({ ...value, dropdown })
+            }
+            value={value?.input || ''}
+            onValueChange={input =>
+              onChange({ ...value, input })
+            }
+          />
+        );
+
     case 'search':
       return (
         <div className="relative">
@@ -192,7 +209,7 @@ useEffect(()=>{
       return (
         <div className="flex w-full">
           <select
-            className="w-1/4 h-8 px-3 text-xs border border-gray-300
+            className="w-1/4 h-10 px-3 text-xs border border-gray-300
                rounded-tl-md rounded-bl-md 
                rounded-tr-none rounded-br-none 
                focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:z-10"
@@ -212,7 +229,7 @@ useEffect(()=>{
             value={value?.input || ''}
             onChange={(e) => onChange({ ...value, input: e.target.value })}
             placeholder="Enter value"
-            className="w-3/4 h-8 text-xs border border-gray-300 border-l-0
+            className="w-3/4 h-10 text-xs border border-gray-300 border-l-0
                rounded-tr-md rounded-br-md 
                rounded-tl-none rounded-bl-none
                focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:z-10"

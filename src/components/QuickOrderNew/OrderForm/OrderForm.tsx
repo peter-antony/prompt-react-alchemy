@@ -20,6 +20,8 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import jsonStore from '@/stores/jsonStore';
 import { useEffect } from 'react';
 import Toast  from '../../Common/Toast';
+import { PanelConfig, PanelSettings } from '@/types/dynamicPanel';
+import { DynamicPanel } from '@/components/DynamicPanel';
 
 interface OrderFormProps {
   onSaveDraft: () => void;
@@ -108,29 +110,29 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
       // setErrorToastOpen(true); <-- show error toast
     }
   }
-  useEffect(() => {
-    const qo = jsonStore.getQuickOrder();
-    console.log("qo >> > >",qo)
-    if (qo.QuickUniqueID != '' && isEditQuickOrder) {
-      alert("Inside If")
-      setQuickOrder(qo);
-      setFormData(prev => ({
-        ...prev,
-        quickOrderNo: qo.QuickOrderNo || '',
-        orderDate: setOrderDate(parseDDMMYYYY(qo.QuickOrderDate)),
-        contract: qo.Contract || '',
-        customer: qo.Customer || '',
-        cluster: qo.Cluster || '',
-        orderType: setOrderType(qo.OrderType),
-        customerOrderNo: qo.CustomerQuickOrderNo || '',
-        customerRefNo: qo.Customer_Supplier_RefNo || '',
-        qcUserDefined: qo.QCUserDefined1 || '',
-        remarks: qo.Remark1 || '',
-        summary: qo.Summary || '',
-        status: qo.Status || 'Confirmed'
-      }));
-    }
-  }, [isEditQuickOrder]);
+  // useEffect(() => {
+  //   const qo = jsonStore.getQuickOrder();
+  //   console.log("qo >> > >",qo)
+  //   if (qo.QuickUniqueID != '' && isEditQuickOrder) {
+  //     alert("Inside If")
+  //     setQuickOrder(qo);
+  //     setFormData(prev => ({
+  //       ...prev,
+  //       quickOrderNo: qo.QuickOrderNo || '',
+  //       orderDate: setOrderDate(parseDDMMYYYY(qo.QuickOrderDate)),
+  //       contract: qo.Contract || '',
+  //       customer: qo.Customer || '',
+  //       cluster: qo.Cluster || '',
+  //       orderType: setOrderType(qo.OrderType),
+  //       customerOrderNo: qo.CustomerQuickOrderNo || '',
+  //       customerRefNo: qo.Customer_Supplier_RefNo || '',
+  //       qcUserDefined: qo.QCUserDefined1 || '',
+  //       remarks: qo.Remark1 || '',
+  //       summary: qo.Summary || '',
+  //       status: qo.Status || 'Confirmed'
+  //     }));
+  //   }
+  // }, [isEditQuickOrder]);
   //Contracts Array
   const contracts = [
     {
@@ -299,9 +301,194 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
   const [isLinkedOrdersOpen, setLinkedOrdersOpen] = useState(false);
   const [isCopyModalOpen, setCopyModalOpen] = useState(false);
 
+  const [OrderFormTitle, setOrderFormTitle] = useState('Order Details');
+
+  const getOrderFormDetailsConfig = (orderType: string): PanelConfig => ({
+  // const OrderFormDetailsConfig: PanelConfig = {
+    orderType: {
+      id: 'orderType',
+      label: '',
+      fieldType: 'radio',
+      width: 'full',
+      value: orderType,
+      options: [
+        { label: 'Buy Order', value: 'buy' },
+        { label: 'Sell Order', value: 'sell' }
+      ],
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 1,
+      onChange: (val: string) => setOrderType(val), // To update state on change
+    },
+    quickOrderDate: {
+      id: 'quickOrderDate',
+      label: 'Quick Order Date',
+      fieldType: 'date',
+      width: 'half',
+      value: '',
+      mandatory: true,
+      visible: true,
+      editable: true,
+      order: 2,
+    },
+    contract: {
+      id: 'contract',
+      label: 'Contract',
+      fieldType: 'select',
+      width: 'half',
+      value: '',
+      mandatory: true,
+      visible: true,
+      editable: true,
+      order: 3,
+      options: contracts.map(c => ({ label: c.name, value: c.name })),
+    },
+    customer: {
+      id: 'customer',
+      label: 'Customer',
+      fieldType: 'select',
+      width: 'half',
+      value: '',
+      mandatory: true,
+      visible: orderType === 'buy',
+      editable: true,
+      order: 4,
+      options: customers.map(c => ({ label: c.name, value: c.name })),
+    },
+    vendor: {
+      id: 'vendor',
+      label: 'Vendor',
+      fieldType: 'select',
+      width: 'half',
+      value: '',
+      mandatory: true,
+      visible: orderType === 'sell',
+      editable: true,
+      order: 4,
+      options: customers.map(c => ({ label: c.name, value: c.name })),
+    },
+    cluster: {
+      id: 'cluster',
+      label: 'Cluster',
+      fieldType: 'select',
+      width: 'half',
+      value: '',
+      mandatory: true,
+      visible: true,
+      editable: true,
+      order: 5,
+      options: [
+        { label: '10000406', value: '10000406' },
+        { label: '10000407', value: '10000407' }
+      ],
+    },
+    customerOrderNo: {
+      id: 'customerOrderNo',
+      label: 'Customer Internal Order No.',
+      fieldType: 'text',
+      width: 'full',
+      value: '',
+      mandatory: false,
+      visible: orderType === 'buy',
+      editable: true,
+      order: 6,
+      placeholder: 'IO/0000000042'
+    },
+    customerRefNo: {
+      id: 'customerRefNo',
+      label: 'Customer/ Supplier Ref. No.',
+      fieldType: 'text',
+      width: 'half',
+      value: '',
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 7,
+      placeholder: 'Enter Ref. No.'
+    },
+    qcUserDefined: {
+      id: 'qcUserDefined',
+      label: 'QC Userdefined 1',
+      fieldType: 'inputDropdown',
+      width: 'half',
+      value: { dropdown: '', input: '' },
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 8,
+      options: [
+        { label: 'QC', value: 'QC' },
+        { label: 'QA', value: 'QA' },
+        { label: 'Test', value: 'Test' }
+      ]
+    },
+    remarks: {
+      id: 'remarks',
+      label: 'Remarks 1',
+      fieldType: 'text',
+      width: 'full',
+      value: '',
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 9,
+      placeholder: 'Enter Remarks'
+    },
+    summary: {
+      id: 'summary',
+      label: 'Summary',
+      fieldType: 'textarea',
+      width: 'full',
+      value: '',
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 10,
+      placeholder: 'Enter Summary'
+    },
+  });
+
+   // Mock functions for user config management
+  const getUserPanelConfig = (userId: string, panelId: string): PanelSettings | null => {
+    const stored = localStorage.getItem(`panel-config-${userId}-${panelId}`);
+    return stored ? JSON.parse(stored) : null;
+  };
+
+  const saveUserPanelConfig = (userId: string, panelId: string, settings: PanelSettings): void => {
+    localStorage.setItem(`panel-config-${userId}-${panelId}`, JSON.stringify(settings));
+    console.log(`Saved config for panel ${panelId}:`, settings);
+  };
+
+  // const dynamicConfig = {
+  //   ...OrderFormDetailsConfig,
+  //   customer: {
+  //     ...OrderFormDetailsConfig.customer,
+  //     visible: orderType === "buy",
+  //   },
+  //   vendor: {
+  //     ...OrderFormDetailsConfig.vendor,
+  //     visible: orderType === "sell",
+  //   },
+  //   // ...other conditional fields
+  // };
+
+  const handlePanelDataChange = (updatedData: any) => {
+    console.log("Updated form data:", updatedData.orderType);
+    const OrderFormDetailsConfig = getOrderFormDetailsConfig(orderType);
+    setFormData(prev => ({
+      ...prev,
+      ...updatedData,
+    }));
+    // If orderType is changed, update orderType state as well
+    if (updatedData.orderType) setOrderType(updatedData.orderType);
+    console.log("Updated form data:", formData);
+    
+  };
+
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
+    <div className="bg-white rounded-lg border border-gray-200">
+      {/* <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
         Order Details
         {isEditQuickOrder && quickOrder && (
           <>
@@ -313,232 +500,24 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
             </span>
           </>
         )}
-      </h2>
+      </h2> */}
 
-      <div className="space-y-6">
-        {/* Order Type */}
-        <div>
-          {/* <Label className="text-sm font-medium text-gray-700 mb-3 block">Order Type</Label> */}
-          <RadioGroup
-            value={orderType}
-            onValueChange={setOrderType}
-            className="flex gap-6"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="buy" id="buy" />
-              <Label htmlFor="buy">Buy Order</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="sell" id="sell" />
-              <Label htmlFor="sell">Sell Order</Label>
-            </div>
-          </RadioGroup>
-        </div>
-
-        {/* Form Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Quick Order Date */}
-          <div>
-            <Label htmlFor="order-date" className="text-sm font-medium text-gray-700 mb-2 block">
-              Quick Order Date
-            </Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal relative",
-                    !orderDate && "text-muted-foreground"
-                  )}
-                >
-                  {orderDate ? format(orderDate, "dd/MM/yyyy") : "Select date"}
-                  <CalendarIcon className="mr-2 h-4 w-4 absolute right-1" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={orderDate}
-                  onSelect={setOrderDate}
-                  initialFocus
-                  className="pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          {/* Contract */}
-          <div>
-            <Label htmlFor="contract" className="text-sm font-medium text-gray-700 mb-2 block">
-              Contract
-            </Label>
-            <SimpleDropDown list={contracts} value={formData.contract}
-              onValueChange={value => handleInputChange('contract', value)} />
-          </div>
-
-          {/* Customer */}
-          {
-            orderType === "buy" && (
-              <div>
-                <Label htmlFor="customer" className="text-sm font-medium text-gray-700 mb-2 block">
-                  Customer
-                </Label>
-                <SimpleDropDown list={customers} value={formData.customer} onValueChange={value => handleInputChange('customer', value)} />
-              </div>
-            )
-          }
-          {/* Vendor */}
-          {
-            orderType === "sell" && (
-              <div>
-                <Label htmlFor="customer" className="text-sm font-medium text-gray-700 mb-2 block">
-                  Vendor
-                </Label>
-                <SimpleDropDown list={customers} value={formData.customer} onValueChange={value => handleInputChange('customer', value)} />
-              </div>
-            )
-          }
-          {/* Cluster */}
-          <div>
-            <Label htmlFor="cluster" className="text-sm font-medium text-gray-700 mb-2 block">
-              Cluster
-            </Label>
-            <Input
-              id="cluster"
-              placeholder="10000406"
-              value={formData.cluster}
-              onChange={(e) => handleInputChange('cluster', e.target.value)}
-            />
-          </div>
-
-          {/* Customer Internal Order No */}
-          {
-            orderType === "buy" && (
-              <div className="col-span-full ">
-                <Label htmlFor="customer-order-no" className="text-sm font-medium text-gray-700 mb-2 block">
-                  Customer Internal Order No.
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="customer-order-no"
-                    placeholder="IO/0000000042"
-                    value={formData.customerOrderNo}
-                    onChange={(e) => handleInputChange('customerOrderNo', e.target.value)}
-                    onFocus={() => {
-                      if (formData.customerOrderNo.length > 0) {
-                        setShowOrderNoSuggestions(true);
-                      }
-                    }}
-                    onBlur={() => {
-                      // Delay hiding suggestions to allow clicking on them
-                      setTimeout(() => setShowOrderNoSuggestions(false), 200);
-                    }}
-                    className="pr-10"
-                  />
-                  <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  
-                  {/* Suggestions dropdown */}
-                  {showOrderNoSuggestions && suggestions.length > 0 && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto">
-                      {suggestions.map((suggestion, index) => (
-                        <div
-                          key={index}
-                          className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                          onClick={() => handleOrderNoSuggestionClick(suggestion)}
-                        >
-                          {suggestion}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )
-          }
-          {/* Customer/Supplier Ref. No. and QC Userdefined 1 on the same line */}
-          <div >
-            <Label htmlFor="customer-ref-no" className="text-sm font-medium text-gray-700 mb-2 block">
-              Customer/ Supplier Ref. No.
-            </Label>
-            <div className="relative">
-              <Input
-                id="customer-ref-no"
-                placeholder="Enter Ref. No."
-                value={formData.customerRefNo}
-                onChange={(e) => handleInputChange('customerRefNo', e.target.value)}
-                onFocus={() => {
-                  if (formData.customerRefNo.length > 0) {
-                    setShowCustomerRefSuggestions(true);
-                  }
-                }}
-                onBlur={() => {
-                  // Delay hiding suggestions to allow clicking on them
-                  setTimeout(() => setShowCustomerRefSuggestions(false), 200);
-                }}
-                className="px-3 py-2 pr-10"
-              />
-              <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-               {/* Suggestions dropdown */}
-              {showCustomerRefSuggestions && suggestions.length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto">
-                  {suggestions.map((suggestion, index) => (
-                    <div
-                      key={index}
-                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                      onClick={() => handleCustomerRefSuggestionClick(suggestion)}
-                    >
-                      {suggestion}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-          <div >
-            <Label className="text-sm font-medium text-gray-700 mb-2 block">
-              QC Userdefined 1
-            </Label>
-            <InputDropDown
-              label="QC Userdefined 1"
-              dropdownOptions={['QC', 'QA', 'Test']}
-              selectedOption={qcDropdown}
-              onOptionChange={option => handleQcChange(option, qcInput)}
-              value={qcInput}
-              onValueChange={val => handleQcChange(qcDropdown, val)}
-            />
-          </div>
-        </div>
-        {/* Remarks */}
-        <div>
-          <Label htmlFor="remarks" className="text-sm font-medium text-gray-700 mb-2 block">
-            Remarks 1
-          </Label>
-          <Textarea
-            id="remarks"
-            placeholder="Enter Remarks"
-            value={formData.remarks}
-            onChange={(e) => handleInputChange('remarks', e.target.value)}
-            rows={3}
-          />
-        </div>
-
-        {/* Summary */}
-        <div>
-          <Label htmlFor="summary" className="text-sm font-medium text-gray-700 mb-2 block">
-            Summary
-          </Label>
-          <Textarea
-            id="summary"
-            placeholder="Enter Summary"
-            value={formData.summary}
-            onChange={(e) => handleInputChange('summary', e.target.value)}
-            rows={3}
-          />
-        </div>
-      </div>
+      <DynamicPanel
+        key={orderType} // <-- This will force remount on orderType change
+        panelId="order-details"
+        panelTitle="Order Details"
+        panelConfig={getOrderFormDetailsConfig(orderType)}
+        initialData={formData}
+        onDataChange={handlePanelDataChange}
+        onTitleChange={setOrderFormTitle}
+        getUserPanelConfig={getUserPanelConfig}
+        saveUserPanelConfig={saveUserPanelConfig}
+        userId="current-user"
+        className="my-custom-orderform-panel"
+      />
 
       {/* Form Actions */}
-      <div className="flex justify-center  gap-3 mt-8 pt-6 border-t border-gray-200">
+      <div className="flex justify-center gap-3 py-3 mt-2 border-t border-gray-200">
         <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setMoreInfoOpen(true)}>
           <CircleArrowOutUpRight  className="w-5 h-5 text-gray-600" />
         </button>
@@ -551,35 +530,36 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
         <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setLinkedOrdersOpen(true)}>
           <Link     className="w-5 h-5 text-gray-600" />
         </button>
-         {
+        {
            isEditQuickOrder?
             <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setCopyModalOpen(true)}>
             <Copy className="w-5 h-5 text-gray-600" />
          </button>:' '
-         }
-        
+        }
       </div>
-        <SideDrawer isOpen={isMoreInfoOpen} onClose={() => setMoreInfoOpen(false)} width="35%" title="More Info" isBack={false}>
-          <div className="">
-            <div className="mt-0 text-sm text-gray-600"><MoreInfo /></div>
-          </div>
-        </SideDrawer>
-        <SideDrawer isOpen={isAttachmentsOpen} onClose={() => setAttachmentsOpen(false)} width="80%" title="Attachments" isBack={false} badgeContent="QO/00001/2025" isBadgeRequired={true}>
-          <div className="">
-            <div className="mt-0 text-sm text-gray-600"><Attachments /></div>
-          </div>
-        </SideDrawer>
-        <SideDrawer isOpen={isHistoryOpen} onClose={() => setHistoryOpen(false)} width="40%" title="Amendment History" isBack={false} badgeContent="QO/00001/2025" isBadgeRequired={true}>
-          <div className="">
-            <div className="mt-0 text-sm text-gray-600"><AmendmentHistory /></div>
-          </div>
-        </SideDrawer>
-        <SideDrawer isOpen={isLinkedOrdersOpen} onClose={() => setLinkedOrdersOpen(false)} width="90%" title="Linked Orders" isBack={false} >
-          <div className="">
-            <div className="mt-0 text-sm text-gray-600"><LinkedOrders /></div>
-          </div>
-        </SideDrawer>
-         {/* Copy Modal */}
+
+      <SideDrawer isOpen={isMoreInfoOpen} onClose={() => setMoreInfoOpen(false)} width="35%" title="More Info" isBack={false}>
+        <div className="">
+          <div className="mt-0 text-sm text-gray-600"><MoreInfo /></div>
+        </div>
+      </SideDrawer>
+      <SideDrawer isOpen={isAttachmentsOpen} onClose={() => setAttachmentsOpen(false)} width="80%" title="Attachments" isBack={false} badgeContent="QO/00001/2025" isBadgeRequired={true}>
+        <div className="">
+          <div className="mt-0 text-sm text-gray-600"><Attachments /></div>
+        </div>
+      </SideDrawer>
+      <SideDrawer isOpen={isHistoryOpen} onClose={() => setHistoryOpen(false)} width="40%" title="Amendment History" isBack={false} badgeContent="QO/00001/2025" isBadgeRequired={true}>
+        <div className="">
+          <div className="mt-0 text-sm text-gray-600"><AmendmentHistory /></div>
+        </div>
+      </SideDrawer>
+      <SideDrawer isOpen={isLinkedOrdersOpen} onClose={() => setLinkedOrdersOpen(false)} width="90%" title="Linked Orders" isBack={false} >
+        <div className="">
+          <div className="mt-0 text-sm text-gray-600"><LinkedOrders /></div>
+        </div>
+      </SideDrawer>
+
+      {/* Copy Modal */}
       <Dialog open={isCopyModalOpen} onOpenChange={setCopyModalOpen}>
         <DialogContent className="max-w-sm w-full p-0 rounded-xl text-xs">
           <div className="flex flex-col">
@@ -620,7 +600,7 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
         open={errorToastOpen}
         onClose={() => setToastOpen(false)}
       />
-    </div>
+  </div>
   );
 };
 

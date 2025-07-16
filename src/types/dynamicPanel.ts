@@ -2,19 +2,24 @@
 export interface FieldConfig {
   id: string;
   label: string;
-  fieldType: 'text' | 'select' | 'search' | 'currency' | 'date' | 'time' | 'textarea' | 'radio' | 'combo';
+  fieldType: 'text' | 'select' | 'search' | 'currency' | 'inputDropdown' | 'date' | 'time' | 'textarea' | 'radio' | 'combo';
   value: any;
   mandatory: boolean;
   visible: boolean;
   editable: boolean;
   order: number;
-  width?: 'third' | 'two-thirds' | 'two-two' | 'full'; // Field width configuration
+  width?: 'third' | 'half' | 'two-thirds' | 'full'; // Field width configuration
   options?: { label: string; value: string }[]; // For select and radio fields
   placeholder?: string;
   inputType?: any;
+  onChange?: (value: any) => void;
 }
 
 export interface PanelConfig {
+  [fieldId: string]: FieldConfig;
+}
+
+export interface getOrderFormDetailsConfig {
   [fieldId: string]: FieldConfig;
 }
 
@@ -43,6 +48,7 @@ export interface DynamicPanelProps {
   panelWidth?: 'full' | 'half' | 'third' | 'quarter' | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
   collapsible?: boolean;
   showPreview?: boolean;
+  className?: string;
 }
 
 export interface FieldVisibilityConfig {

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Settings, ChevronDown, ChevronUp } from 'lucide-react';
 import { FieldRenderer } from './FieldRenderer';
 import { EnhancedFieldVisibilityModal } from './EnhancedFieldVisibilityModal';
-import { PanelStatusIndicator } from './PanelStatusIndicator';
+// import { PanelStatusIndicator } from './PanelStatusIndicator';
 import { DynamicPanelProps, PanelConfig, PanelSettings } from '@/types/dynamicPanel';
 
 export const DynamicPanel: React.FC<DynamicPanelProps> = ({
@@ -24,7 +23,8 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
   userId = 'default-user',
   panelWidth = 'full',
   collapsible = false,
-  showPreview = false
+  showPreview = false,
+  className = '',
 }) => {
   const [panelConfig, setPanelConfig] = useState<PanelConfig>(initialPanelConfig);
   const [panelTitle, setPanelTitle] = useState(initialPanelTitle);
@@ -83,11 +83,13 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
     .filter(([_, config]) => config.visible)
     .sort(([_, a], [__, b]) => a.order - b.order);
 
+  // const [formData, setFormData] = useState(initialData || {});
+
   const handleFieldChange = (fieldId: string, value: any) => {
-    console.log("FORM DATA IN DYNMAIC FORM :: ",formData)
     const updatedData = { ...formData, [fieldId]: value };
+    console.log("Dynamic panel handleFieldChange :", value);
     setFormData(updatedData);
-    onDataChange?.(updatedData);
+    if (onDataChange) onDataChange({ [fieldId]: value }); // Notify parent (OrderForm)
   };
 
   const handleConfigSave = async (
@@ -160,23 +162,23 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
     }
   };
 
-  const getFieldWidthClass = (fieldWidth?: 'third' | 'two-thirds' | 'two-two' | 'full') => {
+  const getFieldWidthClass = (fieldWidth?: 'third' | 'half' | 'two-thirds' | 'full') => {
     switch (fieldWidth) {
       case 'third':
-        return 'col-span-1 md:col-span-1';
+        return 'col-span-4'; // 4/12 = 1/3
+      case 'half':
+        return 'col-span-6'; // 6/12 = 1/2 (50%)
       case 'two-thirds':
-        return 'col-span-2 md:col-span-2';
-      case 'two-two':
-        return 'col-span-6 md:col-span-6';
+        return 'col-span-8'; // 8/12 = 2/3
       case 'full':
       default:
-        return 'col-span-3 md:col-span-3';
+        return 'col-span-12'; // 12/12 = 100%
     }
   };
 
   const PanelContent = () => (
     <>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-12 gap-4">
         {visibleFields.map(([fieldId, fieldConfig]) => (
           <div key={fieldId} className={`space-y-1 ${getFieldWidthClass(fieldConfig.width)}`}>
             <label className="text-xs font-medium text-gray-600 block">
@@ -228,7 +230,7 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
           e.stopPropagation();
           setIsConfigModalOpen(true);
         }}
-        className="h-6 w-6 text-gray-400 hover:text-gray-600"
+        className="h-5 w-5 text-gray-400 hover:text-gray-600"
       >
         <Settings className="h-3 w-3" />
       </Button>
@@ -244,19 +246,29 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <Card className="border border-gray-200 shadow-sm">
+        <Card className="border border-gray-200 shadow-sm mb-6">
           {showHeader ? (
             <CollapsibleTrigger asChild>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 px-4 pt-4 cursor-pointer hover:bg-gray-50">
+              <CardHeader className="flex border-b border-gray-300 flex-row items-center justify-between space-y-0 pb-3 px-4 pt-4 cursor-pointer hover:bg-gray-50">
                 <div className="flex items-center gap-2">
                   {/* <div className="w-5 h-5 border-2 border-purple-500 rounded"></div> */}
                   <div className="">{panelIcon}</div>
                   <CardTitle className="text-sm font-medium text-gray-700">{panelTitle}</CardTitle>
-                  <PanelStatusIndicator 
+                  {/* {isEditQuickOrder && quickOrder && (
+                    <>
+                      <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-700 text-xs font-semibold border border-blue-200">
+                        {quickOrder.QuickUniqueID || "QO/00001/2025"}
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-green-100 text-green-700 text-xs font-semibold border border-green-200">
+                        {quickOrder.Status || "Confirmed"}
+                      </span>
+                    </>
+                  )} */}
+                  {/* <PanelStatusIndicator 
                     panelConfig={panelConfig}
                     formData={formData}
                     showStatus={showStatusIndicator}
-                  />
+                  /> */}
                   {showPreview && (
                     <span className="text-xs text-blue-600 font-medium">DB000023/42</span>
                   )}
@@ -303,21 +315,23 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
 
   return (
     <Card 
-      className={`${getWidthClass()} border border-gray-200 shadow-sm relative mb-6`}
+      className={`${getWidthClass()} ${className} relative` + (panelTitle === "Order Details" ? " " : " border shadow-sm mb-6")}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {showHeader ? (
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 px-4 pt-4">
-          <div className="flex items-center gap-2">
+        <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-3 px-4 pt-4` +
+          (panelTitle === "Order Details" ? " " : " border-b mb-3")
+         }>
+          <div className={`flex items-center` + (panelTitle === "Order Details" ? " " : " gap-2")}>
             {/* <div className="w-5 h-5 border-2 border-purple-500 rounded"></div> */}
             <div className="">{panelIcon}</div>
             <CardTitle className="text-sm font-medium text-gray-700">{panelTitle}</CardTitle>
-            <PanelStatusIndicator 
+            {/* <PanelStatusIndicator 
               panelConfig={panelConfig}
               formData={formData}
               showStatus={showStatusIndicator}
-            />
+            /> */}
             {showPreview && (
               <span className="text-xs text-blue-600 font-medium">DB000023/42</span>
             )}

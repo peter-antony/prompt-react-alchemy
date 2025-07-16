@@ -6,9 +6,9 @@ export const AppFooter: React.FC = () => {
   return (
     <footer className="h-16 bg-white border-t border-gray-200 flex items-center justify-between px-6">
       <div className="flex items-center">
-        <button className="w-9 h-9 bg-white-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors border border-gray-300">
+        {/* <button className="w-9 h-9 bg-white-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors border border-gray-300">
           <Printer size={16} className="text-gray-600" />
-        </button>
+        </button> */}
       </div>
       
       <div className="flex items-center space-x-4">

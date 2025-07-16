@@ -148,7 +148,9 @@ body{
 .max-w-2xl{
   max-width: 58rem;
 }
-
+.my-custom-orderform-panel {
+  border-width: 0px !important;
+}
 
 
 

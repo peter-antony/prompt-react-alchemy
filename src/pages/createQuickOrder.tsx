@@ -13,7 +13,7 @@ const CreateQuickOrder = () => {
   const [searchParams] = useSearchParams();
   const isEditQuickOrder = !!searchParams.get("id");
   //here to store the id
-  
+
   //BreadCrumb data
   const breadcrumbItems = [
     { label: 'Home', href: '/dashboard', active: false },
@@ -22,20 +22,19 @@ const CreateQuickOrder = () => {
   ];
 
   return (
-    <AppLayout> 
-    <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto p-4 px-6 space-y-6">
-        <div className="hidden md:block">
-          <Breadcrumb items={breadcrumbItems} />
-        </div>
-        
-        <div className="">
-            <NewCreateQuickOrder isEditQuickOrder={isEditQuickOrder} />
-            
-        </div>
+    <AppLayout>
+      <div className="min-h-screen bg-gray-100">
+        <div className="container mx-auto p-4 px-6 space-y-6">
+          <div className="hidden md:block">
+            <Breadcrumb items={breadcrumbItems} />
+          </div>
 
+          <div className="">
+            <NewCreateQuickOrder isEditQuickOrder={isEditQuickOrder} />
+          </div>
+
+        </div>
       </div>
-    </div>
     </AppLayout>
   );
 };
