@@ -41,7 +41,7 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
 
   // Load user configuration on mount
   useEffect(() => {
-    console.log("USE EFFECT FORM : ",formData)
+    // console.log("USE EFFECT FORM : ",formData)
     const loadUserConfig = async () => {
       if (getUserPanelConfig) {
         try {

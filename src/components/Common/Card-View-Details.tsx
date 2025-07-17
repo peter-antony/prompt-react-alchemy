@@ -1,45 +1,54 @@
 import React, { useRef, useState, useEffect } from "react";
-import { MoreVertical, Link as LinkIcon, Calendar, MapPin, 
-    Wrench, BadgeCheck, AlertCircle, UsersRound, FileText, Banknote, 
+import {
+    MoreVertical, Link as LinkIcon, Calendar, MapPin,
+    Wrench, BadgeCheck, AlertCircle, UsersRound, FileText, Banknote,
     Settings, CirclePercent, Repeat1,
-    Copy, Trash2, } from "lucide-react";
+    Copy, Trash2,
+} from "lucide-react";
 import Attachments from "../QuickOrderNew/OrderForm/Attachments";
+import ResourceGroupDetailsForm from "../QuickOrderNew/ResourceGroupDetails";
+import { SideDrawer } from "./SideDrawer";
 
 interface CardStatus {
-  label: string;
-  color: string;
-  bg: string;
+    label: string;
+    color: string;
+    bg: string;
 }
 
 const statusMap: Record<string, CardStatus> = {
-  Approved: { label: "Approved", color: "text-green-600", bg: "bg-green-50" },
-  Failed: { label: "Failed", color: "text-red-600", bg: "bg-red-50" },
-  "Under Amendment": { label: "Under Amendment", color: "text-orange-600", bg: "bg-orange-50" },
+    Approved: { label: "Approved", color: "text-green-600", bg: "bg-green-50" },
+    Failed: { label: "Failed", color: "text-red-600", bg: "bg-red-50" },
+    "Under Amendment": { label: "Under Amendment", color: "text-orange-600", bg: "bg-orange-50" },
 };
 
 export interface CardDetailsItem {
-  id: string;
-  title: string;
-  subtitle: string;
-  wagons: string;
-  price: string;
-  trainType: string;
-  repairType: string;
-  date: string;
-  rateType: string;
-  location: string;
-  draftBill: string;
-  status: keyof typeof statusMap;
+    id: string;
+    title: string;
+    subtitle: string;
+    wagons: string;
+    price: string;
+    trainType: string;
+    repairType: string;
+    date: string;
+    rateType: string;
+    location: string;
+    draftBill: string;
+    status: keyof typeof statusMap;
 }
 
 interface CardDetailsProps {
-  data: CardDetailsItem[];
+    data: CardDetailsItem[];
+    isEditQuickOrder:boolean;
 }
 
-const CardDetails: React.FC<CardDetailsProps> = ({ data }) => {
+const CardDetails: React.FC<CardDetailsProps> = ({ data,isEditQuickOrder }) => {
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const menuRef = useRef<HTMLDivElement>(null);
-
+    const [isResourceGroup , setResourceGroupOpen] = useState({
+        isResourceGroupOpen: false,
+        ResourceUniqueID:"0"
+    });
+    const [isBack, setIsBack] = useState(true);
     // Close menu on outside click
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -69,8 +78,8 @@ const CardDetails: React.FC<CardDetailsProps> = ({ data }) => {
                                     <UsersRound className="w-4 h-4 text-violet-500" />
                                 </span>
                                 <div>
-                                <div className="font-semibold text-sm">{item.title}</div>
-                                <div className="text-xs text-gray-400">{item.subtitle}</div>
+                                <div className="font-semibold text-sm"  onClick={() => setResourceGroupOpen({isResourceGroupOpen:true,ResourceUniqueID:item.id})}>{item.title}</div>
+                                    <div className="text-xs text-gray-400">{item.subtitle}</div>
                                 </div>
                             </div>
                         </div>
@@ -146,6 +155,17 @@ const CardDetails: React.FC<CardDetailsProps> = ({ data }) => {
                     </div>
                 </div>
             ))}
+            <SideDrawer
+                isOpen={isResourceGroup.isResourceGroupOpen}
+                onClose={() => setResourceGroupOpen({isResourceGroupOpen:false,ResourceUniqueID:"0"})}
+                width="100%"
+                title="Resource Group Details"
+                isBack={isBack}
+            >
+                <div className="text-sm text-gray-600">
+                    <ResourceGroupDetailsForm isEditQuickOrder={isEditQuickOrder} />
+                </div>
+            </SideDrawer>
         </div>
     );
 };

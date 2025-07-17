@@ -6,8 +6,8 @@ const QUICK_ORDER_JSON =
   {
     "ResponseResult": {
       "QuickOrder": {
-        "QuickUniqueID": "",
-        "OrderType": "",
+        "QuickUniqueID": "QO/1000034/2025",
+        "OrderType": "buy",
         "QuickOrderNo": "",
         "QuickOrderDate": "",
         "Vendor": "",
@@ -33,31 +33,31 @@ const QUICK_ORDER_JSON =
             "ModeFlag": "Insert/Update/Delete/NoChange",
             "ResourceStatus": "Save/Confirm/UnderAmend",
             "BasicDetails": {
-              "Resource": "Vehicle",
-              "ResourceType": "Truck 4.2",
-              "ServiceType": "Block Train Conventional",
-              "SubSericeType": "Repair"
+              "Resource": "Resource1",
+              "ResourceType": "BEr",
+              "ServiceType": "bbdd",
+              "SubSericeType": "sssss"
             },
             "OperationalDetails": {
-              "OperationalLocation": "FrankFurt Station",
-              "DepartPoint": "10-000491",
-              "ArrivalPoint": "10-000721",
+              "OperationalLocation": "vfds",
+              "DepartPoint": "asaddsa",
+              "ArrivalPoint": "mnjnmn",
               "FromDate": "24/06/2024",
-              "FromTime": "11:20 PM",
+              "FromTime": "",
               "ToDate": "28/06/2024",
-              "ToTime": "08:20 AM",
-              "Remarks": "test remark"
+              "ToTime": "",
+              "Remarks": "bvbbvbbv"
             },
             "BillingDetails": {
               "DraftBillNo": "DB00023/42",
-              "ContractPrice": "1200.00",
-              "NetAmount": "5580.00",
-              "BillingType": "Wagon",
-              "UnitPrice": "1395.00",
-              "BillingQty": "4",
-              "Tariff": "TAR000750 - Tariff Description",
-              "TariffType": "Rate Per Block Train",
-              "Remarks": "Test Remarks",
+              "ContractPrice": 1200.00,
+              "NetAmount": 5580.00,
+              "BillingType": "",
+              "UnitPrice": "",
+              "BillingQty": "",
+              "Tariff": "",
+              "TariffType": "",
+              "Remarks": "",
               "InteralOrder": "1"
             },
             "MoreRefDocs": [

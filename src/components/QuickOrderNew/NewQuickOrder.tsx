@@ -54,7 +54,7 @@ const NewCreateQuickOrder = ({ isEditQuickOrder }: NewCreateQuickOrderProps) => 
         
         {/* Right Column - Resource Group Panel */}
         <div className="lg:col-span-1 w-4/6">
-        <NewResourceGroup onAddResource={handleAddResource} />
+        <NewResourceGroup onAddResource={handleAddResource} isEditQuickOrder={isEditQuickOrder} />
         </div>
     </div>
   );

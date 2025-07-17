@@ -664,8 +664,8 @@ const QuickOrderManagement = () => {
 
   const handleLinkClick = (row: any, columnKey: string) => {
     // Only navigate if the clicked column is the Quick Order No. (id)
-    if (columnKey === 'id' && row.id) {
-      navigate(`/create-quick-order?id=${encodeURIComponent(row.id)}`);
+    if (columnKey === 'QuickOrderNo' && row.QuickUniqueID) {
+      navigate(`/create-quick-order?id=${encodeURIComponent(row.QuickUniqueID)}`);
     }
   };
 

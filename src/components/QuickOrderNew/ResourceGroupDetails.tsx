@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Search, Calendar, Clock, Bookmark, Banknote, Wrench, ArrowLeft, 
+import {
+  X, Search, Calendar, Clock, Bookmark, Banknote, Wrench, ArrowLeft,
   FileText, BookmarkCheck,
   Plus,
   ChevronDown,
@@ -12,7 +13,7 @@ import { X, Search, Calendar, Clock, Bookmark, Banknote, Wrench, ArrowLeft,
   MapPin,
   Link as LinkIcon,
   HousePlug, Box, BaggageClaim, Truck,
-  CloudUpload 
+  CloudUpload
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,22 +37,21 @@ import BulkUpload from '@/components/QuickOrderNew/BulkUpload';
 import jsonStore from '@/stores/jsonStore';
 import { format } from 'date-fns';
 
-// interface ResourceGroupDetailsFormProps {
-//   open: boolean;
-//   onClose: () => void;
-// }
+interface ResourceGroupDetailsFormProps {
+  isEditQuickOrder?: boolean
+}
 
 // const ResourceGroupDetailsForm = ({ open, onClose }: ResourceGroupDetailsFormProps) => {
-export const ResourceGroupDetailsForm = () => {
+export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDetailsFormProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isPlanActualsOpen, setIsPlanActualsOpen] = useState(false);
   const [isPlanActualsVisible, setIsPlanActualsVisible] = useState(false);
 
-  useEffect(() => {
-    // Check localStorage for planActualsSaved flag
-    const saved = localStorage.getItem('planActualsSaved');
-    setIsPlanActualsVisible(saved === 'true');
-  }, [currentStep, isPlanActualsOpen]);
+  // useEffect(() => {
+  //   // Check localStorage for planActualsSaved flag
+  //   const saved = localStorage.getItem('planActualsSaved');
+  //   setIsPlanActualsVisible(saved === 'true');
+  // }, [currentStep, isPlanActualsOpen]);
 
   const handleProceedToNext = () => {
     setCurrentStep(2);
@@ -77,34 +77,86 @@ export const ResourceGroupDetailsForm = () => {
   };
 
   const handleSaveDetails = () => {
+    // Only keep PascalCase keys for BasicDetails
+    const newBasicDetails = Object.fromEntries(
+      Object.entries(basicDetailsData).filter(([key]) =>
+        ["Resource", "ResourceType", "ServiceType", "SubSericeType"].includes(key)
+      )
+    );
+    // Only keep PascalCase keys for OperationalDetails
+    if(operationalDetailsData ){
+      const newOperationalDetails = Object.fromEntries(
+        Object.entries({
+          ...operationalDetailsData,
+          FromDate: (operationalDetailsData as any).FromDate ? format((operationalDetailsData as any).FromDate, 'dd/MM/yyyy') : '',
+          ToDate: (operationalDetailsData as any).ToDate ? format((operationalDetailsData as any).ToDate, 'dd/MM/yyyy') : '',
+        }).filter(([key]) =>
+          [
+            "OperationalLocation",
+            "DepartPoint",
+            "ArrivalPoint",
+            "FromDate",
+            "FromTime",
+            "ToDate",
+            "ToTime",
+            "Remarks"
+          ].includes(key)
+        )
+      );
+      jsonStore.setOperationalDetails(newOperationalDetails);
+    }
+    // Save to store
+    jsonStore.setBasicDetails(newBasicDetails);
+    // jsonStore.setBillingDetails(newBillingDetails);
+    const fullJson = jsonStore.getJsonData();
+    console.log("FULL JSON :: ", fullJson);
     toast.success('Details saved successfully');
-    console.log('Save details clicked');
   };
-
+  function onBillingDetailsUpdate() {
+    console.log("billingData = ", billingData)
+    console.log("billingDetailsData = ", billingDetailsData)
+    const oldBillingDetails = jsonStore.getBillingDetails();
+    const newBillingDetails = {
+      ...oldBillingDetails,
+      // DraftBillNo: billingData.DraftBillNo,
+      // ContractPrice: billingData.ContractPrice,
+      // NetAmount: billingData.NetAmount,
+      // BillingType: billingDetailsData.BillingType,
+      UnitPrice: billingData.UnitPrice,
+      BillingQty: billingData.BillingQty,
+      Tariff: billingData.Tariff,
+      TariffType: billingData.TariffType,
+      Remarks: billingData.Remarks,
+      InteralOrder: billingData.InteralOrder,
+    }
+    // console.log("newBillingDetails : ",newBillingDetails)
+    jsonStore.setBillingDetails(newBillingDetails);
+  }
   // Declare initialBasicDetails before using it in useState
   // Utility to normalize keys from store to config field IDs
   function normalizeBasicDetails(data) {
     return {
-      resource: data.Resource,
-      resourceType: data.ResourceType,
-      serviceType: data.ServiceType,
-      subservice: data.SubSericeType, // fix typo if needed
+      Resource: data.Resource,
+      ResourceType: data.ResourceType,
+      ServiceType: data.ServiceType,
+      SubSericeType: data.SubSericeType, // fix typo if needed
     };
   }
 
   function normalizeOperationalDetails(data) {
-    return {
-      operationalLocation: data.OperationalLocation,
-      departPoint: data.DepartPoint,
-      arrivalPoint: data.ArrivalPoint,
-      fromDate:parseDDMMYYYY(data.FromDate)  ,
-      fromTime: data.FromTime,
-      toDate: parseDDMMYYYY(data.ToDate) ,
-      toTime: data.ToTime,
-      remarks: data.Remarks,
-    };
+    if (data)
+      return {
+        OperationalLocation: data.OperationalLocation,
+        DepartPoint: data.DepartPoint,
+        ArrivalPoint: data.ArrivalPoint,
+        FromDate:(data.FromDate?parseDDMMYYYY(data.FromDate):"") ,
+        FromTime: data.FromTime,
+        ToDate:(data.ToDate?parseDDMMYYYY(data.ToDate):"") ,
+        ToTime: data.ToTime,
+        Remarks: data.Remarks,
+      };
   }
-  const parseDDMMYYYY=(dateStr)=> {
+  const parseDDMMYYYY = (dateStr) => {
     // Expects dateStr in 'DD/MM/YYYY'
     const [day, month, year] = dateStr.split('/').map(Number);
     // JS Date: months are 0-based
@@ -113,21 +165,37 @@ export const ResourceGroupDetailsForm = () => {
 
   function normalizeBillingDetails(data) {
     return {
-      totalAmount: data.TotalAmount,
-      taxAmount: data.TaxAmount,
-      discountAmount: data.DiscountAmount,
-      billingStatus: data.BillingStatus,
-      paymentTerms: data.PaymentTerms,
-      invoiceDate: data.InvoiceDate,
+      DraftBillNo: data.DraftBillNo,
+      ContractPrice: data.ContractPrice,
+      NetAmount: data.NetAmount,
+      // BillingType: data.BillingType,
+      UnitPrice: data.UnitPrice,
+      BillingQty: data.BillingQty,
+      Tariff: data.Tariff,
+      TariffType: data.TariffType,
+      Remarks: data.Remarks,
+      InteralOrder: data.InteralOrder
     };
   }
 
-  const initialBasicDetails = normalizeBasicDetails(jsonStore.getBasicDetails() || {});
-  const [basicDetailsData, setBasicDetailsData] = useState(initialBasicDetails);
-  const initialOperationalDetails = normalizeOperationalDetails(jsonStore.getOperationalDetails() || {});
-  const [operationalDetailsData, setOperationalDetailsData] = useState(initialOperationalDetails);
-  const initialBillingDetails = normalizeBillingDetails(jsonStore.getBillingDetails() || {});
-  const [billingDetailsData, setBillingDetailsData] = useState(initialBillingDetails);
+  const getInitialBasicDetails = () =>
+    isEditQuickOrder
+      ? normalizeBasicDetails(jsonStore.getBasicDetails() || {})
+      : {};
+
+  const getInitialOperationalDetails = () =>
+    isEditQuickOrder
+      ? normalizeOperationalDetails(jsonStore.getOperationalDetails() || {})
+      : {};
+
+  const getInitialBillingDetails = () =>
+    isEditQuickOrder
+      ? normalizeBillingDetails(jsonStore.getBillingDetails() || {})
+      : {};
+
+  const [basicDetailsData, setBasicDetailsData] = useState(getInitialBasicDetails);
+  const [operationalDetailsData, setOperationalDetailsData] = useState(getInitialOperationalDetails);
+  const [billingDetailsData, setBillingDetailsData] = useState(getInitialBillingDetails);
 
   // Panel titles state
   const [basicDetailsTitle, setBasicDetailsTitle] = useState('Basic Details');
@@ -146,7 +214,7 @@ export const ResourceGroupDetailsForm = () => {
 
   // Basic Details Panel Configuration
   const basicDetailsConfig: PanelConfig = {
-    resource: {
+    Resource: {
       id: 'Resource',
       label: 'Resource',
       fieldType: 'select',
@@ -163,7 +231,7 @@ export const ResourceGroupDetailsForm = () => {
         { label: 'Other', value: 'Other' }
       ]
     },
-    resourceType: {
+    ResourceType: {
       id: 'ResourceType',
       label: 'Resource Type',
       fieldType: 'select',
@@ -179,7 +247,7 @@ export const ResourceGroupDetailsForm = () => {
         { label: 'Truck 5.2', value: 'truck-5.2' },
       ]
     },
-    serviceType: {
+    ServiceType: {
       id: 'ServiceType',
       label: 'Service Type',
       fieldType: 'select',
@@ -194,7 +262,7 @@ export const ResourceGroupDetailsForm = () => {
         { label: 'Block Train Convention', value: 'Block Train Convention' },
       ]
     },
-    subservice: {
+    SubSericeType: {
       id: 'SubSericeType',
       label: 'Sub-Service',
       fieldType: 'select',
@@ -214,7 +282,7 @@ export const ResourceGroupDetailsForm = () => {
 
   // Operational Details Panel Configuration
   const operationalDetailsConfig: PanelConfig = {
-    operationalLocation: {
+    OperationalLocation: {
       id: 'OperationalLocation',
       label: 'Operational Location',
       fieldType: 'search',
@@ -226,7 +294,7 @@ export const ResourceGroupDetailsForm = () => {
       order: 1,
       placeholder: 'Search operational location...'
     },
-    departPoint: {
+    DepartPoint: {
       id: 'DepartPoint',
       label: 'Departure Point',
       fieldType: 'select',
@@ -242,7 +310,7 @@ export const ResourceGroupDetailsForm = () => {
         { label: '10-000491', value: '10-000491' }
       ]
     },
-    arrivalPoint: {
+    ArrivalPoint: {
       id: 'ArrivalPoint',
       label: 'Arrival Point',
       fieldType: 'select',
@@ -258,7 +326,7 @@ export const ResourceGroupDetailsForm = () => {
         { label: '10-000722', value: '10-000722' }
       ]
     },
-    fromDate: {
+    FromDate: {
       id: 'FromDate',
       label: 'From Date',
       fieldType: 'date',
@@ -269,7 +337,7 @@ export const ResourceGroupDetailsForm = () => {
       editable: true,
       order: 4
     },
-    fromTime: {
+    FromTime: {
       id: 'FromTime',
       label: 'From Time',
       fieldType: 'time',
@@ -280,7 +348,7 @@ export const ResourceGroupDetailsForm = () => {
       editable: true,
       order: 5
     },
-    toDate: {
+    ToDate: {
       id: 'ToDate',
       label: 'To Date',
       fieldType: 'date',
@@ -291,7 +359,7 @@ export const ResourceGroupDetailsForm = () => {
       editable: true,
       order: 6
     },
-    toTime: {
+    ToTime: {
       id: 'ToTime',
       label: 'To Time',
       fieldType: 'time',
@@ -302,7 +370,7 @@ export const ResourceGroupDetailsForm = () => {
       editable: true,
       order: 7
     },
-    remarks: {
+    Remarks: {
       id: 'Remarks',
       label: 'Remarks',
       fieldType: 'text',
@@ -317,8 +385,8 @@ export const ResourceGroupDetailsForm = () => {
 
   // Billing Details Panel Configuration
   const billingDetailsConfig: PanelConfig = {
-    totalAmount: {
-      id: 'totalAmount',
+    TotalAmount: {
+      id: 'TotalAmount',
       label: 'Total Amount',
       fieldType: 'currency',
       value: '',
@@ -327,8 +395,8 @@ export const ResourceGroupDetailsForm = () => {
       editable: true,
       order: 1
     },
-    taxAmount: {
-      id: 'taxAmount',
+    TaxAmount: {
+      id: 'TaxAmount',
       label: 'Tax Amount',
       fieldType: 'currency',
       value: '',
@@ -337,8 +405,8 @@ export const ResourceGroupDetailsForm = () => {
       editable: true,
       order: 2
     },
-    discountAmount: {
-      id: 'discountAmount',
+    DiscountAmount: {
+      id: 'DiscountAmount',
       label: 'Discount Amount',
       fieldType: 'currency',
       value: '',
@@ -347,8 +415,8 @@ export const ResourceGroupDetailsForm = () => {
       editable: true,
       order: 3
     },
-    billingStatus: {
-      id: 'billingStatus',
+    BillingStatus: {
+      id: 'BillingStatus',
       label: 'Billing Status',
       fieldType: 'select',
       value: '',
@@ -363,8 +431,8 @@ export const ResourceGroupDetailsForm = () => {
         { label: 'Rejected', value: 'rejected' }
       ]
     },
-    paymentTerms: {
-      id: 'paymentTerms',
+    PaymentTerms: {
+      id: 'PaymentTerms',
       label: 'Payment Terms',
       fieldType: 'select',
       value: '',
@@ -378,8 +446,8 @@ export const ResourceGroupDetailsForm = () => {
         { label: 'Due on Receipt', value: 'due-on-receipt' }
       ]
     },
-    invoiceDate: {
-      id: 'invoiceDate',
+    InvoiceDate: {
+      id: 'InvoiceDate',
       label: 'Invoice Date',
       fieldType: 'date',
       value: '',
@@ -389,18 +457,7 @@ export const ResourceGroupDetailsForm = () => {
       order: 6
     }
   };
-
-  const [billingData, setBillingData] = useState({
-    billingDetail: "DB00023/42",
-    contractPrice: 1200.00,
-    netAmount: 5580.00,
-    billingType: 'Wagon',
-    unitPrice: 1395.00,
-    billingQty: 4,
-    tariff: 'TAR000750 - Tariff Description',
-    tariffType: 'Rate Per Block Train',
-    remarks: ''
-  });
+  const [billingData, setBillingData] = useState(jsonStore.getBillingDetails() || {})
 
   const [view, setView] = useState<"grid" | "list">("grid");
 
@@ -415,13 +472,19 @@ export const ResourceGroupDetailsForm = () => {
     console.log(`Saved config for panel ${panelId}:`, settings);
   };
   useEffect(() => {
-    const rawBasic = jsonStore.getBasicDetails() || {};
-    setBasicDetailsData(normalizeBasicDetails(rawBasic));
-    const rawOperational = jsonStore.getOperationalDetails() || {};
-    setOperationalDetailsData(normalizeOperationalDetails(rawOperational));
-    const rawBilling = jsonStore.getBillingDetails() || {};
-    setBillingDetailsData(normalizeBillingDetails(rawBilling));
-  }, []);
+    if (isEditQuickOrder) {
+      setBasicDetailsData(normalizeBasicDetails(jsonStore.getBasicDetails() || {}));
+      setOperationalDetailsData(normalizeOperationalDetails(jsonStore.getOperationalDetails() || {}));
+      setBillingDetailsData(normalizeBillingDetails(jsonStore.getBillingDetails() || {}));
+    } else {
+      setBasicDetailsData({});
+      setOperationalDetailsData({});
+      setBillingDetailsData({});
+    }
+    const saved = localStorage.getItem('planActualsSaved');
+    setIsPlanActualsVisible(saved === 'true');
+
+  }, [isEditQuickOrder]);
   const steps = [
     {
       label: "Resource Group Creation",
@@ -461,7 +524,7 @@ export const ResourceGroupDetailsForm = () => {
         },
         {
           label: "Bulk Upload",
-          icon: <CloudUpload  className="h-4 w-4" />,
+          icon: <CloudUpload className="h-4 w-4" />,
           onClick: () => {
             setMoreInfoOpen(true);
           }
@@ -471,7 +534,11 @@ export const ResourceGroupDetailsForm = () => {
   ];
 
   const [isMoreInfoOpen, setMoreInfoOpen] = useState(false);
-
+  // useEffect(() => {
+  //   const resourceGroupArray = jsonStore.getResourceGroup();
+  //   console.log('RESOURCE GROUP  JSON data:', resourceGroupArray);
+  //   // You can now use jsonData as needed (e.g., set state, prefill form, etc.)
+  // }, []);
   return (
     <div className="">
       <div className="flex h-full">
@@ -528,12 +595,12 @@ export const ResourceGroupDetailsForm = () => {
               {currentStep === 2 && (
                 <>
                   <h2 className="text-lg font-semibold">Plan and Actuals</h2>
-                    { isPlanActualsVisible && 
-                      (<div className="flex items-center gap-2">
-                    {/* Create Order Button with Dropdown */}
-                    <DropdownButton config={configurableButtons[0]} />
-                    <button className={`p-2 rounded ${view === "grid" ? "bg-blue-50" : ""}`} onClick={() => setView("grid")}> <LayoutGrid className={`w-5 h-5 ${view === "grid" ? "text-blue-600" : "text-gray-400"}`} /> </button>
-                    <button className={`p-2 rounded ${view === "list" ? "bg-blue-50" : ""}`} onClick={() => setView("list")}> <List className={`w-5 h-5 ${view === "list" ? "text-blue-600" : "text-gray-400"}`} /> </button>
+                  {isPlanActualsVisible &&
+                    (<div className="flex items-center gap-2">
+                      {/* Create Order Button with Dropdown */}
+                      <DropdownButton config={configurableButtons[0]} />
+                      <button className={`p-2 rounded ${view === "grid" ? "bg-blue-50" : ""}`} onClick={() => setView("grid")}> <LayoutGrid className={`w-5 h-5 ${view === "grid" ? "text-blue-600" : "text-gray-400"}`} /> </button>
+                      <button className={`p-2 rounded ${view === "list" ? "bg-blue-50" : ""}`} onClick={() => setView("list")}> <List className={`w-5 h-5 ${view === "list" ? "text-blue-600" : "text-gray-400"}`} /> </button>
                     </div>
                     )}
                 </>
@@ -554,7 +621,7 @@ export const ResourceGroupDetailsForm = () => {
                         panelIcon={<Wrench className="w-5 h-5 text-lime-500" />}
                         panelConfig={basicDetailsConfig}
                         initialData={basicDetailsData}
-                        onDataChange={setBasicDetailsData}
+                        onDataChange={(updatedData) => setBasicDetailsData(prev => ({ ...prev, ...updatedData }))}
                         onTitleChange={setBasicDetailsTitle}
                         // onWidthChange={setBasicDetailsWidth}
                         getUserPanelConfig={getUserPanelConfig}
@@ -571,7 +638,7 @@ export const ResourceGroupDetailsForm = () => {
                         panelIcon={<Bookmark className="w-5 h-5 text-blue-500" />}
                         panelConfig={operationalDetailsConfig}
                         initialData={operationalDetailsData}
-                        onDataChange={setOperationalDetailsData}
+                        onDataChange={(updatedData) => setOperationalDetailsData(prev => ({ ...prev, ...updatedData }))}
                         onTitleChange={setOperationalDetailsTitle}
                         // onWidthChange={setOperationalDetailsWidth}
                         getUserPanelConfig={getUserPanelConfig}
@@ -590,7 +657,7 @@ export const ResourceGroupDetailsForm = () => {
                         panelIcon={<Banknote className="w-5 h-5 text-orange-500" />}
                         panelConfig={billingDetailsConfig}
                         initialData={billingData}
-                        onDataChange={setBillingData}
+                        onDataChange={(updatedData) => setBillingDetailsData(prev => ({ ...prev, ...updatedData }))}
                         onTitleChange={setBillingDetailsTitle}
                         getUserPanelConfig={getUserPanelConfig}
                         saveUserPanelConfig={saveUserPanelConfig}

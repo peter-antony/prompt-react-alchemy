@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { DynamicPanelProps, PanelConfig, PanelSettings } from '@/types/dynamicPanel';
+import { InputDropDown } from '../Common/InputDropDown';
 
 interface BillingDetailsPanelProps {
   panelId: string;
@@ -58,7 +59,7 @@ export const BillingDetailsPanel: React.FC<BillingDetailsPanelProps> = ({
   // Load user configuration on mount
   useEffect(() => {
     const loadUserConfig = async () => {
-        console.log('loadUserConfig', initialData);
+      console.log('loadUserConfig bbb', initialData);
       if (getUserPanelConfig) {
         try {
           const userSettings = await getUserPanelConfig(userId, panelId);
@@ -85,28 +86,31 @@ export const BillingDetailsPanel: React.FC<BillingDetailsPanelProps> = ({
     };
 
     loadUserConfig();
-  }, [getUserPanelConfig, userId, panelId]);
+  }, [ userId, panelId]);
 
   // Get visible fields sorted by order
   const visibleFields = Object.entries(panelConfig)
     .filter(([_, config]) => config.visible)
     .sort(([_, a], [__, b]) => a.order - b.order);
 
+  // Add handleFieldChange for all form controls
   const handleFieldChange = (fieldId: string, value: any) => {
     const updatedData = { ...formData, [fieldId]: value };
+    console.log("updatedData = ",updatedData)
     setFormData(updatedData);
     onDataChange?.(updatedData);
   };
-
+  const [unitDropdown, setUnitDropdown] = useState('QC');
+  const [unitInput, setUnitInput] = useState('');
   const handleConfigSave = async (
-    updatedConfig: PanelConfig, 
-    newTitle?: string, 
+    updatedConfig: PanelConfig,
+    newTitle?: string,
     newWidth?: 'full' | 'half' | 'third' | 'quarter' | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12,
     newCollapsible?: boolean,
     newPanelVisible?: boolean
   ) => {
     setPanelConfig(updatedConfig);
-    
+
     if (newTitle !== undefined) {
       setPanelTitle(newTitle);
       onTitleChange?.(newTitle);
@@ -125,7 +129,7 @@ export const BillingDetailsPanel: React.FC<BillingDetailsPanelProps> = ({
     if (newPanelVisible !== undefined) {
       setPanelVisible(newPanelVisible);
     }
-    
+
     if (saveUserPanelConfig) {
       try {
         const settings: PanelSettings = {
@@ -142,90 +146,114 @@ export const BillingDetailsPanel: React.FC<BillingDetailsPanelProps> = ({
     }
   };
 
-
-    return (
-        <div className="">
-            {/* Header */}
-            <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-3 px-4 pt-4 border-b">
-                <div className='flex items-center gap-2'>
-                    <div className="">{panelIcon}</div>
-                    <h3 className="tracking-tight text-sm font-semibold text-gray-700">{panelTitle}</h3>
-                </div>
-                <span className="text-blue-600 bg-blue-50 px-3 py-1 text-sm font-semibold rounded-full">{formData.billingDetail}</span>
-            </div>
-        
-            {/* Info Cards */}
-            <div className="grid grid-cols-2 gap-4 p-4">
-                <Card className="p-4 border-0 bg-emerald-50">
-                <p className="text-sm text-gray-600">Contract Price</p>
-                <p className="text-lg font-semibold text-[#00A76F]">€ {formData.contractPrice.toFixed(2)}</p>
-                </Card>
-                <Card className="p-4 border-0 bg-indigo-50">
-                <p className="text-sm text-gray-600">Net Amount</p>
-                <p className="text-lg font-semibold text-[#7C3AED]">€ {formData.netAmount.toFixed(2)}</p>
-                </Card>
-            </div>
-        
-            {/* Form Fields */}
-            <div className="space-y-4 px-4 pb-4">
-                <div className="space-y-2">
-                    <label className="text-sm text-gray-600">Billing Type</label>
-                    <Select defaultValue={formData.billingType}>
-                        <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select billing type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                        <SelectItem value="Wagon">Wagon</SelectItem>
-                        <SelectItem value="Container">Container</SelectItem>
-                        <SelectItem value="Truck">Truck</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-        
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <label className="text-sm text-gray-600">Unit Price</label>
-                        <div className="flex gap-2">
-                            <Select defaultValue="€">
-                                <SelectTrigger className="w-20">
-                                <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                <SelectItem value="€">€</SelectItem>
-                                <SelectItem value="$">$</SelectItem>
-                                <SelectItem value="£">£</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <Input type="number" defaultValue={formData.unitPrice} className="flex-1" />
-                        </div>
-                    </div>
-        
-                    <div className="space-y-2">
-                        <label className="text-sm text-gray-600">Billing Qty.</label>
-                        <Input type="number" defaultValue={formData.billingQty} />
-                    </div>
-                </div>
-        
-                <div className="space-y-2">
-                    <label className="text-sm text-gray-600">Tariff</label>
-                    <div className="relative">
-                        <Input defaultValue={formData.tariff} />
-                        <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    </div>
-                </div>
-        
-                <div className="space-y-2">
-                    <label className="text-sm text-gray-600">Tariff Type</label>
-                    <Input defaultValue={formData.tariffType} className="bg-gray-50" />
-                </div>
-        
-                <div className="space-y-2">
-                    <label className="text-sm text-gray-600">Remarks</label>
-                    <Input defaultValue={formData.remarks} placeholder="Enter Remarks" />
-                </div>
-            </div>
+  const handleQcChange = (dropdownValue: string, inputValue: string) => {
+    setUnitDropdown(dropdownValue);
+    setUnitInput(inputValue);
+    handleFieldChange('UnitPrice',`${dropdownValue}-${inputValue}`)
+    // setFormData(prev => ({
+    //   ...prev,
+    //   UnitPrice: `${dropdownValue}-${inputValue}`
+    // }));
+  };
+  return (
+    <div className="">
+      {/* Header */}
+      <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-3 px-4 pt-4 border-b">
+        <div className='flex items-center gap-2'>
+          <div className="">{panelIcon}</div>
+          <h3 className="tracking-tight text-sm font-semibold text-gray-700">{panelTitle}</h3>
         </div>
-    );
-  
-  
+        <span className="text-blue-600 bg-blue-50 px-3 py-1 text-sm font-semibold rounded-full">{formData.DraftBillNo}</span>
+      </div>
+
+      {/* Info Cards */}
+      <div className="grid grid-cols-2 gap-4 p-4">
+        <Card className="p-4 border-0 bg-emerald-50">
+          <p className="text-sm text-gray-600">Contract Price</p>
+          <p className="text-lg font-semibold text-[#00A76F]">€ {formData.ContractPrice}</p>
+        </Card>
+        <Card className="p-4 border-0 bg-indigo-50">
+          <p className="text-sm text-gray-600">Net Amount</p>
+          <p className="text-lg font-semibold text-[#7C3AED]">€ {formData.NetAmount}</p>
+        </Card>
+      </div>
+
+      {/* Form Fields */}
+      <div className="space-y-4 px-4 pb-4">
+        <div className="space-y-2">
+          <label className="text-sm text-gray-600">Billing Type</label>
+          <Select
+            value={formData.BillingType || ''}
+            onValueChange={value => handleFieldChange('BillingType', value)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select billing type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Wagon">Wagon</SelectItem>
+              <SelectItem value="Container">Container</SelectItem>
+              <SelectItem value="Truck">Truck</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-sm text-gray-600">Unit Price</label>
+            <div >
+            <InputDropDown
+              label="QC Userdefined 1"
+              dropdownOptions={['€', '$', '£']}
+              selectedOption={unitDropdown}
+              onOptionChange={option => handleQcChange(option, unitInput)}
+              value={unitInput}
+              onValueChange={val => handleQcChange(unitDropdown, val)}
+            />
+              
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm text-gray-600">Billing Qty.</label>
+            <Input
+              type="number"
+              value={formData.BillingQty || ''}
+              onChange={e => handleFieldChange('BillingQty', e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm text-gray-600">Tariff</label>
+          <div className="relative">
+            <Input
+              value={formData.Tariff || ''}
+              onChange={e => handleFieldChange('Tariff', e.target.value)}
+            />
+            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm text-gray-600">Tariff Type</label>
+          <Input
+            value={formData.TariffType || ''}
+            className="bg-gray-50"
+            onChange={e => handleFieldChange('TariffType', e.target.value)}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm text-gray-600">Remarks</label>
+          <Input
+            value={formData.Remarks || ''}
+            placeholder="Enter Remarks"
+            onChange={e => handleFieldChange('Remarks', e.target.value)}
+          />
+        </div>
+      </div>
+    </div>
+  );
+
+
 };

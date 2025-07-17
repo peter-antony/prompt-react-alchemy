@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CalendarIcon, Search, CircleArrowOutUpRight, Paperclip, BookX, Link, Copy, CircleX, CheckCircle, AlertCircle, X  } from 'lucide-react';import { Button } from '@/components/ui/button';
+import { CalendarIcon, Search, CircleArrowOutUpRight, Paperclip, BookX, Link, Copy, CircleX, CheckCircle, AlertCircle, X } from 'lucide-react'; import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -19,7 +19,7 @@ import LinkedOrders from './LinkedOrders';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import jsonStore from '@/stores/jsonStore';
 import { useEffect } from 'react';
-import Toast  from '../../Common/Toast';
+import Toast from '../../Common/Toast';
 import { PanelConfig, PanelSettings } from '@/types/dynamicPanel';
 import { DynamicPanel } from '@/components/DynamicPanel';
 
@@ -31,108 +31,87 @@ interface OrderFormProps {
 }
 
 const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: OrderFormProps) => {
-  const [orderType, setOrderType] = useState('buy');
-  const [orderDate, setOrderDate] = useState<Date>();
+  const [OrderType, setOrderType] = useState('buy');
+  const [OrderDate, setOrderDate] = useState<Date>();
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showOrderNoSuggestions, setShowOrderNoSuggestions] = useState(false);
   const [showCustomerRefSuggestions, setShowCustomerRefSuggestions] = useState(false);
-  const [formData, setFormData] = useState({
-    contract: '',
-    customer: '',
-    cluster: '',
-    customerOrderNo: '',
-    customerRefNo: '',
-    qcUserDefined: '',
-    qcValue: '',
-    remarks: '',
-    summary: '',
-    quickOrderNo: '',
-    status: ''
-  });
+  const initialOrderFormDetails = normalizeOrderFormDetails(jsonStore.getQuickOrder() || {});
+
+  const [formData, setFormData] = useState(initialOrderFormDetails);
   const [toastOpen, setToastOpen] = useState(false);
   const [errorToastOpen, setErrorToastOpen] = useState(false);
   const [quickOrder, setQuickOrder] = useState<any>(null);
-  onConfirm = () => {
-    console.log("FORM DATA : ", formData);
-    // Update QuickOrder in jsonStore
-    const oldQuickOrder = jsonStore.getQuickOrder();
-    const uniqueId=oldQuickOrder.QuickUniqueID;
-    const parts = uniqueId.split('/');
-    if (oldQuickOrder.QuickUniqueID) {
-      const newQuickOrder = {
-        ...oldQuickOrder,
-        QuickUniqueID:uniqueId,
-        OrderType: orderType,
-        QuickOrderDate: orderDate ? format(orderDate, 'dd/MM/yyyy') : '',
-        Contract: formData.contract,
-        Customer: formData.customer,
-        Cluster: formData.cluster,
-        CustomerQuickOrderNo: formData.customerOrderNo,
-        Customer_Supplier_RefNo: formData.customerRefNo,
-        QCUserDefined1: formData.qcUserDefined,
-        Remark1: formData.remarks,
-        Summary: formData.summary,
-        Status:"Confirmed",
-        // Preserve existing nested objects
-        ResourceGroup: oldQuickOrder.ResourceGroup || [],
-        AmendmentHistory: oldQuickOrder.AmendmentHistory || [],
-        Attachments: oldQuickOrder.Attachments || {},
-        // Add more mappings as needed
-      };
-      jsonStore.setQuickOrder(newQuickOrder);
-      setCopyModalOpen(false);
-      setToastOpen(true); // <-- Show success toast
-    }else{
-      const uniqueId=1;
-      const newQuickOrder = {
-        ...oldQuickOrder,
-        QuickUniqueID:'QO/0000'+(uniqueId+1)+'/2025',
-        OrderType: orderType,
-        QuickOrderDate: orderDate ? format(orderDate, 'dd/MM/yyyy') : '',
-        Contract: formData.contract,
-        Customer: formData.customer,
-        Cluster: formData.cluster,
-        CustomerQuickOrderNo: formData.customerOrderNo,
-        Customer_Supplier_RefNo: formData.customerRefNo,
-        QCUserDefined1: formData.qcUserDefined,
-        Remark1: formData.remarks,
-        Summary: formData.summary,
-        Status:"Confirmed",
-        // Preserve existing nested objects
-        ResourceGroup: oldQuickOrder.ResourceGroup || [],
-        AmendmentHistory: oldQuickOrder.AmendmentHistory || [],
-        Attachments: oldQuickOrder.Attachments || {},
-        // Add more mappings as needed
-      };
-      jsonStore.setQuickOrder(newQuickOrder);
-      setCopyModalOpen(false);
-      setToastOpen(true);
-      // setErrorToastOpen(true); <-- show error toast
-    }
-  }
+  const [inputValue, setInputValue] = useState("");
+  const [selectedQC, setSelectedQC] = useState("QC");
+  const [qcDropdown, setQcDropdown] = useState('QC');
+  const [qcInput, setQcInput] = useState('');
   // useEffect(() => {
-  //   const qo = jsonStore.getQuickOrder();
-  //   console.log("qo >> > >",qo)
-  //   if (qo.QuickUniqueID != '' && isEditQuickOrder) {
-  //     alert("Inside If")
-  //     setQuickOrder(qo);
-  //     setFormData(prev => ({
-  //       ...prev,
-  //       quickOrderNo: qo.QuickOrderNo || '',
-  //       orderDate: setOrderDate(parseDDMMYYYY(qo.QuickOrderDate)),
-  //       contract: qo.Contract || '',
-  //       customer: qo.Customer || '',
-  //       cluster: qo.Cluster || '',
-  //       orderType: setOrderType(qo.OrderType),
-  //       customerOrderNo: qo.CustomerQuickOrderNo || '',
-  //       customerRefNo: qo.Customer_Supplier_RefNo || '',
-  //       qcUserDefined: qo.QCUserDefined1 || '',
-  //       remarks: qo.Remark1 || '',
-  //       summary: qo.Summary || '',
-  //       status: qo.Status || 'Confirmed'
-  //     }));
+  //   const quickOrder = jsonStore.getQuickOrder();
+  //     console.log("Inside USE EFFECT : ",quickOrder)
+  //   if (isEditQuickOrder) {
+  //     setFormData(normalizeOrderFormDetails(quickOrder));
   //   }
-  // }, [isEditQuickOrder]);
+  // }, []);
+
+  // Utility to normalize keys from store to config field IDs
+  function normalizeOrderFormDetails(data) {
+    console.log("DATA : ",data)
+    return {
+      OrderType: data.OrderType,
+      QuickOrderDate: data.QuickOrderDate,
+      Contract: data.Contract,
+      Customer: data.Customer,
+      Vendor: data.Vendor,
+      Cluster: data.Cluster,
+      CustomerQuickOrderNo: data.CustomerQuickOrderNo,
+      Customer_Supplier_RefNo: data.Customer_Supplier_RefNo,
+      QCUserDefined1: data.QCUserDefined1,
+      Remark1: data.Remark1,
+      Summary: data.Summary
+    };
+    
+  }
+  onConfirm = () => {
+    if (!isEditQuickOrder) {
+      // Create mode: merge formData into QuickOrder, keep other fields unchanged
+      const currentJson = jsonStore.getJsonData();
+      const updatedQuickOrder = {
+        ...currentJson.ResponseResult.QuickOrder,
+        ...formData
+      };
+      console.log("updatedQuickOrder = ",updatedQuickOrder)
+      const updatedJson = {
+        ...currentJson,
+        ResponseResult: {
+          ...currentJson.ResponseResult,
+          QuickOrder: updatedQuickOrder
+        }
+      };
+      const newBasicDetails = Object.fromEntries(
+        Object.entries(formData).filter(([key]) =>
+          ["OrderType", "QuickOrderDate", "Contract", "Customer","Vendor","Cluster","CustomerQuickOrderNo","Customer_Supplier_RefNo","QCUserDefined1","Remark1","Summary"].includes(key)
+        )
+      );
+      jsonStore.setJsonData(updatedJson);
+      console.log("NEW JSON : ", jsonStore.getQuickOrder())
+      setToastOpen(true);
+    } else {
+      // Edit mode: update only matching fields in QuickOrder
+      const quickOrder = jsonStore.getQuickOrder();
+      if (quickOrder) {
+        const updatedQuickOrder = { ...quickOrder };
+        Object.keys(formData).forEach(field => {
+          if (quickOrder.hasOwnProperty(field)) {
+            updatedQuickOrder[field] = formData[field];
+          }
+        });
+        jsonStore.setQuickOrder(updatedQuickOrder);
+        setToastOpen(true);
+      }
+    }
+  };
+ 
   //Contracts Array
   const contracts = [
     {
@@ -208,17 +187,223 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
     }
 
   ]
-  const [inputValue, setInputValue] = useState("");
-  const [selectedQC, setSelectedQC] = useState("QC");
-  const [qcDropdown, setQcDropdown] = useState('QC');
-  const [qcInput, setQcInput] = useState('');
+
+
+  useEffect(() => {
+    const quickOrder = jsonStore.getQuickOrder();
+    if (isEditQuickOrder && quickOrder && Object.keys(quickOrder).length > 0) {
+      setOrderType(quickOrder.OrderType || 'buy');
+      setFormData(normalizeOrderFormDetails(quickOrder));
+    } else if (!isEditQuickOrder) {
+      setOrderType('buy');
+      setFormData({
+        OrderType: '',
+        QuickOrderDate: '',
+        Contract: '',
+        Customer: '',
+        Vendor: '',
+        Cluster: '',
+        CustomerQuickOrderNo: '',
+        Customer_Supplier_RefNo: '',
+        QCUserDefined1: '',
+        Remark1: '',
+        Summary: ''
+      });
+    }
+  }, [isEditQuickOrder]);
+  // Local array of order IDs for suggestions
+  const orderIds = [
+    'IO/0000000042',
+    'IO/0000000043',
+    'IO/0000000044',
+    'IO/0000000045',
+    'IO/0000000046',
+    'IO/0000000047',
+    'IO/0000000048',
+    'IO/0000000049',
+    'IO/0000000050'
+  ];
+  // Local array of customer ref IDs for suggestions
+  const customerRefIds = [
+    '1234567890',
+    '1234567891',
+    '1234567892',
+    '1234567893',
+    '1234567894',
+  ];
+  const [isMoreInfoOpen, setMoreInfoOpen] = useState(false);
+  const [isBack, setIsBack] = useState(true);
+  const [isAttachmentsOpen, setAttachmentsOpen] = useState(false);
+  const [isHistoryOpen, setHistoryOpen] = useState(false);
+  const [isLinkedOrdersOpen, setLinkedOrdersOpen] = useState(false);
+  const [isCopyModalOpen, setCopyModalOpen] = useState(false);
+
+  const [OrderFormTitle, setOrderFormTitle] = useState('Order Details');
+
+  const getOrderFormDetailsConfig = (OrderType: string): PanelConfig => ({
+    // const OrderFormDetailsConfig: PanelConfig = {
+      
+    OrderType: {
+      id: 'OrderType',
+      label: '',
+      fieldType: 'radio',
+      width: 'full',
+      value: OrderType || 'buy',
+      options: [
+        { label: 'Buy Order', value: 'buy' },
+        { label: 'Sell Order', value: 'sell' }
+      ],
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 1,
+      onChange: (val: string) => setOrderType(val), // To update state on change
+    },
+    QuickOrderDate: {
+      id: 'QuickOrderDate',
+      label: 'Quick Order Date',
+      fieldType: 'date',
+      width: 'half',
+      value: '',
+      mandatory: true,
+      visible: true,
+      editable: true,
+      order: 2,
+    },
+    Contract: {
+      id: 'Contract',
+      label: 'Contract',
+      fieldType: 'select',
+      width: 'half',
+      value: '',
+      mandatory: true,
+      visible: true,
+      editable: true,
+      order: 3,
+      options: contracts.map(c => ({ label: c.name, value: c.name })),
+    },
+    Customer: {
+      id: 'Customer',
+      label: 'Customer',
+      fieldType: 'select',
+      width: 'half',
+      value: '',
+      mandatory: true,
+      visible: OrderType === 'buy',
+      editable: true,
+      order: 4,
+      options: customers.map(c => ({ label: c.name, value: c.name })),
+    },
+    Vendor: {
+      id: 'Vendor',
+      label: 'Vendor',
+      fieldType: 'select',
+      width: 'half',
+      value: '',
+      mandatory: true,
+      visible: OrderType === 'sell',
+      editable: true,
+      order: 4,
+      options: customers.map(c => ({ label: c.name, value: c.name })),
+    },
+    Cluster: {
+      id: 'Cluster',
+      label: 'Cluster',
+      fieldType: 'select',
+      width: 'half',
+      value: '',
+      mandatory: true,
+      visible: true,
+      editable: true,
+      order: 5,
+      options: [
+        { label: '10000406', value: '10000406' },
+        { label: '10000407', value: '10000407' }
+      ],
+    },
+    CustomerQuickOrderNo: {
+      id: 'CustomerQuickOrderNo',
+      label: 'Customer Internal Order No.',
+      fieldType: 'text',
+      width: 'full',
+      value: '',
+      mandatory: false,
+      visible: OrderType === 'buy',
+      editable: true,
+      order: 6,
+      placeholder: 'IO/0000000042'
+    },
+    Customer_Supplier_RefNo: {
+      id: 'Customer_Supplier_RefNo',
+      label: 'Customer/ Supplier Ref. No.',
+      fieldType: 'text',
+      width: 'half',
+      value: '',
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 7,
+      placeholder: 'Enter Ref. No.'
+    },
+    QCUserDefined1: {
+      id: 'QCUserDefined1',
+      label: 'QC Userdefined 1',
+      fieldType: 'inputDropdown',
+      width: 'half',
+      value: { dropdown: '', input: '' },
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 8,
+      options: [
+        { label: 'QC', value: 'QC' },
+        { label: 'QA', value: 'QA' },
+        { label: 'Test', value: 'Test' }
+      ]
+    },
+    Remark1: {
+      id: 'Remark1',
+      label: 'Remarks 1',
+      fieldType: 'text',
+      width: 'full',
+      value: '',
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 9,
+      placeholder: 'Enter Remarks'
+    },
+    Summary: {
+      id: 'Summary',
+      label: 'Summary',
+      fieldType: 'textarea',
+      width: 'full',
+      value: '',
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 10,
+      placeholder: 'Enter Summary'
+    },
+  });
+
+  // Mock functions for user config management
+  const getUserPanelConfig = (userId: string, panelId: string): PanelSettings | null => {
+    const stored = localStorage.getItem(`panel-config-${userId}-${panelId}`);
+    return stored ? JSON.parse(stored) : null;
+  };
+
+  const saveUserPanelConfig = (userId: string, panelId: string, settings: PanelSettings): void => {
+    localStorage.setItem(`panel-config-${userId}-${panelId}`, JSON.stringify(settings));
+    console.log(`Saved config for panel ${panelId}:`, settings);
+  };
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
+
     // Handle suggestions for customer order number
     if (field === 'customerOrderNo') {
       if (value.length > 0) {
-        const filtered = orderIds.filter(id => 
+        const filtered = orderIds.filter(id =>
           id.toLowerCase().includes(value.toLowerCase())
         );
         setSuggestions(filtered);
@@ -228,9 +413,9 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
         setShowOrderNoSuggestions(false);
       }
     }
-    if(field === 'customerRefNo') {
+    if (field === 'customerRefNo') {
       if (value.length > 0) {
-        const filtered = customerRefIds.filter(id => 
+        const filtered = customerRefIds.filter(id =>
           id.toLowerCase().includes(value.toLowerCase())
         );
         setSuggestions(filtered);
@@ -264,226 +449,27 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
     }));
   };
 
-  const isFormValid = () => {
-    return orderDate && formData.contract && formData.customer;
-  };
-  const parseDDMMYYYY=(dateStr)=> {
+  // const isFormValid = () => {
+  //   return OrderDate && formData.contract && formData.customer;
+  // };
+  const parseDDMMYYYY = (dateStr) => {
     // Expects dateStr in 'DD/MM/YYYY'
     const [day, month, year] = dateStr.split('/').map(Number);
     // JS Date: months are 0-based
     return new Date(year, month - 1, day);
   }
 
-  // Local array of order IDs for suggestions
-  const orderIds = [
-    'IO/0000000042',
-    'IO/0000000043',
-    'IO/0000000044',
-    'IO/0000000045',
-    'IO/0000000046',
-    'IO/0000000047',
-    'IO/0000000048',
-    'IO/0000000049',
-    'IO/0000000050'
-  ];
-  // Local array of customer ref IDs for suggestions
-  const customerRefIds = [
-    '1234567890',
-    '1234567891',
-    '1234567892',
-    '1234567893',
-    '1234567894',
-  ];
-  const [isMoreInfoOpen, setMoreInfoOpen] = useState(false);
-  const [isBack, setIsBack] = useState(true);
-  const [isAttachmentsOpen, setAttachmentsOpen] = useState(false);
-  const [isHistoryOpen, setHistoryOpen] = useState(false);
-  const [isLinkedOrdersOpen, setLinkedOrdersOpen] = useState(false);
-  const [isCopyModalOpen, setCopyModalOpen] = useState(false);
-
-  const [OrderFormTitle, setOrderFormTitle] = useState('Order Details');
-
-  const getOrderFormDetailsConfig = (orderType: string): PanelConfig => ({
-  // const OrderFormDetailsConfig: PanelConfig = {
-    orderType: {
-      id: 'orderType',
-      label: '',
-      fieldType: 'radio',
-      width: 'full',
-      value: orderType,
-      options: [
-        { label: 'Buy Order', value: 'buy' },
-        { label: 'Sell Order', value: 'sell' }
-      ],
-      mandatory: false,
-      visible: true,
-      editable: true,
-      order: 1,
-      onChange: (val: string) => setOrderType(val), // To update state on change
-    },
-    quickOrderDate: {
-      id: 'quickOrderDate',
-      label: 'Quick Order Date',
-      fieldType: 'date',
-      width: 'half',
-      value: '',
-      mandatory: true,
-      visible: true,
-      editable: true,
-      order: 2,
-    },
-    contract: {
-      id: 'contract',
-      label: 'Contract',
-      fieldType: 'select',
-      width: 'half',
-      value: '',
-      mandatory: true,
-      visible: true,
-      editable: true,
-      order: 3,
-      options: contracts.map(c => ({ label: c.name, value: c.name })),
-    },
-    customer: {
-      id: 'customer',
-      label: 'Customer',
-      fieldType: 'select',
-      width: 'half',
-      value: '',
-      mandatory: true,
-      visible: orderType === 'buy',
-      editable: true,
-      order: 4,
-      options: customers.map(c => ({ label: c.name, value: c.name })),
-    },
-    vendor: {
-      id: 'vendor',
-      label: 'Vendor',
-      fieldType: 'select',
-      width: 'half',
-      value: '',
-      mandatory: true,
-      visible: orderType === 'sell',
-      editable: true,
-      order: 4,
-      options: customers.map(c => ({ label: c.name, value: c.name })),
-    },
-    cluster: {
-      id: 'cluster',
-      label: 'Cluster',
-      fieldType: 'select',
-      width: 'half',
-      value: '',
-      mandatory: true,
-      visible: true,
-      editable: true,
-      order: 5,
-      options: [
-        { label: '10000406', value: '10000406' },
-        { label: '10000407', value: '10000407' }
-      ],
-    },
-    customerOrderNo: {
-      id: 'customerOrderNo',
-      label: 'Customer Internal Order No.',
-      fieldType: 'text',
-      width: 'full',
-      value: '',
-      mandatory: false,
-      visible: orderType === 'buy',
-      editable: true,
-      order: 6,
-      placeholder: 'IO/0000000042'
-    },
-    customerRefNo: {
-      id: 'customerRefNo',
-      label: 'Customer/ Supplier Ref. No.',
-      fieldType: 'text',
-      width: 'half',
-      value: '',
-      mandatory: false,
-      visible: true,
-      editable: true,
-      order: 7,
-      placeholder: 'Enter Ref. No.'
-    },
-    qcUserDefined: {
-      id: 'qcUserDefined',
-      label: 'QC Userdefined 1',
-      fieldType: 'inputDropdown',
-      width: 'half',
-      value: { dropdown: '', input: '' },
-      mandatory: false,
-      visible: true,
-      editable: true,
-      order: 8,
-      options: [
-        { label: 'QC', value: 'QC' },
-        { label: 'QA', value: 'QA' },
-        { label: 'Test', value: 'Test' }
-      ]
-    },
-    remarks: {
-      id: 'remarks',
-      label: 'Remarks 1',
-      fieldType: 'text',
-      width: 'full',
-      value: '',
-      mandatory: false,
-      visible: true,
-      editable: true,
-      order: 9,
-      placeholder: 'Enter Remarks'
-    },
-    summary: {
-      id: 'summary',
-      label: 'Summary',
-      fieldType: 'textarea',
-      width: 'full',
-      value: '',
-      mandatory: false,
-      visible: true,
-      editable: true,
-      order: 10,
-      placeholder: 'Enter Summary'
-    },
-  });
-
-   // Mock functions for user config management
-  const getUserPanelConfig = (userId: string, panelId: string): PanelSettings | null => {
-    const stored = localStorage.getItem(`panel-config-${userId}-${panelId}`);
-    return stored ? JSON.parse(stored) : null;
-  };
-
-  const saveUserPanelConfig = (userId: string, panelId: string, settings: PanelSettings): void => {
-    localStorage.setItem(`panel-config-${userId}-${panelId}`, JSON.stringify(settings));
-    console.log(`Saved config for panel ${panelId}:`, settings);
-  };
-
-  // const dynamicConfig = {
-  //   ...OrderFormDetailsConfig,
-  //   customer: {
-  //     ...OrderFormDetailsConfig.customer,
-  //     visible: orderType === "buy",
-  //   },
-  //   vendor: {
-  //     ...OrderFormDetailsConfig.vendor,
-  //     visible: orderType === "sell",
-  //   },
-  //   // ...other conditional fields
-  // };
-
   const handlePanelDataChange = (updatedData: any) => {
-    console.log("Updated form data:", updatedData.orderType);
-    const OrderFormDetailsConfig = getOrderFormDetailsConfig(orderType);
+    console.log("Updated form data:", updatedData.OrderType);
+    const OrderFormDetailsConfig = getOrderFormDetailsConfig(OrderType);
     setFormData(prev => ({
       ...prev,
       ...updatedData,
     }));
     // If orderType is changed, update orderType state as well
-    if (updatedData.orderType) setOrderType(updatedData.orderType);
+    if (updatedData.OrderType) setOrderType(updatedData.OrderType);
     console.log("Updated form data:", formData);
-    
+
   };
 
   return (
@@ -501,12 +487,11 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
           </>
         )}
       </h2> */}
-
-      <DynamicPanel
-        key={orderType} // <-- This will force remount on orderType change
+       <DynamicPanel
+        key={OrderType} // <-- This will force remount on orderType change
         panelId="order-details"
         panelTitle="Order Details"
-        panelConfig={getOrderFormDetailsConfig(orderType)}
+        panelConfig={getOrderFormDetailsConfig(OrderType)}
         initialData={formData}
         onDataChange={handlePanelDataChange}
         onTitleChange={setOrderFormTitle}
@@ -514,27 +499,29 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
         saveUserPanelConfig={saveUserPanelConfig}
         userId="current-user"
         className="my-custom-orderform-panel"
-      />
+      /> 
+
+      
 
       {/* Form Actions */}
       <div className="flex justify-center gap-3 py-3 mt-2 border-t border-gray-200">
         <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setMoreInfoOpen(true)}>
-          <CircleArrowOutUpRight  className="w-5 h-5 text-gray-600" />
+          <CircleArrowOutUpRight className="w-5 h-5 text-gray-600" />
         </button>
         <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setAttachmentsOpen(true)}>
-          <Paperclip   className="w-5 h-5 text-gray-600" />
+          <Paperclip className="w-5 h-5 text-gray-600" />
         </button>
-        <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={(e)=>onConfirm()}>
-          <BookX    className="w-5 h-5 text-gray-600" />
+        <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={(e) => onConfirm()}>
+          <BookX className="w-5 h-5 text-gray-600" />
         </button>
         <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setLinkedOrdersOpen(true)}>
-          <Link     className="w-5 h-5 text-gray-600" />
+          <Link className="w-5 h-5 text-gray-600" />
         </button>
         {
-           isEditQuickOrder?
+          isEditQuickOrder ?
             <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setCopyModalOpen(true)}>
-            <Copy className="w-5 h-5 text-gray-600" />
-         </button>:' '
+              <Copy className="w-5 h-5 text-gray-600" />
+            </button> : ' '
         }
       </div>
 
@@ -570,7 +557,7 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
                 <span className="font-semibold text-lg">Copy</span>
               </div>
               {/* <CircleX  onClick={() => setCopyModalOpen(false)} className="text-gray-400 hover:text-gray-600" /> */}
-             
+
             </div>
             {/* Resource Group */}
             <div className="px-6 py-4">
@@ -583,7 +570,7 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
             </div>
             {/* Copy Details Button */}
             <div className="px-6 pb-6">
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition" onClick={(e)=>onConfirm()}>Copy Details</button>
+              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition" onClick={(e) => onConfirm()}>Copy Details</button>
             </div>
           </div>
         </DialogContent>
@@ -600,7 +587,7 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
         open={errorToastOpen}
         onClose={() => setToastOpen(false)}
       />
-  </div>
+    </div>
   );
 };
 
