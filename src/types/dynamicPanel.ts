@@ -2,7 +2,7 @@
 export interface FieldConfig {
   id: string;
   label: string;
-  fieldType: 'text' | 'select' | 'search' | 'currency' | 'inputDropdown' | 'date' | 'time' | 'textarea' | 'radio' | 'combo';
+  fieldType: 'text' | 'select' | 'search' | 'currency' | 'inputDropdown' | 'date' | 'time' | 'textarea' | 'radio' | 'combo' | 'card';
   value: any;
   mandatory: boolean;
   visible: boolean;
@@ -13,6 +13,9 @@ export interface FieldConfig {
   placeholder?: string;
   inputType?: any;
   onChange?: (value: any) => void;
+  labelFlag?: boolean; // Flag to indicate if label should be displayed
+  color?: string; // For card field type background color
+  fieldColour?: string; // For card field type color
 }
 
 export interface PanelConfig {
@@ -49,6 +52,7 @@ export interface DynamicPanelProps {
   collapsible?: boolean;
   showPreview?: boolean;
   className?: string;
+  panelSubTitle?: boolean;
 }
 
 export interface FieldVisibilityConfig {

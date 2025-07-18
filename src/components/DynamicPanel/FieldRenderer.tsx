@@ -28,7 +28,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
   value,
   onChange
 }) => {
-  const { fieldType, editable, placeholder, options, inputType } = config;
+  const { fieldType, editable, placeholder, options, inputType, color, fieldColour } = config;
 
   if (!editable) {
     return (
@@ -201,6 +201,29 @@ useEffect(()=>{
             className={`${baseInputClasses} pr-8`}
           />
           <Search className="absolute right-2 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
+        </div>
+      );
+
+    case 'card':
+      const cardStyle = color ? {
+        background: `linear-gradient(135deg, ${color}20, ${color}10)`,
+        borderColor: `${color}40`
+      } : {};
+      
+      return (
+        <div 
+          className="border rounded-lg p-4 shadow-sm transition-all duration-200 hover:shadow-md"
+          style={color ? cardStyle : {}}
+        >
+          <div className="text-sm font-medium text-muted-foreground mb-2">
+            {config.label}
+          </div>
+          <div 
+            className="text-lg font-bold"
+            style={{ color: fieldColour || 'inherit' }}
+          >
+            {value || '€ 0.00'}
+          </div>
         </div>
       );
 

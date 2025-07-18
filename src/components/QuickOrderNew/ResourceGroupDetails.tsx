@@ -534,6 +534,117 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
   ];
 
   const [isMoreInfoOpen, setMoreInfoOpen] = useState(false);
+
+  const snippetPanelConfig: PanelConfig = {
+    contractPrice: {
+      id: 'contractPrice',
+      label: 'Contract Price',
+      fieldType: 'card',
+      value: '€ 1200.00',
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 1,
+      width: 'half',
+      color: '#10b981', // Emerald green background
+      fieldColour: '#047857' // Dark emerald text
+    },
+    netAmount: {
+      id: 'netAmount',
+      label: 'Net Amount',
+      fieldType: 'card',
+      value: '€ 5580.00',
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 2,
+      width: 'half',
+      color: '#8b5cf6', // Purple background
+      fieldColour: '#6d28d9' // Dark purple text
+    },
+    billingType: {
+      id: 'billingType',
+      label: 'Billing Type',
+      fieldType: 'select',
+      value: 'Wagon',
+      mandatory: true,
+      visible: true,
+      editable: true,
+      order: 3,
+      width: 'full',
+      options: [
+        { label: 'Wagon', value: 'Wagon' },
+        { label: 'Container', value: 'Container' },
+        { label: 'Block', value: 'Block' }
+      ]
+    },
+    unitPrice: {
+    id: 'unitPrice',
+    label: 'Unit Price',
+    fieldType: 'inputDropdown',
+    width: 'half',
+    value: { dropdown: '', input: '1395.00' },
+    mandatory: false,
+    visible: true,
+    editable: true,
+    order: 4,
+    options: [
+      { label: 'QC', value: 'QC' },
+      { label: 'QA', value: 'QA' },
+      { label: 'Test', value: 'Test' }
+    ]
+  },
+    billingQty: {
+      id: 'billingQty',
+      label: 'Billing Qty.',
+      fieldType: 'text',
+      value: '4',
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 5,
+      width: 'half',
+    },
+    tariff: {
+      id: 'tariff',
+      label: 'Tariff',
+      fieldType: 'search',
+      value: 'TAR000750 - Tariff Description',
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 6,
+      placeholder: 'Search tariff...',
+      width: 'full',
+    },
+    tariffType: {
+      id: 'tariffType',
+      label: 'Tariff Type',
+      fieldType: 'text',
+      value: 'Rate Per Block Train',
+      mandatory: false,
+      visible: true,
+      editable: false,
+      order: 7,
+      width: 'full',
+    },
+    billingRemarks: {
+      id: 'billingRemarks',
+      label: 'Remarks',
+      fieldType: 'text',
+      value: '',
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 8,
+      placeholder: 'Enter Remarks',
+      width: 'full',
+    }
+  };
+  
+  const handleStepClick = (step: number) => {
+    setCurrentStep(step);
+  };
   // useEffect(() => {
   //   const resourceGroupArray = jsonStore.getResourceGroup();
   //   console.log('RESOURCE GROUP  JSON data:', resourceGroupArray);
@@ -545,7 +656,11 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
         {/* Left Side - Stepper and Main Content */}
         <div className="flex-1 flex">
           {/* Vertical Stepper */}
-          <VerticalStepper steps={steps} activeStep={1} />
+          <VerticalStepper
+            steps={steps}
+            activeStep={currentStep}
+            onStepClick={handleStepClick}
+          />
           {/*<div className="w-64 p-6 border-r min-h-[500px]">
             <div className="">
               <div className="flex items-start space-x-3 cursor-pointer" onClick={handleFirstStep}>
@@ -649,8 +764,18 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
                     )}
                   </div>
 
-                  <div className="w-2/5 rounded-lg bg-card text-card-foreground col-span-12 border border-gray-200 shadow-sm mb-16">
-                    {billingDetailsVisible && (
+                  <div className="w-2/5 mb-6">
+                    <div className="space-y-6">
+                      <DynamicPanel
+                        panelId="billing-snippets"
+                        panelTitle={billingDetailsTitle}
+                        panelIcon={<Banknote className="w-5 h-5 text-orange-500" />}
+                        panelConfig={snippetPanelConfig}
+                        panelWidth="full"
+                        panelSubTitle={true}
+                      />
+                    </div>
+                    {/* {billingDetailsVisible && (
                       <BillingDetailsPanel
                         panelId="billing-details"
                         panelTitle={billingDetailsTitle}
@@ -663,7 +788,7 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
                         saveUserPanelConfig={saveUserPanelConfig}
                         userId="current-user"
                       />
-                    )}
+                    )} */}
                   </div>
 
                 </div>

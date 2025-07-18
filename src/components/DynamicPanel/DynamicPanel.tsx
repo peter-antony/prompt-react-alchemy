@@ -25,6 +25,7 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
   collapsible = false,
   showPreview = false,
   className = '',
+  panelSubTitle = false,
 }) => {
   const [panelConfig, setPanelConfig] = useState<PanelConfig>(initialPanelConfig);
   const [panelTitle, setPanelTitle] = useState(initialPanelTitle);
@@ -181,12 +182,15 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
       <div className="grid grid-cols-12 gap-4">
         {visibleFields.map(([fieldId, fieldConfig]) => (
           <div key={fieldId} className={`space-y-1 ${getFieldWidthClass(fieldConfig.width)}`}>
-            <label className="text-xs font-medium text-gray-600 block">
-              {fieldConfig.label}
-              {fieldConfig.mandatory && (
-                <span className="text-red-500 ml-1">*</span>
-              )}
-            </label>
+            {fieldConfig.label !== 'Contract Price' && fieldConfig.label !== 'Net Amount' && (
+              <label className="text-xs font-medium text-gray-600 block">
+                {fieldConfig.label}
+                {fieldConfig.mandatory && (
+                  <span className="text-red-500 ml-1">*</span>
+                )}
+              </label>
+            )}
+            
             <FieldRenderer
               config={fieldConfig}
               value={formData[fieldId]}
@@ -269,7 +273,7 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
                     formData={formData}
                     showStatus={showStatusIndicator}
                   /> */}
-                  {showPreview && (
+                  {panelSubTitle && (
                     <span className="text-xs text-blue-600 font-medium">DB000023/42</span>
                   )}
                 </div>
@@ -332,8 +336,8 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
               formData={formData}
               showStatus={showStatusIndicator}
             /> */}
-            {showPreview && (
-              <span className="text-xs text-blue-600 font-medium">DB000023/42</span>
+            {panelSubTitle && (
+              <span className="text-xs bg-blue-50 text-blue-600 font-semibold px-3 py-1 rounded-full">DB000023/42</span>
             )}
           </div>
           <SettingsButton />
