@@ -47,12 +47,6 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
   const [isPlanActualsOpen, setIsPlanActualsOpen] = useState(false);
   const [isPlanActualsVisible, setIsPlanActualsVisible] = useState(false);
 
-  // useEffect(() => {
-  //   // Check localStorage for planActualsSaved flag
-  //   const saved = localStorage.getItem('planActualsSaved');
-  //   setIsPlanActualsVisible(saved === 'true');
-  // }, [currentStep, isPlanActualsOpen]);
-
   const handleProceedToNext = () => {
     setCurrentStep(2);
   };
@@ -84,7 +78,7 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
       )
     );
     // Only keep PascalCase keys for OperationalDetails
-    if(operationalDetailsData ){
+    if (operationalDetailsData) {
       const newOperationalDetails = Object.fromEntries(
         Object.entries({
           ...operationalDetailsData,
@@ -105,6 +99,28 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
       );
       jsonStore.setOperationalDetails(newOperationalDetails);
     }
+    // Only keep PascalCase keys for BillingDetails
+    if (billingDetailsData) {
+      const newBillingDetails = Object.fromEntries(
+        Object.entries({
+          ...billingDetailsData,
+        }).filter(([key]) =>
+          [
+            "DraftBillNo",
+            "ContractPrice",
+            "NetAmount",
+            "BillingType",
+            "UnitPrice",
+            "BillingQty",
+            "Tariff",
+            "TariffType",
+            "Remarks",
+            "InteralOrder"
+          ].includes(key)
+        )
+      );
+      jsonStore.setBillingDetails(newBillingDetails);
+    }
     // Save to store
     jsonStore.setBasicDetails(newBasicDetails);
     // jsonStore.setBillingDetails(newBillingDetails);
@@ -112,27 +128,7 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
     console.log("FULL JSON :: ", fullJson);
     toast.success('Details saved successfully');
   };
-  function onBillingDetailsUpdate() {
-    console.log("billingData = ", billingData)
-    console.log("billingDetailsData = ", billingDetailsData)
-    const oldBillingDetails = jsonStore.getBillingDetails();
-    const newBillingDetails = {
-      ...oldBillingDetails,
-      // DraftBillNo: billingData.DraftBillNo,
-      // ContractPrice: billingData.ContractPrice,
-      // NetAmount: billingData.NetAmount,
-      // BillingType: billingDetailsData.BillingType,
-      UnitPrice: billingData.UnitPrice,
-      BillingQty: billingData.BillingQty,
-      Tariff: billingData.Tariff,
-      TariffType: billingData.TariffType,
-      Remarks: billingData.Remarks,
-      InteralOrder: billingData.InteralOrder,
-    }
-    // console.log("newBillingDetails : ",newBillingDetails)
-    jsonStore.setBillingDetails(newBillingDetails);
-  }
-  // Declare initialBasicDetails before using it in useState
+  
   // Utility to normalize keys from store to config field IDs
   function normalizeBasicDetails(data) {
     return {
@@ -149,9 +145,9 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
         OperationalLocation: data.OperationalLocation,
         DepartPoint: data.DepartPoint,
         ArrivalPoint: data.ArrivalPoint,
-        FromDate:(data.FromDate?parseDDMMYYYY(data.FromDate):"") ,
+        FromDate: (data.FromDate ? parseDDMMYYYY(data.FromDate) : ""),
         FromTime: data.FromTime,
-        ToDate:(data.ToDate?parseDDMMYYYY(data.ToDate):"") ,
+        ToDate: (data.ToDate ? parseDDMMYYYY(data.ToDate) : ""),
         ToTime: data.ToTime,
         Remarks: data.Remarks,
       };
@@ -201,11 +197,6 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
   const [basicDetailsTitle, setBasicDetailsTitle] = useState('Basic Details');
   const [operationalDetailsTitle, setOperationalDetailsTitle] = useState('Operational Details');
   const [billingDetailsTitle, setBillingDetailsTitle] = useState('Billing Details');
-
-  // Panel widths state - updated for 12-column system
-  // const [basicDetailsWidth, setBasicDetailsWidth] = useState<'full' | 'half' | 'third' | 'quarter' | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12>(12);
-  // const [operationalDetailsWidth, setOperationalDetailsWidth] = useState<'full' | 'half' | 'third' | 'quarter' | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12>(6);
-  // const [billingDetailsWidth, setBillingDetailsWidth] = useState<'full' | 'half' | 'third' | 'quarter' | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12>(6);
 
   // Panel visibility state
   const [basicDetailsVisible, setBasicDetailsVisible] = useState(true);
@@ -385,79 +376,113 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
 
   // Billing Details Panel Configuration
   const billingDetailsConfig: PanelConfig = {
-    TotalAmount: {
-      id: 'TotalAmount',
-      label: 'Total Amount',
-      fieldType: 'currency',
-      value: '',
-      mandatory: true,
-      visible: true,
-      editable: true,
-      order: 1
-    },
-    TaxAmount: {
-      id: 'TaxAmount',
-      label: 'Tax Amount',
-      fieldType: 'currency',
-      value: '',
+    ContractPrice: {
+      id: 'ContractPrice',
+      label: 'Contract Price',
+      fieldType: 'card',
+      value: '€ 1200.00',
       mandatory: false,
       visible: true,
       editable: true,
-      order: 2
+      order: 1,
+      width: 'half',
+      color: '#10b981', // Emerald green background
+      fieldColour: '#047857' // Dark emerald text
     },
-    DiscountAmount: {
-      id: 'DiscountAmount',
-      label: 'Discount Amount',
-      fieldType: 'currency',
-      value: '',
+    NetAmount: {
+      id: 'NetAmount',
+      label: 'Net Amount',
+      fieldType: 'card',
+      value: '€ 5580.00',
       mandatory: false,
       visible: true,
       editable: true,
-      order: 3
+      order: 2,
+      width: 'half',
+      color: '#8b5cf6', // Purple background
+      fieldColour: '#6d28d9' // Dark purple text
     },
-    BillingStatus: {
-      id: 'BillingStatus',
-      label: 'Billing Status',
+    BillingType: {
+      id: 'BillingType',
+      label: 'Billing Type',
       fieldType: 'select',
-      value: '',
+      value: 'Wagon',
       mandatory: true,
+      visible: true,
+      editable: true,
+      order: 3,
+      width: 'full',
+      options: [
+        { label: 'Wagon', value: 'Wagon' },
+        { label: 'Container', value: 'Container' },
+        { label: 'Block', value: 'Block' }
+      ]
+    },
+    UnitPrice: {
+      id: 'UnitPrice',
+      label: 'Unit Price',
+      fieldType: 'inputDropdown',
+      width: 'half',
+      value: { dropdown: '', input: '1395.00' },
+      mandatory: false,
       visible: true,
       editable: true,
       order: 4,
       options: [
-        { label: 'Draft', value: 'draft' },
-        { label: 'Pending', value: 'pending' },
-        { label: 'Approved', value: 'approved' },
-        { label: 'Rejected', value: 'rejected' }
+        { label: '€', value: '€' },
+        { label: '$', value: '$' },
+        { label: '£', value: '£' }
       ]
     },
-    PaymentTerms: {
-      id: 'PaymentTerms',
-      label: 'Payment Terms',
-      fieldType: 'select',
-      value: '',
+    BillingQty: {
+      id: 'BillingQty',
+      label: 'Billing Qty.',
+      fieldType: 'text',
+      value: '4',
       mandatory: false,
       visible: true,
       editable: true,
       order: 5,
-      options: [
-        { label: 'Net 30', value: 'net-30' },
-        { label: 'Net 60', value: 'net-60' },
-        { label: 'Due on Receipt', value: 'due-on-receipt' }
-      ]
+      width: 'half',
     },
-    InvoiceDate: {
-      id: 'InvoiceDate',
-      label: 'Invoice Date',
-      fieldType: 'date',
+    Tariff: {
+      id: 'Tariff',
+      label: 'Tariff',
+      fieldType: 'search',
+      value: 'TAR000750 - Tariff Description',
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 6,
+      placeholder: 'Search tariff...',
+      width: 'full',
+    },
+    TariffType: {
+      id: 'TariffType',
+      label: 'Tariff Type',
+      fieldType: 'text',
+      value: 'Rate Per Block Train',
+      mandatory: false,
+      visible: true,
+      editable: false,
+      order: 7,
+      width: 'full',
+    },
+    Remarks: {
+      id: 'Remarks',
+      label: 'Remarks',
+      fieldType: 'text',
       value: '',
       mandatory: false,
       visible: true,
       editable: true,
-      order: 6
+      order: 8,
+      placeholder: 'Enter Remarks',
+      width: 'full',
     }
   };
-  const [billingData, setBillingData] = useState(jsonStore.getBillingDetails() || {})
+
+  // Remove: const [billingData, setBillingData] = useState(jsonStore.getBillingDetails() || {})
 
   const [view, setView] = useState<"grid" | "list">("grid");
 
@@ -535,121 +560,12 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
 
   const [isMoreInfoOpen, setMoreInfoOpen] = useState(false);
 
-  const snippetPanelConfig: PanelConfig = {
-    contractPrice: {
-      id: 'contractPrice',
-      label: 'Contract Price',
-      fieldType: 'card',
-      value: '€ 1200.00',
-      mandatory: false,
-      visible: true,
-      editable: true,
-      order: 1,
-      width: 'half',
-      color: '#10b981', // Emerald green background
-      fieldColour: '#047857' // Dark emerald text
-    },
-    netAmount: {
-      id: 'netAmount',
-      label: 'Net Amount',
-      fieldType: 'card',
-      value: '€ 5580.00',
-      mandatory: false,
-      visible: true,
-      editable: true,
-      order: 2,
-      width: 'half',
-      color: '#8b5cf6', // Purple background
-      fieldColour: '#6d28d9' // Dark purple text
-    },
-    billingType: {
-      id: 'billingType',
-      label: 'Billing Type',
-      fieldType: 'select',
-      value: 'Wagon',
-      mandatory: true,
-      visible: true,
-      editable: true,
-      order: 3,
-      width: 'full',
-      options: [
-        { label: 'Wagon', value: 'Wagon' },
-        { label: 'Container', value: 'Container' },
-        { label: 'Block', value: 'Block' }
-      ]
-    },
-    unitPrice: {
-    id: 'unitPrice',
-    label: 'Unit Price',
-    fieldType: 'inputDropdown',
-    width: 'half',
-    value: { dropdown: '', input: '1395.00' },
-    mandatory: false,
-    visible: true,
-    editable: true,
-    order: 4,
-    options: [
-      { label: 'QC', value: 'QC' },
-      { label: 'QA', value: 'QA' },
-      { label: 'Test', value: 'Test' }
-    ]
-  },
-    billingQty: {
-      id: 'billingQty',
-      label: 'Billing Qty.',
-      fieldType: 'text',
-      value: '4',
-      mandatory: false,
-      visible: true,
-      editable: true,
-      order: 5,
-      width: 'half',
-    },
-    tariff: {
-      id: 'tariff',
-      label: 'Tariff',
-      fieldType: 'search',
-      value: 'TAR000750 - Tariff Description',
-      mandatory: false,
-      visible: true,
-      editable: true,
-      order: 6,
-      placeholder: 'Search tariff...',
-      width: 'full',
-    },
-    tariffType: {
-      id: 'tariffType',
-      label: 'Tariff Type',
-      fieldType: 'text',
-      value: 'Rate Per Block Train',
-      mandatory: false,
-      visible: true,
-      editable: false,
-      order: 7,
-      width: 'full',
-    },
-    billingRemarks: {
-      id: 'billingRemarks',
-      label: 'Remarks',
-      fieldType: 'text',
-      value: '',
-      mandatory: false,
-      visible: true,
-      editable: true,
-      order: 8,
-      placeholder: 'Enter Remarks',
-      width: 'full',
-    }
-  };
-  
+
+
   const handleStepClick = (step: number) => {
     setCurrentStep(step);
   };
-  // useEffect(() => {
-  //   const resourceGroupArray = jsonStore.getResourceGroup();
-  //   console.log('RESOURCE GROUP  JSON data:', resourceGroupArray);
-  //   // You can now use jsonData as needed (e.g., set state, prefill form, etc.)
-  // }, []);
+
   return (
     <div className="">
       <div className="flex h-full">
@@ -770,25 +686,14 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
                         panelId="billing-snippets"
                         panelTitle={billingDetailsTitle}
                         panelIcon={<Banknote className="w-5 h-5 text-orange-500" />}
-                        panelConfig={snippetPanelConfig}
+                        panelConfig={billingDetailsConfig}
+                        initialData={billingDetailsData}
+                        onDataChange={(updatedData) => setBillingDetailsData(prev => ({ ...prev, ...updatedData }))}
                         panelWidth="full"
                         panelSubTitle={true}
                       />
                     </div>
-                    {/* {billingDetailsVisible && (
-                      <BillingDetailsPanel
-                        panelId="billing-details"
-                        panelTitle={billingDetailsTitle}
-                        panelIcon={<Banknote className="w-5 h-5 text-orange-500" />}
-                        panelConfig={billingDetailsConfig}
-                        initialData={billingData}
-                        onDataChange={(updatedData) => setBillingDetailsData(prev => ({ ...prev, ...updatedData }))}
-                        onTitleChange={setBillingDetailsTitle}
-                        getUserPanelConfig={getUserPanelConfig}
-                        saveUserPanelConfig={saveUserPanelConfig}
-                        userId="current-user"
-                      />
-                    )} */}
+
                   </div>
 
                 </div>
