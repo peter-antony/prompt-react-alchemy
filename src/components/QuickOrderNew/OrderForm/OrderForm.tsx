@@ -695,7 +695,7 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
           <div className="mt-0 text-sm text-gray-600"><AmendmentHistory /></div>
         </div>
       </SideDrawer>
-      <SideDrawer isOpen={isLinkedOrdersOpen} onClose={() => setLinkedOrdersOpen(false)} width="90%" title="Linked Orders" isBack={false} >
+      <SideDrawer isOpen={isLinkedOrdersOpen} onClose={() => setLinkedOrdersOpen(false)} width="80%" title="Linked Orders" isBack={false} >
         <div className="">
           <div className="mt-0 text-sm text-gray-600"><LinkedOrders /></div>
         </div>

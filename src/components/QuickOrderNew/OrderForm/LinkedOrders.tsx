@@ -1,9 +1,11 @@
+import React, { useState, useRef, useEffect } from "react";
 import { User, FileText, Calendar, Bookmark, Search, Filter, Camera } from "lucide-react";
+import { FilterDropdown } from "@/components/Common/FilterDropdown";
 
 const orders = [
   {
     type: "C",
-    typeColor: "bg-purple-100 text-purple-600",
+    typeColor: "bg-blue-100 text-blue-600",
     action: "Sell",
     id: "IO/0000000042",
     contract: "CON000000439",
@@ -15,7 +17,7 @@ const orders = [
   },
   {
     type: "S",
-    typeColor: "bg-red-100 text-red-500",
+    typeColor: "bg-rose-100 text-red-800",
     action: "Buy",
     id: "IO/0000000042",
     contract: "CON000000439",
@@ -27,19 +29,7 @@ const orders = [
   },
   {
     type: "S",
-    typeColor: "bg-red-100 text-red-500",
-    action: "Buy",
-    id: "IO/0000000042",
-    contract: "CON000000439",
-    company: "XYZ Manufacturer Pvt. Ltd.",
-    customerNo: "CUS4343200/01",
-    amount: "€ 45595.00",
-    orderNo: "QO0382000/32",
-    date: "12-Mar-2025",
-  },
-  {
-    type: "C",
-    typeColor: "bg-purple-100 text-purple-600",
+    typeColor: "bg-rose-100 text-red-800",
     action: "Buy",
     id: "IO/0000000042",
     contract: "CON000000439",
@@ -51,7 +41,19 @@ const orders = [
   },
   {
     type: "S",
-    typeColor: "bg-purple-100 text-purple-600",
+    typeColor: "bg-rose-100 text-red-800",
+    action: "Buy",
+    id: "IO/0000000042",
+    contract: "CON000000439",
+    company: "XYZ Manufacturer Pvt. Ltd.",
+    customerNo: "CUS4343200/01",
+    amount: "€ 45595.00",
+    orderNo: "QO0382000/32",
+    date: "12-Mar-2025",
+  },
+  {
+    type: "S",
+    typeColor: "bg-blue-100 text-blue-800",
     action: "Sell",
     id: "IO/0000000042",
     contract: "CON000000439",
@@ -64,6 +66,49 @@ const orders = [
 ];
 
 export default function LinkedOrders() {
+
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filters, setFilters] = useState({ supplier: true, customer: true });
+  const filterBtnRef = useRef<HTMLButtonElement>(null);
+
+  // Example counts
+  const supplierCount = 5;
+  const customerCount = 1;
+
+  const filterOptions = [
+    {
+      key: "supplier",
+      checked: filters.supplier, // boolean
+      count: supplierCount,      // number
+      name: "Supplier",          // string
+      button: "Apply",           // string or could be a function/action
+      // color: '#ffffff', // Emerald green background
+      className: "px-2 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-red-800" // Dark emerald text
+    },
+    {
+      key: "customer",
+      checked: filters.customer,
+      count: customerCount,
+      name: "Customer",
+      button: "Apply",
+      // color: '#10b981', // Emerald green background
+      className: "px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800" // Dark emerald text
+    },
+    // Add more filters as needed
+  ];
+
+  const handleFilterChange = (key, checked) => {
+    setFilters(prev => ({ ...prev, [key]: checked }));
+  };
+
+  function handleApply(): void {
+    throw new Error("Function not implemented.");
+  }
+
+  function handleReset(): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className="bg-[#f8fafd] min-h-screen p-4">
       {/* Header */}
@@ -82,9 +127,24 @@ export default function LinkedOrders() {
             />
             <Search className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-600" />
           </div>
-          <button className="rounded-lg border border-gray-300 p-2 hover:bg-gray-100">
-            <Filter className="w-5 h-5 text-gray-500" />
-          </button>
+          <div className="relative">
+            <button
+              ref={filterBtnRef}
+              className="rounded-lg border border-gray-300 p-2 hover:bg-gray-100"
+              onClick={() => setFilterOpen((open) => !open)}
+            >
+              <Filter className="w-5 h-5 text-gray-500" />
+            </button>
+            <FilterDropdown
+              open={filterOpen}
+              anchorRef={filterBtnRef}
+              onClose={() => setFilterOpen(false)}
+              filterOptions={filterOptions}
+              onFilterChange={handleFilterChange}
+              onReset={handleReset}
+              onApply={handleApply}
+            />
+          </div>
         </div>
       </div>
       {/* Cards Grid */}
