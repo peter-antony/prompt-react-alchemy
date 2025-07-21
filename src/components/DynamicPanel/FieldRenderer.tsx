@@ -127,7 +127,7 @@ useEffect(()=>{
             <Calendar
               mode="single"
               selected={value}
-              onSelect={setOrderDate}
+              onSelect={onChange}
               initialFocus
               className="pointer-events-auto"
             />
