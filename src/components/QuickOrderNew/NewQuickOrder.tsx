@@ -41,7 +41,7 @@ const NewCreateQuickOrder = ({ isEditQuickOrder }: NewCreateQuickOrderProps) => 
   };
 
   return (
-    <div className="flex gap-6">
+    <div className="flex gap-6 mb-11">
         {/* Left Column - Order Form */}
         <div className="lg:col-span-1 w-2/6">
         <OrderForm

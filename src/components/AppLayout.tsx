@@ -29,7 +29,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             {children}
           </main>
 
-          <div className="">
+          <div className="relative">
             <AppFooter />
           </div>
         </div>

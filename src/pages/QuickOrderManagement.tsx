@@ -755,7 +755,7 @@ const QuickOrderManagement = () => {
               <PlanAndActualDetails onCloseDrawer={() => setIsDrawerOpen(false)} />
             </SideDrawer>
             {/* Footer with action buttons matching the screenshot style */}
-            <div className="flex items-center justify-between p-4 border-t bg-gray-50/50">
+            {/* <div className="flex items-center justify-between p-4 border-t bg-gray-50/50">
               <div className="flex items-center space-x-3">
                 <Button 
                   variant="outline" 
@@ -783,7 +783,7 @@ const QuickOrderManagement = () => {
               >
                 Cancel
               </Button>
-            </div>
+            </div> */}
           </div>
 
           

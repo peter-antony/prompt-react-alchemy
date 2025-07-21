@@ -472,6 +472,143 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
 
   };
 
+  const moreInfoPanelConfig: PanelConfig = {
+    PrimaryDocTypeandNo: {
+      id: 'PrimaryDocType',
+      label: 'Primary Doc Type and No.',
+      fieldType: 'inputDropdown',
+      width: 'full',
+      value: { dropdown: '', input: '' },
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 1,
+      options: [
+        { label: 'IO-Hire/Rent', value: 'IO-Hire/Rent' },
+        { label: 'IO-Buy/Rent', value: 'IO-Buy/Rent' },
+      ]
+    },
+    SecondaryDocTypeandNo: {
+      id: 'SecondaryDocType',
+      label: 'Secondary Doc Type and No.',
+      fieldType: 'inputDropdown',
+      width: 'full',
+      value: { dropdown: '', input: '' },
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 2,
+      options: [
+        { label: 'IO-Hire/Rent', value: 'IO-Hire/Rent' },
+        { label: 'IO-Buy/Rent', value: 'IO-Buy/Rent' },
+      ]
+    },
+    PrimaryDocDate: {
+      id: 'PrimaryDocDate',
+      label: 'Primary Doc Date',
+      fieldType: 'date',
+      width: 'half',
+      value: '',
+      mandatory: true,
+      visible: true,
+      editable: true,
+      order: 3,
+    },
+    SecondaryDocDate: {
+      id: 'SecondaryDocDate',
+      label: 'Secondary Doc Date',
+      fieldType: 'date',
+      width: 'half',
+      value: '',
+      mandatory: true,
+      visible: true,
+      editable: true,
+      order: 4,
+    },
+    WBS: {
+      id: 'WBS',
+      label: 'WBS',
+      fieldType: 'text',
+      width: 'full',
+      value: '',
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 5,
+      placeholder: ''
+    },
+    QCUserdefined2: {
+      id: 'QCUserdefined2',
+      label: 'QC Userdefined 2',
+      fieldType: 'inputDropdown',
+      width: 'half',
+      value: { dropdown: '', input: '' },
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 6,
+      options: [
+        { label: 'QC', value: 'QC' },
+        { label: 'QA', value: 'QA' },
+      ]
+    },
+    QCUserdefined3: {
+      id: 'QCUserdefined2',
+      label: 'QC Userdefined 2',
+      fieldType: 'inputDropdown',
+      width: 'half',
+      value: { dropdown: '', input: '' },
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 7,
+      options: [
+        { label: 'QC', value: 'QC' },
+        { label: 'QA', value: 'QA' },
+      ]
+    },
+    Remarks2: {
+      id: 'Remarks2',
+      label: 'Remarks 2',
+      fieldType: 'text',
+      value: '',
+      mandatory: false,
+      visible: true,
+      editable: false,
+      order: 8,
+      width: 'full',
+    },
+    Remarks3: {
+      id: 'Remarks3',
+      label: 'Remarks 3',
+      fieldType: 'text',
+      value: '',
+      mandatory: false,
+      visible: true,
+      editable: true,
+      order: 9,
+      placeholder: 'Enter Remarks',
+      width: 'full',
+    }
+  };
+  const [moreInfoTitle, setmoreInfoTitle] = useState('More Info');
+  const [moreInfoData, setmoreInfoData] = useState();
+  const onSave = () => {
+    console.log("FORM DATA : ", formData);
+  }
+  const handleMoreInfoDataChange = (updatedData: any) => {
+    console.log("Updated form data:", updatedData.OrderType);
+    // const OrderFormDetailsConfig = getOrderFormDetailsConfig(OrderType);
+    // setFormData(prev => ({
+    //   ...prev,
+    //   ...updatedData,
+    // }));
+    // // If orderType is changed, update orderType state as well
+    // if (updatedData.OrderType) setOrderType(updatedData.OrderType);
+    // console.log("Updated form data:", formData);
+
+  };
+
   return (
     <div className="bg-white rounded-lg border border-gray-200">
       {/* <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
@@ -487,7 +624,7 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
           </>
         )}
       </h2> */}
-       <DynamicPanel
+      <DynamicPanel
         key={OrderType} // <-- This will force remount on orderType change
         panelId="order-details"
         panelTitle="Order Details"
@@ -527,7 +664,25 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
 
       <SideDrawer isOpen={isMoreInfoOpen} onClose={() => setMoreInfoOpen(false)} width="35%" title="More Info" isBack={false}>
         <div className="">
-          <div className="mt-0 text-sm text-gray-600"><MoreInfo /></div>
+          <div className="mt-0 text-sm text-gray-600">
+            <DynamicPanel
+              panelId="More-Info"
+              panelTitle={moreInfoTitle}
+              panelConfig={moreInfoPanelConfig}
+              initialData={moreInfoData}
+              onDataChange={handleMoreInfoDataChange}
+              onTitleChange={setmoreInfoTitle}
+              getUserPanelConfig={getUserPanelConfig}
+              saveUserPanelConfig={saveUserPanelConfig}
+              userId="current-user"
+            />
+            {/* <MoreInfo /> */}
+          </div>
+          <div className="flex bg-white justify-end w-full px-4 border-t border-gray-300">
+            <button type="button" className="bg-blue-600 my-2 text-white text-sm px-6 py-2 rounded font-medium" onClick={onSave}>
+              Save Details
+            </button>
+          </div>
         </div>
       </SideDrawer>
       <SideDrawer isOpen={isAttachmentsOpen} onClose={() => setAttachmentsOpen(false)} width="80%" title="Attachments" isBack={false} badgeContent="QO/00001/2025" isBadgeRequired={true}>

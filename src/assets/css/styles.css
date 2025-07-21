@@ -151,7 +151,9 @@ body{
 .my-custom-orderform-panel {
   border-width: 0px !important;
 }
-
+.w-96{
+  width: 96%;
+}
 
 
 

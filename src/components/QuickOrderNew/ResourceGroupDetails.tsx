@@ -732,7 +732,7 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
         </div>
       </div>
       {/* Action Buttons */}
-      <div className="mt-2 w-full z-50 bg-white border-t border-gray-300 flex justify-end space-x-3 absolute bottom-0 px-8">
+      <div className="mt-2 w-full z-50 bg-white border-t border-gray-300 flex justify-end space-x-3 absolute bottom-0 px-6">
         {currentStep === 1 && (
           <Button variant="outline" onClick={handleProceedToNext} className="h-8 my-2 rounded border-blue-600 text-blue-600 hover:bg-blue-50">
             Proceed to Next
