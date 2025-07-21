@@ -44,8 +44,13 @@ import { Label } from "../ui/label";
 import { SimpleDropDown } from "../Common/SimpleDropDown";
 import { SideDrawer } from "../Common/SideDrawer";
 import { BulkUpdatePlanActuals } from "./BulkUpdatePlanActuals";
-
-export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
+import jsonStore from '@/stores/jsonStore';
+import { useEffect } from 'react';
+interface PlanAndActualsDetailsProps {
+  isEditQuickOrder?: boolean
+  onCloseDrawer()
+}
+export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAndActualsDetailsProps) => {
   let currentStep = 1;
   const [planType, setPlanType] = useState("plan");
   const [isOpen, setIsOpen] = useState(false);
@@ -69,14 +74,6 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
   );
   const [billingDetailsTitle, setBillingDetailsTitle] =
     useState("Billing Details");
-  const [wagonDetailsData, setWagonDetailsData] = useState({});
-  const [containerDetailsData, setContainerDetailsData] = useState({});
-  const [productDetailsData, setProductDetailsData] = useState({});
-  const [thuDetailsData, setTHUDetailsData] = useState({});
-  const [journeyDetailsData, setJourneyDetailsData] = useState({});
-  const [otherDetailsData, setOtherDetailsData] = useState({});
-  const [operationalDetailsData, setOperationalDetailsData] = useState({});
-  const [billingDetailsData, setBillingDetailsData] = useState({});
   const [isBulkUpdateOpen, setIsBulkUpdateOpen] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   // Mock functions for user config management
@@ -101,7 +98,60 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
   };
 
   const handleSavePlanActuals = () => {
-    localStorage.setItem('planActualsSaved', 'true'); // Set flag for ResourceGroupDetails
+    localStorage.setItem('planActualsSaved', 'true');
+    console.log("planType = ",planType)
+     // Check button Type Plan or Actuals
+    if(planType=="plan"){
+      // jsonStore.setPlanDetails({
+      //   PlanLineUniqueID: "R01",
+      //   PlanSeqNo: "value",
+      //   ModeFlag: "Insert",
+      //   WagonDetails: wagonDetailsData,
+      //   ContainerDetails: containerDetailsData,
+      //   ProductDetails: productDetailsData,
+      //   THUDetails: thuDetailsData,
+      //   JourneyAndSchedulingDetails: journeyDetailsData,
+      //   OtherDetails: otherDetailsData,
+      // });
+      const planObj={
+        PlanLineUniqueID: "R02",
+        PlanSeqNo: "SEQPL01",
+        ModeFlag: "Insert",
+        WagonDetails: wagonDetailsData,
+        ContainerDetails: containerDetailsData,
+        ProductDetails: productDetailsData,
+        THUDetails: thuDetailsData,
+        JourneyAndSchedulingDetails: journeyDetailsData,
+        OtherDetails: otherDetailsData,
+      }
+      jsonStore.pushPlanDetails(planObj);
+    }else{
+      // jsonStore.setActualDetails({
+      //   PlanLineUniqueID: "R01",
+      //   PlanSeqNo: "value",
+      //   ModeFlag: "Insert",
+      //   WagonDetails: wagonDetailsData,
+      //   ContainerDetails: containerDetailsData,
+      //   ProductDetails: productDetailsData,
+      //   THUDetails: thuDetailsData,
+      //   JourneyAndSchedulingDetails: journeyDetailsData,
+      //   OtherDetails: otherDetailsData,
+      // });
+      const actualObj={
+        ActualLineUniqueID: "R01",
+        ActualSeqNo: "SEQAC01",
+        ModeFlag: "Insert",
+        WagonDetails: wagonDetailsData,
+        ContainerDetails: containerDetailsData,
+        ProductDetails: productDetailsData,
+        THUDetails: thuDetailsData,
+        JourneyAndSchedulingDetails: journeyDetailsData,
+        OtherDetails: otherDetailsData,
+      }
+      jsonStore.pushPlanDetails(actualObj);
+    }
+    const QUICORD = jsonStore.getQuickOrder();
+    console.log("SAVE--AFTER  QUICK ORDER DETAILS :: ",QUICORD)
     onCloseDrawer();
   };
   const [billingData, setBillingData] = useState({
@@ -118,8 +168,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
 
   // Basic Details Panel Configuration
   const wagonDetailsConfig: PanelConfig = {
-    wagonType: {
-      id: "wagonType",
+    WagonType: {
+      id: "WagonType",
       label: "Wagon Type",
       fieldType: "select",
       width: 'third',
@@ -131,8 +181,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       order: 1,
       options: [{ label: "Other", value: "other" }],
     },
-    wagonID: {
-      id: "wagonID",
+    WagonID: {
+      id: "WagonID",
       label: "Wagon ID",
       fieldType: "text",
       width: 'third',
@@ -143,87 +193,71 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       placeholder: "Enter ID",
       order: 2,
     },
-    wagonQuantity: {
-      id: "wagonQuantity",
+    wagonQWagonQuantityuantity: {
+      id: "WagonQuantity",
       label: "Wagon Quantity",
-      fieldType: "combo",
+      fieldType: "inputDropdown",
       width: 'third',
-      value: {
-        select: "truck-4.2",
-        input: 1,
-      },
-      inputType: "number",
+      value: { dropdown: 'EA', input: '5' },
       mandatory: false,
       visible: true,
       editable: true,
       order: 3,
       options: [
-        { label: "Vehicle", value: "vehicle" },
-        { label: "Equipment", value: "equipment" },
+        { label: "EA", value: "EA" },
+        { label: "EU", value: "EU" },
       ],
     },
-    wagonTareWeight: {
-      id: "wagonWeight",
+    WagonTareWeight: {
+      id: "WagonTareWeight",
       label: "Wagon Tare Weight",
-      fieldType: "combo",
+      fieldType: "inputDropdown",
       width: 'third',
-      editable: true,
       placeholder: "Enter value",
-      inputType: "number",
+      value: { dropdown: 'TON', input: '13' },
       mandatory: false,
       visible: true,
-      value: {
-        select: "truck-4.2",
-        input: "",
-      },
+      editable: true,
       order: 4,
       options: [
-        { label: "Truck 4.2", value: "truck-4.2" },
-        { label: "Truck 4.5", value: "truck-4.5" },
-        { label: "Truck 5.2", value: "truck-5.2" },
-      ],
+        { label: "TON", value: "TON" },
+        { label: "KG", value: "KG" },
+        { label: "ST", value: "ST" },
+      ]
     },
-    wagonGrossWeight: {
-      id: "wagonGrossWeight",
+    WagonGrossWeight: {
+      id: "WagonGrossWeight",
       label: "Wagon Gross Weight",
-      fieldType: "combo",
+      fieldType: 'inputDropdown',
       width: 'third',
-      value: "",
-      inputType: "number",
       mandatory: false,
       visible: true,
       editable: true,
       order: 5,
+      value: { dropdown: 'TON', input: '10' },
       options: [
-        {
-          label: "Block Train Conventional",
-          value: "Block Train Conventional",
-        },
-        { label: "Block Train Convention", value: "Block Train Convention" },
-      ],
+        { label: "TON", value: "TON" },
+        { label: "KG", value: "KG" },
+        { label: "ST", value: "ST" },
+      ]
     },
-    wagonLength: {
-      id: "wagonLength",
+    WagonLength: {
+      id: "WagonLength",
       label: "Wagon Length",
-      fieldType: "combo",
+      fieldType: "inputDropdown",
       width: 'third',
-      value: {
-        select: "",
-        input: "",
-      },
-      inputType: "number",
       mandatory: false,
       visible: true,
       editable: true,
       order: 6,
+      value: { dropdown: 'Meter', input: '25' },
       options: [
-        { label: "Repair", value: "repair" },
-        { label: "Maintenance", value: "maintenance" },
-        { label: "Other", value: "other" },
-      ],
+        { label: "M", value: "Meter" },
+        { label: "Feet", value: "Feet" },
+      ]
     },
-    wagonSequence: {
-      id: "wagonSequence",
+    WagonSequence: {
+      id: "WagonSequence",
       label: "Wagon Sequence",
       fieldType: "text",
       width: 'third',
@@ -238,8 +272,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
 
   // Container Details Panel Configuration
   const containerDetailsConfig: PanelConfig = {
-    containerType: {
-      id: "containerType",
+    ContainerType: {
+      id: "ContainerType",
       label: "Container Type",
       fieldType: "select",
       width: 'third',
@@ -251,8 +285,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       order: 1,
       options: [{ label: "Other", value: "other" }],
     },
-    containerID: {
-      id: "containerID",
+    ContainerID: {
+      id: "ContainerID",
       label: "Container ID",
       fieldType: "text",
       width: 'third',
@@ -263,72 +297,59 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       placeholder: "Enter ID",
       order: 2,
     },
-    containerQuantity: {
-      id: "containerQuantity",
+    ContainerQuantity: {
+      id: "ContainerQuantity",
       label: "Container Quantity",
-      fieldType: "combo",
+      fieldType: "inputDropdown",
       width: 'third',
-      value: {
-        select: "",
-        input: "",
-      },
-      inputType: "number",
       mandatory: false,
       visible: true,
       editable: true,
       order: 3,
+      value: { dropdown: "EA", input: "EA" },
       options: [
-        { label: "Vehicle", value: "vehicle" },
-        { label: "Equipment", value: "equipment" },
+        { label: "EA", value: "EA" },
+        { label: "EU", value: "EU" },
       ],
     },
-    containerTareWeight: {
-      id: "containerTareWeight",
+    ContainerTareWeight: {
+      id: "ContainerTareWeight",
       label: "Container Tare Weight",
-      fieldType: "combo",
+      fieldType: "inputDropdown",
       width: 'third',
-      value: {
-        select: "",
-        input: "",
-      },
-      inputType: "number",
       mandatory: false,
       visible: true,
       editable: true,
       order: 4,
+      value: { dropdown: "TON", input: "TON" },
       options: [
-        { label: "Truck 4.2", value: "truck-4.2" },
-        { label: "Truck 4.5", value: "truck-4.5" },
-        { label: "Truck 5.2", value: "truck-5.2" },
-      ],
+        { label: "TON", value: "TON" },
+        { label: "KG", value: "KG" },
+        { label: "ST", value: "ST" },
+      ]
     },
-    containerLoadWeight: {
-      id: "containerLoadWeight",
+    ContainerLoadWeight: {
+      id: "ContainerLoadWeight",
       label: "Container Load Weight",
-      fieldType: "combo",
+      fieldType: "inputDropdown",
       width: 'third',
-      value: {
-        select: "",
-        input: "",
-      },
+      value: { dropdown: "TON", input: "TON" },
       inputType: "number",
       mandatory: false,
       visible: true,
       editable: true,
       order: 5,
       options: [
-        {
-          label: "Block Train Conventional",
-          value: "Block Train Conventional",
-        },
-        { label: "Block Train Convention", value: "Block Train Convention" },
-      ],
+        { label: "TON", value: "TON" },
+        { label: "KG", value: "KG" },
+        { label: "ST", value: "ST" },
+      ]
     },
   };
   // Product Details Panel Configuration
   const productDetailsConfig: PanelConfig = {
-    nhm: {
-      id: "nhm",
+    NHM: {
+      id: "NHM",
       label: "NHM",
       fieldType: "select",
       width: 'third',
@@ -340,8 +361,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       order: 1,
       options: [{ label: "NHM", value: "NHM" }],
     },
-    productID: {
-      id: "productID",
+    ProductID: {
+      id: "ProductID",
       label: "Product ID",
       fieldType: "text",
       width: 'third',
@@ -352,27 +373,23 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       placeholder: "Wheat Muslin",
       order: 2,
     },
-    productQuantity: {
-      id: "productQuantity",
+    ProductQuantity: {
+      id: "ProductQuantity",
       label: "Product Quantity",
-      fieldType: "combo",
+      fieldType: "inputDropdown",
       width: 'third',
-      value: {
-        select: "",
-        input: "",
-      },
-      inputType: "number",
       mandatory: false,
       visible: true,
       editable: true,
       order: 3,
+      value: { dropdown: "EA", input: "EA" },
       options: [
-        { label: "Vehicle", value: "vehicle" },
-        { label: "Equipment", value: "equipment" },
+        { label: "EA", value: "EA" },
+        { label: "EU", value: "EU" },
       ],
     },
-    classOfStores: {
-      id: "classOfStores",
+    ClassofStores: {
+      id: "ClassofStores",
       label: "Container Tare Weight",
       fieldType: "select",
       width: 'third',
@@ -388,8 +405,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
         { label: "Truck 5.2", value: "truck-5.2" },
       ],
     },
-    unCode: {
-      id: "unCode",
+    UNCode: {
+      id: "UNCode",
       label: "UN Code",
       fieldType: "select",
       width: 'third',
@@ -403,8 +420,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
         { label: "Block Train Convention", value: "Block Train Convention" },
       ],
     },
-    dgClass: {
-      id: "dgClass",
+    DGClass: {
+      id: "DGClass",
       label: "DG Class",
       fieldType: "select",
       width: 'third',
@@ -421,8 +438,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
   };
   // THU Details Panel Configuration
   const thuDetailsConfig: PanelConfig = {
-    thuID: {
-      id: "thuID",
+    THUID: {
+      id: "THUID",
       label: "THU ID",
       fieldType: "select",
       width: 'third',
@@ -434,8 +451,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       order: 1,
       options: [{ label: "THU", value: "THU" }],
     },
-    thuSerialNo: {
-      id: "thuSerialNo",
+    THUSerialNo: {
+      id: "THUSerialNo",
       label: "THU Serial No.",
       fieldType: "select",
       width: 'third',
@@ -446,49 +463,44 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       placeholder: "Select THU Serial No.",
       order: 2,
     },
-    thuQuantity: {
-      id: "thuQuantity",
+    THUQuantity: {
+      id: "THUQuantity",
       label: "THU Quantity",
-      fieldType: "combo",
+      fieldType: "inputDropdown",
       width: 'third',
-      value: {
-        select: "",
-        input: "",
-      },
-      inputType: "number",
       mandatory: false,
       visible: true,
       editable: true,
       order: 3,
+      value: { dropdown: "EA", input: "EA" },
       options: [
-        { label: "Vehicle", value: "vehicle" },
-        { label: "Equipment", value: "equipment" },
+        { label: "EA", value: "EA" },
+        { label: "EU", value: "EU" },
       ],
     },
-    thuWeight: {
-      id: "thuWeight",
+    THUWeight: {
+      id: "THUWeight",
       label: "THU Weight",
-      fieldType: "combo",
+      fieldType: "inputDropdown",
       width: 'third',
-      value: {
-        select: "",
-        input: "",
-      },
       inputType: "number",
       mandatory: false,
       visible: true,
       editable: true,
       order: 5,
       placeholder: "Select Class",
+      value: { dropdown: "TON", input: "TON" },
       options: [
-        { label: "Block Train Convention", value: "Block Train Convention" },
-      ],
+        { label: "TON", value: "TON" },
+        { label: "KG", value: "KG" },
+        { label: "ST", value: "ST" },
+      ]
     },
   };
   // journey & scheduling Details Panel Configuration
   const journeyDetailsConfig: PanelConfig = {
-    departure: {
-      id: "departure",
+    Departure: {
+      id: "Departure",
       label: "Departure",
       fieldType: "select",
       width: 'third',
@@ -500,8 +512,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       order: 1,
       options: [{ label: "Departure", value: "Departure" }],
     },
-    arrival: {
-      id: "arrival",
+    Arrival: {
+      id: "Arrival",
       label: "Arrival",
       fieldType: "select",
       width: 'third',
@@ -513,8 +525,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       order: 2,
       options: [{ label: "Arrival", value: "Arrival" }],
     },
-    activityLocation: {
-      id: "activityLocation",
+    ActivityLocation: {
+      id: "ActivityLocation",
       label: "Activity Location",
       fieldType: "search",
       width: 'third',
@@ -525,8 +537,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       order: 3,
       placeholder: "Search Location",
     },
-    activity: {
-      id: "activity",
+    Activity: {
+      id: "Activity",
       label: "Activity",
       fieldType: "select",
       width: 'third',
@@ -538,8 +550,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       placeholder: "Select Activity",
       options: [{ label: "Loading", value: "Loading" }],
     },
-    plannedDateAndTime: {
-      id: "plannedDateAndTime",
+    PlannedDateTime: {
+      id: "PlannedDateTime",
       label: "Planned Date and Time",
       fieldType: "date",
       width: 'third',
@@ -550,8 +562,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       order: 6,
       placeholder: "10-Mar-2025",
     },
-    revisedDateAndTime: {
-      id: "revisedDateAndTime",
+    RevPlannedDateTime: {
+      id: "RevPlannedDateTime",
       label: "Rev. Planned Date and Time",
       fieldType: "date",
       width: 'third',
@@ -562,8 +574,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       order: 7,
       placeholder: "10-Mar-2025",
     },
-    trainNo: {
-      id: "trainNo",
+    TrainNo: {
+      id: "TrainNo",
       label: "Train No.",
       fieldType: "text",
       width: 'third',
@@ -574,8 +586,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       order: 8,
       placeholder: "Enter Train No.",
     },
-    loadType: {
-      id: "loadType",
+    LoadType: {
+      id: "LoadType",
       label: "Load Type",
       fieldType: "radio",
       width: 'third',
@@ -588,8 +600,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
   };
   // other Details Panel Configuration
   const otherDetailsConfig: PanelConfig = {
-    fromDate: {
-      id: "fromDate",
+    FromDate: {
+      id: "FromDate",
       label: "From Date",
       fieldType: "date",
       width: 'third',
@@ -601,8 +613,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       order: 1,
       options: [{ label: "Departure", value: "Departure" }],
     },
-    fromTime: {
-      id: "fromTime",
+    FromTime: {
+      id: "FromTime",
       label: "From Time",
       fieldType: "time",
       width: 'third',
@@ -613,8 +625,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       placeholder: "Select From Time",
       order: 2,
     },
-    toDate: {
-      id: "toDate",
+    ToDate: {
+      id: "ToDate",
       label: "To Date",
       fieldType: "date",
       width: 'third',
@@ -625,8 +637,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       order: 3,
       placeholder: "Select To Date",
     },
-    toTime: {
-      id: "toTime",
+    ToTime: {
+      id: "ToTime",
       label: "To Time",
       fieldType: "time",
       width: 'third',
@@ -637,59 +649,61 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       placeholder: "Select To Time",
       order: 4,
     },
-    qcUserdefined1: {
-      id: "qcUserdefined1",
+    QCUserDefined1: {
+      id: "QCUserDefined1",
       label: "QC Userdefined 1",
-      fieldType: "combo",
+      fieldType: "inputDropdown",
       width: 'third',
-      value: {
-        select: "",
-        input: "",
-      },
-      inputType: "number",
+      value: { dropdown: '', input: '' },
       mandatory: false,
       visible: true,
       editable: true,
       order: 5,
       placeholder: "Select QC",
-      options: [{ label: "Loading", value: "Loading" }],
+
+      options: [
+        { label: 'QC', value: 'QC' },
+        { label: 'QA', value: 'QA' },
+        { label: 'Test', value: 'Test' }
+      ]
     },
-    qcUserdefined2: {
-      id: "qcUserdefined2",
+    QCUserDefined2: {
+      id: "QCUserDefined2",
       label: "QC Userdefined 2",
-      fieldType: "combo",
+      fieldType: "inputDropdown",
       width: 'third',
-      value: {
-        select: "",
-        input: "",
-      },
-      inputType: "number",
       mandatory: false,
       visible: true,
       editable: true,
       order: 6,
       placeholder: "Select QC",
-      options: [{ label: "Loading", value: "Loading" }],
+      value: { dropdown: '', input: '' },
+      options: [
+        { label: 'QC', value: 'QC' },
+        { label: 'QA', value: 'QA' },
+        { label: 'Test', value: 'Test' }
+      ]
     },
-    qcUserdefined3: {
-      id: "qcUserdefined3",
+    QCUserDefined3: {
+      id: "QCUserDefined3",
       label: "QC Userdefined 3",
-      fieldType: "combo",
+      fieldType: "inputDropdown",
       width: 'third',
-      value: {
-        select: "",
-        input: "",
-      },
       inputType: "number",
       mandatory: false,
       visible: true,
       editable: true,
       order: 7,
       placeholder: "Select QC",
-      options: [{ label: "Loading", value: "Loading" }],
+      value: { dropdown: '', input: '' },
+      options: [
+        { label: 'QC', value: 'QC' },
+        { label: 'QA', value: 'QA' },
+        { label: 'Test', value: 'Test' }
+      ]
     },
-    remarks1: {
-      id: "remarks1",
+    Remarks1: {
+      id: "Remarks1",
       label: "Remarks 1",
       fieldType: "text",
       width: 'third',
@@ -700,8 +714,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       order: 8,
       placeholder: "Enter Remarks",
     },
-    remarks2: {
-      id: "remarks2",
+    Remarks2: {
+      id: "Remarks2",
       label: "Remarks 2",
       fieldType: "text",
       width: 'third',
@@ -712,8 +726,8 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
       order: 9,
       placeholder: "Enter Remarks",
     },
-    remarks3: {
-      id: "remarks3",
+    Remarks3: {
+      id: "Remarks3",
       label: "Remarks 3",
       fieldType: "text",
       width: 'third',
@@ -745,12 +759,125 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
     console.log(`Field: ${field}, Value: ${value}`);
   };
 
+  // Replace the static mappedPlanActualItems array with the merged array from jsonStore
   const mappedPlanActualItems = [
-    { id: "WAG00000001", desc: "Habbins", price: 1395, currency: "€" },
-    { id: "WAG00000002", desc: "Zaccs", price: 1395, currency: "€" },
-    { id: "WAG00000003", desc: "A Type Wagon", price: 1395, currency: "€" },
-    // { id: "WAG00000004", desc: "Closed Wagon", price: 1395, currency: "€" },
+    ...jsonStore.getAllPlanDetails(),
+    ...jsonStore.getAllActualDetails()
   ];
+
+  // Normalization functions for each config
+  function normalizeWagonDetails(data) {
+    return {
+      WagonType: data.WagonType || '',
+      WagonID: data.WagonID || '',
+      WagonQuantity: data.WagonQuantity || { dropdown: '', input: '' },
+      WagonTareWeight: data.WagonTareWeight || { dropdown: '', input: '' },
+      WagonGrossWeight: data.WagonGrossWeight || { dropdown: '', input: '' },
+      WagonLength: data.WagonLength || { dropdown: '', input: '' },
+      WagonSequence: data.WagonSequence || '',
+    };
+  }
+  function normalizeContainerDetails(data) {
+    return {
+      ContainerType: data.ContainerType || '',
+      ContainerID: data.ContainerID || '',
+      ContainerQuantity: data.ContainerQuantity || { dropdown: '', input: '' },
+      ContainerTareWeight: data.ContainerTareWeight || { dropdown: '', input: '' },
+      ContainerLoadWeight: data.ContainerLoadWeight || { dropdown: '', input: '' },
+    };
+  }
+  function normalizeProductDetails(data) {
+    return {
+      NHM: data.NHM || '',
+      ProductID: data.ProductID || '',
+      ProductQuantity: data.ProductQuantity || { dropdown: '', input: '' },
+      ClassofStores: data.ClassofStores || '',
+      UNCode: data.UNCode || '',
+      DGClass: data.DGClass || '',
+    };
+  }
+  function normalizeTHUDetails(data) {
+    return {
+      THUID: data.THUID || '',
+      THUSerialNo: data.THUSerialNo || '',
+      THUQuantity: data.THUQuantity || { dropdown: '', input: '' },
+      THUWeight: data.THUWeight || { dropdown: '', input: '' },
+    };
+  }
+  function normalizeJourneyDetails(data) {
+    return {
+      Departure: data.Departure || '',
+      Arrival: data.Arrival || '',
+      ActivityLocation: data.ActivityLocation || '',
+      Activity: data.Activity || '',
+      PlannedDateTime: data.PlannedDateTime || '',
+      RevPlannedDateTime: data.RevPlannedDateTime || '',
+      TrainNo: data.TrainNo || '',
+      LoadType: data.LoadType || '',
+    };
+  }
+  function normalizeOtherDetails(data) {
+    return {
+      FromDate: data.FromDate || '',
+      FromTime: data.FromTime || '',
+      ToDate: data.ToDate || '',
+      ToTime: data.ToTime || '',
+      QCUserDefined1: data.QCUserDefined1 || { dropdown: '', input: '' },
+      QCUserDefined2: data.QCUserDefined2 || { dropdown: '', input: '' },
+      QCUserDefined3: data.QCUserDefined3 || { dropdown: '', input: '' },
+      Remarks1: data.Remarks1 || '',
+      Remarks2: data.Remarks2 || '',
+      Remarks3: data.Remarks3 || '',
+    };
+  }
+
+  // Initial state setup
+  const getInitialWagonDetails = () =>
+    isEditQuickOrder ? normalizeWagonDetails(jsonStore.getPlanDetails()?.WagonDetails || {}) : {};
+  const getInitialContainerDetails = () =>
+    isEditQuickOrder ? normalizeContainerDetails(jsonStore.getPlanDetails()?.ContainerDetails || {}) : {};
+  const getInitialProductDetails = () =>
+    isEditQuickOrder ? normalizeProductDetails(jsonStore.getPlanDetails()?.ProductDetails || {}) : {};
+  const getInitialTHUDetails = () =>
+    isEditQuickOrder ? normalizeTHUDetails(jsonStore.getPlanDetails()?.THUDetails || {}) : {};
+  const getInitialJourneyDetails = () =>
+    isEditQuickOrder ? normalizeJourneyDetails(jsonStore.getPlanDetails()?.JourneyAndSchedulingDetails || {}) : {};
+  const getInitialOtherDetails = () =>
+    isEditQuickOrder ? normalizeOtherDetails(jsonStore.getPlanDetails()?.OtherDetails || {}) : {};
+
+  const [wagonDetailsData, setWagonDetailsData] = useState(getInitialWagonDetails);
+  const [containerDetailsData, setContainerDetailsData] = useState(getInitialContainerDetails);
+  const [productDetailsData, setProductDetailsData] = useState(getInitialProductDetails);
+  const [thuDetailsData, setTHUDetailsData] = useState(getInitialTHUDetails);
+  const [journeyDetailsData, setJourneyDetailsData] = useState(getInitialJourneyDetails);
+  const [otherDetailsData, setOtherDetailsData] = useState(getInitialOtherDetails);
+
+  // Sync state with jsonStore on isEditQuickOrder change
+  useEffect(() => {
+    const planDetails = jsonStore.getPlanDetails() || {};
+    console.log("PLAN DETAILS :: ",planDetails)
+    if (isEditQuickOrder) {
+      setWagonDetailsData(normalizeWagonDetails(planDetails.WagonDetails || {}));
+      setContainerDetailsData(normalizeContainerDetails(planDetails.ContainerDetails || {}));
+      setProductDetailsData(normalizeProductDetails(planDetails.ProductDetails || {}));
+      setTHUDetailsData(normalizeTHUDetails(planDetails.THUDetails || {}));
+      setJourneyDetailsData(normalizeJourneyDetails(planDetails.JourneyAndSchedulingDetails || {}));
+      setOtherDetailsData(normalizeOtherDetails(planDetails.OtherDetails || {}));
+    } else {
+      setWagonDetailsData({});
+      setContainerDetailsData({});
+      setProductDetailsData({});
+      setTHUDetailsData({});
+      setJourneyDetailsData({});
+      setOtherDetailsData({});
+    }
+  }, [isEditQuickOrder]);
+
+  // Update jsonStore on saveUserPanelConfig
+  const handleSaveUserPanelConfig = (userId, panelId, settings) => {
+
+    saveUserPanelConfig(userId, panelId, settings);
+  };
 
   return (
     <>
@@ -798,26 +925,28 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
             </div> */}
             {/* // ...in your JSX: */}
             <div className="flex flex-col gap-4">
-              {mappedPlanActualItems.map((item) => (
+
+              {isEditQuickOrder && mappedPlanActualItems.map((item) => (
                 <div
                   key={item.id}
                   className="flex flex-col border rounded-lg p-3 bg-white shadow-sm relative"
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <div className="font-medium text-sm">{item.id}</div>
+                      <div className="font-medium text-sm">{item.WagonDetails.WagonID}</div>
                       <div className="text-xs text-gray-500 mt-2">
-                        {item.desc}
+                        {item.WagonDetails.WagonType}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="bg-blue-50 text-blue-600 font-semibold px-3 py-1 rounded-full text-sm">
-                        {item.currency} {item.price.toFixed(2)}
+                        {/* {item.currency} {item.price.toFixed(2)} */}
+                        {item.WagonDetails.WagonQuantity}
                       </span>
                       <button
                         className="p-1 rounded hover:bg-gray-100 relative"
                         onClick={() =>
-                          setOpenMenuId(openMenuId === item.id ? null : item.id)
+                          setOpenMenuId(openMenuId === item.PlanLineUniqueID ? null : item.PlanLineUniqueID)
                         }
                       >
                         <MoreVertical className="w-5 h-5 text-gray-500" />
@@ -840,7 +969,7 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
                               setOpenMenuId(null);
                               // alert(`Delete ${item.id}`);
                             }}
-                          ><Trash2 size={16} color={'red'}/>
+                          ><Trash2 size={16} color={'red'} />
                             Delete
                           </button>
                         </div>
@@ -849,7 +978,6 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
                   </div>
                 </div>
               ))}
-              {/* Optionally, keep the Input for adding new items */}
               <Input type="text" placeholder="--" value={"--"} readOnly />
             </div>
           </div>
@@ -906,11 +1034,11 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
                         panelIcon={<Bus className="w-5 h-5 text-green-600" />}
                         panelConfig={wagonDetailsConfig}
                         initialData={wagonDetailsData}
-                        onDataChange={setWagonDetailsData}
+                        onDataChange={(updatedData) => setWagonDetailsData(prev => ({ ...prev, ...updatedData }))}
                         onTitleChange={setWagonDetailsTitle}
                         // onWidthChange={setBasicDetailsWidth}
                         getUserPanelConfig={getUserPanelConfig}
-                        saveUserPanelConfig={saveUserPanelConfig}
+                        saveUserPanelConfig={handleSaveUserPanelConfig}
                         userId="current-user"
                       // panelWidth={basicDetailsWidth}
                       />
@@ -925,10 +1053,10 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
                         }
                         panelConfig={containerDetailsConfig}
                         initialData={containerDetailsData}
-                        onDataChange={setContainerDetailsData}
+                        onDataChange={(updatedData) => setContainerDetailsData(prev => ({ ...prev, ...updatedData }))}
                         onTitleChange={setContainerDetailsTitle}
                         getUserPanelConfig={getUserPanelConfig}
-                        saveUserPanelConfig={saveUserPanelConfig}
+                        saveUserPanelConfig={handleSaveUserPanelConfig}
                         userId="current-user"
                       />
                     )}
@@ -940,10 +1068,10 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
                         panelIcon={<Package className="w-5 h-5 text-red-600" />}
                         panelConfig={productDetailsConfig}
                         initialData={productDetailsData}
-                        onDataChange={setProductDetailsData}
+                        onDataChange={(updatedData) => setProductDetailsData(prev => ({ ...prev, ...updatedData }))}
                         onTitleChange={setProductDetailsTitle}
                         getUserPanelConfig={getUserPanelConfig}
-                        saveUserPanelConfig={saveUserPanelConfig}
+                        saveUserPanelConfig={handleSaveUserPanelConfig}
                         userId="current-user"
                       />
                     )}
@@ -957,10 +1085,10 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
                         }
                         panelConfig={thuDetailsConfig}
                         initialData={thuDetailsData}
-                        onDataChange={setTHUDetailsData}
+                        onDataChange={(updatedData) => setTHUDetailsData(prev => ({ ...prev, ...updatedData }))}
                         onTitleChange={setTHUDetailsTitle}
                         getUserPanelConfig={getUserPanelConfig}
-                        saveUserPanelConfig={saveUserPanelConfig}
+                        saveUserPanelConfig={handleSaveUserPanelConfig}
                         userId="current-user"
                       />
                     )}
@@ -977,10 +1105,10 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
                         }
                         panelConfig={journeyDetailsConfig}
                         initialData={journeyDetailsData}
-                        onDataChange={setJourneyDetailsData}
+                        onDataChange={(updatedData) => setJourneyDetailsData(prev => ({ ...prev, ...updatedData }))}
                         onTitleChange={setJourneyDetailsTitle}
                         getUserPanelConfig={getUserPanelConfig}
-                        saveUserPanelConfig={saveUserPanelConfig}
+                        saveUserPanelConfig={handleSaveUserPanelConfig}
                         userId="current-user"
                       />
                     )}
@@ -997,10 +1125,10 @@ export const PlanAndActualDetails: React.FC<any> = ({ onCloseDrawer }) => {
                         }
                         panelConfig={otherDetailsConfig}
                         initialData={otherDetailsData}
-                        onDataChange={setOtherDetailsData}
+                        onDataChange={(updatedData) => setOtherDetailsData(prev => ({ ...prev, ...updatedData }))}
                         onTitleChange={setOtherDetailsTitle}
                         getUserPanelConfig={getUserPanelConfig}
-                        saveUserPanelConfig={saveUserPanelConfig}
+                        saveUserPanelConfig={handleSaveUserPanelConfig}
                         userId="current-user"
                       />
                     )}

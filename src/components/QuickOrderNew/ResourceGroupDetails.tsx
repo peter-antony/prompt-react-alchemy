@@ -751,7 +751,9 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
       {/* SideDrawer component */}
       <SideDrawer isOpen={isPlanActualsOpen} onClose={() => setIsPlanActualsOpen(false)} width='85%' title="Plan and Actual Details" isBack={false}>
         <div>
-          <PlanAndActualDetails onCloseDrawer={() => setIsPlanActualsOpen(false)}></PlanAndActualDetails>
+          {/* <PlanAndActualDetails onCloseDrawer={() => setIsPlanActualsOpen(false)}></PlanAndActualDetails> */}
+          <PlanAndActualDetails onCloseDrawer={() => setIsPlanActualsOpen(false)} isEditQuickOrder={isEditQuickOrder}></PlanAndActualDetails>
+
         </div>
       </SideDrawer>
 

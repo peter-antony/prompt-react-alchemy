@@ -239,6 +239,71 @@ function getResourceGroupCount() {
   return 0;
 }
 
+function pushPlanDetails(planDetail: any) {
+  if (
+    jsonData &&
+    jsonData.ResponseResult &&
+    jsonData.ResponseResult.QuickOrder &&
+    Array.isArray(jsonData.ResponseResult.QuickOrder.ResourceGroup) &&
+    jsonData.ResponseResult.QuickOrder.ResourceGroup.length > 0
+  ) {
+    const rg = jsonData.ResponseResult.QuickOrder.ResourceGroup[0];
+    if (!Array.isArray(rg.PlanDetails)) {
+      alert("IF.. ")
+      rg.PlanDetails = [];
+    }
+    rg.PlanDetails.push(planDetail);
+    return true;
+  }
+  return false;
+}
+
+function pushActualDetails(actualDetail: any) {
+  if (
+    jsonData &&
+    jsonData.ResponseResult &&
+    jsonData.ResponseResult.QuickOrder &&
+    Array.isArray(jsonData.ResponseResult.QuickOrder.ResourceGroup) &&
+    jsonData.ResponseResult.QuickOrder.ResourceGroup.length > 0
+  ) {
+    const rg = jsonData.ResponseResult.QuickOrder.ResourceGroup[0];
+    if (!Array.isArray(rg.ActualDetails)) {
+      rg.ActualDetails = [];
+    }
+    rg.ActualDetails.push(actualDetail);
+    return true;
+  }
+  return false;
+}
+
+function getAllPlanDetails() {
+  if (
+    jsonData &&
+    jsonData.ResponseResult &&
+    jsonData.ResponseResult.QuickOrder &&
+    Array.isArray(jsonData.ResponseResult.QuickOrder.ResourceGroup) &&
+    jsonData.ResponseResult.QuickOrder.ResourceGroup.length > 0
+  ) {
+    const rg = jsonData.ResponseResult.QuickOrder.ResourceGroup[0];
+    return Array.isArray(rg.PlanDetails) ? rg.PlanDetails : [];
+  }
+  return [];
+}
+
+function getAllActualDetails() {
+  if (
+    jsonData &&
+    jsonData.ResponseResult &&
+    jsonData.ResponseResult.QuickOrder &&
+    Array.isArray(jsonData.ResponseResult.QuickOrder.ResourceGroup) &&
+    jsonData.ResponseResult.QuickOrder.ResourceGroup.length > 0
+  ) {
+    const rg = jsonData.ResponseResult.QuickOrder.ResourceGroup[0];
+    return Array.isArray(rg.ActualDetails) ? rg.ActualDetails : [];
+  }
+  return [];
+}
+
 const jsonStore = {
   setJsonData,
   getJsonData,
@@ -261,6 +326,10 @@ const jsonStore = {
   getActualDetails,
   setActualDetails,
   getResourceGroupCount,
+  pushPlanDetails,
+  pushActualDetails,
+  getAllPlanDetails,
+  getAllActualDetails
 };
 
 export default jsonStore; 
