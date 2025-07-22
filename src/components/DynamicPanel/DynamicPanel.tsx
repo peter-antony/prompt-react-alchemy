@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useForm } from 'react-hook-form';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -10,9 +11,12 @@ import { DynamicPanelProps, PanelConfig, PanelSettings } from '@/types/dynamicPa
 
 export const DynamicPanel: React.FC<DynamicPanelProps> = ({
   panelId,
+  panelOrder = 1,
+  startingTabIndex = 1,
   panelTitle: initialPanelTitle,
   panelIcon: initialPanelIcon,
   panelConfig: initialPanelConfig,
+  formName,
   initialData = {},
   onDataChange,
   onTitleChange,
@@ -40,9 +44,16 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
+  // Initialize react-hook-form
+  const form = useForm({
+    defaultValues: initialData,
+    mode: 'onBlur'
+  });
+
+  const { control, watch, setValue, getValues } = form;
+
   // Load user configuration on mount
   useEffect(() => {
-    // console.log("USE EFFECT FORM : ",formData)
     const loadUserConfig = async () => {
       if (getUserPanelConfig) {
         try {
@@ -74,24 +85,32 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
     loadUserConfig();
   }, [getUserPanelConfig, userId, panelId]);
 
-  // Sync formData with initialData when initialData changes
+  // Get visible fields sorted by order with calculated tab indices
+  const visibleFields = useMemo(() => {
+    const fields = Object.entries(panelConfig)
+      .filter(([_, config]) => config.visible)
+      .sort(([_, a], [__, b]) => a.order - b.order)
+      .map(([fieldId, config], index) => {
+        const tabIndex = startingTabIndex + index;
+        console.log(`Field ${fieldId} in panel ${panelOrder}: order=${config.order}, tabIndex=${tabIndex}`);
+        return {
+          fieldId,
+          config,
+          tabIndex
+        };
+      });
+    
+    console.log('All visible fields with tabIndex:', fields);
+    return fields;
+  }, [panelConfig, panelOrder]);
+
+  // Watch for form changes and notify parent
   useEffect(() => {
-    setFormData(initialData || {});
-  }, [initialData]);
-
-  // Get visible fields sorted by order
-  const visibleFields = Object.entries(panelConfig)
-    .filter(([_, config]) => config.visible)
-    .sort(([_, a], [__, b]) => a.order - b.order);
-
-  // const [formData, setFormData] = useState(initialData || {});
-
-  const handleFieldChange = (fieldId: string, value: any) => {
-    const updatedData = { ...formData, [fieldId]: value };
-    console.log("Dynamic panel handleFieldChange :", value);
-    setFormData(updatedData);
-    if (onDataChange) onDataChange({ [fieldId]: value }); // Notify parent (OrderForm)
-  };
+    const subscription = watch((data) => {
+      onDataChange?.(data);
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, onDataChange]);
 
   const handleConfigSave = async (
     updatedConfig: PanelConfig, 
@@ -178,23 +197,21 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
   };
 
   const PanelContent = () => (
-    <>
+    <form name={formName}>
       <div className="grid grid-cols-12 gap-4">
-        {visibleFields.map(([fieldId, fieldConfig]) => (
-          <div key={fieldId} className={`space-y-1 ${getFieldWidthClass(fieldConfig.width)}`}>
-            {fieldConfig.label !== 'Contract Price' && fieldConfig.label !== 'Net Amount' && (
-              <label className="text-xs font-medium text-gray-600 block">
-                {fieldConfig.label}
-                {fieldConfig.mandatory && (
-                  <span className="text-red-500 ml-1">*</span>
-                )}
-              </label>
-            )}
-            
+        {visibleFields.map(({ fieldId, config, tabIndex }) => (
+          <div key={fieldId} className={`space-y-1 ${getFieldWidthClass(config.width)}`}>
+            <label className="text-xs font-medium text-gray-600 block">
+              {config.label}
+              {config.mandatory && (
+                <span className="text-red-500 ml-1">*</span>
+              )}
+            </label>
             <FieldRenderer
-              config={fieldConfig}
-              value={formData[fieldId]}
-              onChange={(value) => handleFieldChange(fieldId, value)}
+              config={config}
+              control={control}
+              fieldId={fieldId}
+              tabIndex={tabIndex}
             />
           </div>
         ))}
@@ -205,7 +222,7 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
           No visible fields configured. Click the settings icon to configure fields.
         </div>
       )}
-    </>
+    </form>
   );
 
   // Don't render the panel if it's not visible
@@ -269,10 +286,10 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
                     </>
                   )} */}
                   {/* <PanelStatusIndicator 
-                    panelConfig={panelConfig}
-                    formData={formData}
-                    showStatus={showStatusIndicator}
-                  /> */}
+                     panelConfig={panelConfig}
+                     formData={getValues() || {}}
+                     showStatus={showStatusIndicator}
+                   /> */}
                   {panelSubTitle && (
                     <span className="text-xs text-blue-600 font-medium">DB000023/42</span>
                   )}
@@ -333,7 +350,7 @@ export const DynamicPanel: React.FC<DynamicPanelProps> = ({
             <CardTitle className="text-sm font-medium text-gray-700">{panelTitle}</CardTitle>
             {/* <PanelStatusIndicator 
               panelConfig={panelConfig}
-              formData={formData}
+              formData={getValues() || {}}
               showStatus={showStatusIndicator}
             /> */}
             {panelSubTitle && (

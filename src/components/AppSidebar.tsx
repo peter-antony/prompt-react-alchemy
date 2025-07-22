@@ -22,7 +22,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ collapsed = false }) => 
     // { icon: Package, label: 'Inventory', path: '/quick-order' },
     { icon: Package, label: 'Inventory', path: '/json-creater' },
     { icon: MapPinned, label: 'Route Management', path: '/trip-plans-search-hub' },
-    { icon: Truck, label: 'Fleet Management', path: '/create-new-trip' },
+    { icon: Truck, label: 'Fleet Management', path: '/dynamic-panel-demo-clone' },
   ];
 
   return (

@@ -17,6 +17,10 @@ import NotFound from "./pages/NotFound";
 import QuickOrderManagement from "./pages/QuickOrderManagement";
 import CreateQuickOrder from "./pages/createQuickOrder";
 import JsonCreater from "./pages/JsonCreater";
+import DynamicPanelDemoClone from "./pages/DynamicPanelDemoClone";
+
+
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -32,6 +36,7 @@ const App = () => (
           <Route path="/trip-plans-search-hub" element={<TripPlansSearchHub />} />
           <Route path="/create-quick-order" element={<CreateQuickOrder />} />
           <Route path="/json-creater" element={<JsonCreater />} />
+          <Route path="/dynamic-panel-demo-clone" element={<DynamicPanelDemoClone />} />
 
           {/* <Route path="/" element={<Index />} />
           <Route path="/grid-demo" element={<GridDemo />} />

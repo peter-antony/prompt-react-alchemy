@@ -13,7 +13,7 @@ import {
   MapPin,
   Link as LinkIcon,
   HousePlug, Box, BaggageClaim, Truck,
-  CloudUpload
+  CloudUpload, EyeOff
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -220,7 +220,12 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
         { label: 'Equipment', value: 'Equipment' },
         { label: 'Material', value: 'Material' },
         { label: 'Other', value: 'Other' }
-      ]
+      ],
+      events: {
+        onChange: (value, event) => {
+          console.log('contractType changed:', value);
+        }
+      }
     },
     ResourceType: {
       id: 'ResourceType',
@@ -267,8 +272,13 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
         { label: 'Repair', value: 'Repair' },
         { label: 'Maintenance', value: 'Maintenance' },
         { label: 'Other', value: 'Other' }
-      ]
-    }
+      ],
+      // events: {
+      //   onBlur: (event) => {
+      //     console.log('Description blur event:', event);
+      //   }
+      // }
+    }   
   };
 
   // Operational Details Panel Configuration
@@ -416,7 +426,12 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
         { label: 'Wagon', value: 'Wagon' },
         { label: 'Container', value: 'Container' },
         { label: 'Block', value: 'Block' }
-      ]
+      ],
+      events: {
+        onChange: (value, event) => {
+          console.log('contractType changed:', value);
+        }
+      }
     },
     UnitPrice: {
       id: 'UnitPrice',
@@ -432,7 +447,12 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
         { label: '€', value: '€' },
         { label: '$', value: '$' },
         { label: '£', value: '£' }
-      ]
+      ],
+      events: {
+        onChange: (value, event) => {
+          console.log('contractType changed:', value);
+        }
+      }
     },
     BillingQty: {
       id: 'BillingQty',
@@ -560,11 +580,37 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
 
   const [isMoreInfoOpen, setMoreInfoOpen] = useState(false);
 
-
-
   const handleStepClick = (step: number) => {
     setCurrentStep(step);
   };
+
+
+  // Panel widths state - updated for 12-column system
+  const [basicDetailsWidth, setBasicDetailsWidth] = useState<'full' | 'half' | 'third' | 'quarter' | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12>(12);
+  const [operationalDetailsWidth, setOperationalDetailsWidth] = useState<'full' | 'half' | 'third' | 'quarter' | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12>(6);
+  const [billingDetailsWidth, setBillingDetailsWidth] = useState<'full' | 'half' | 'third' | 'quarter' | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12>(6);
+
+  // Panel visibility management
+  const panels = [
+    { id: 'basic-details', title: basicDetailsTitle, visible: basicDetailsVisible },
+    { id: 'operational-details', title: operationalDetailsTitle, visible: operationalDetailsVisible },
+    { id: 'billing-details', title: billingDetailsTitle, visible: billingDetailsVisible }
+  ];
+
+  const handlePanelVisibilityChange = (panelId: string, visible: boolean) => {
+    switch (panelId) {
+      case 'basic-details':
+        setBasicDetailsVisible(visible);
+        break;
+      case 'operational-details':
+        setOperationalDetailsVisible(visible);
+        break;
+      case 'billing-details':
+        setBillingDetailsVisible(visible);
+        break;
+    }
+  };
+
 
   return (
     <div className="">
@@ -644,60 +690,134 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
                 {/* Basic Details Section */}
                 {/* <div className="grid grid-cols-12 gap-6"> */}
                 <div className="flex gap-6">
-                  <div className="w-3/5">
-                    {basicDetailsVisible && (
-                      <DynamicPanel
-                        panelId="basic-details"
-                        panelTitle={basicDetailsTitle}
-                        panelIcon={<Wrench className="w-5 h-5 text-lime-500" />}
-                        panelConfig={basicDetailsConfig}
-                        initialData={basicDetailsData}
-                        onDataChange={(updatedData) => setBasicDetailsData(prev => ({ ...prev, ...updatedData }))}
-                        onTitleChange={setBasicDetailsTitle}
-                        // onWidthChange={setBasicDetailsWidth}
-                        getUserPanelConfig={getUserPanelConfig}
-                        saveUserPanelConfig={saveUserPanelConfig}
-                        userId="current-user"
-                      // panelWidth={basicDetailsWidth}
-                      />
-                    )}
+                  <div className='w-3/5'>
+                    {(() => {
+                      let currentTabIndex = 1;
+                      const panels = [];
+                      
+                      // Panel 1: Basic Details
+                      if (basicDetailsVisible) {
+                        const basicDetailsVisibleCount = Object.values(basicDetailsConfig).filter(config => config.visible).length;
+                        panels.push(
+                          <DynamicPanel
+                            key="basic-details"
+                            panelId="basic-details"
+                            panelOrder={1}
+                            startingTabIndex={currentTabIndex}
+                            panelTitle={basicDetailsTitle}
+                            panelConfig={basicDetailsConfig}
+                            formName="basicDetailsForm"
+                            initialData={basicDetailsData}
+                            onTitleChange={setBasicDetailsTitle}
+                            onWidthChange={setBasicDetailsWidth}
+                            getUserPanelConfig={getUserPanelConfig}
+                            saveUserPanelConfig={saveUserPanelConfig}
+                            userId="current-user"
+                            panelWidth={basicDetailsWidth}
+                          />
+                        );
+                        currentTabIndex += basicDetailsVisibleCount;
+                      }
 
-                    {operationalDetailsVisible && (
-                      <DynamicPanel
-                        panelId="operational-details"
-                        panelTitle={operationalDetailsTitle}
-                        panelIcon={<Bookmark className="w-5 h-5 text-blue-500" />}
-                        panelConfig={operationalDetailsConfig}
-                        initialData={operationalDetailsData}
-                        onDataChange={(updatedData) => setOperationalDetailsData(prev => ({ ...prev, ...updatedData }))}
-                        onTitleChange={setOperationalDetailsTitle}
-                        // onWidthChange={setOperationalDetailsWidth}
-                        getUserPanelConfig={getUserPanelConfig}
-                        saveUserPanelConfig={saveUserPanelConfig}
-                        userId="current-user"
-                      // panelWidth={operationalDetailsWidth}
-                      />
-                    )}
+                      // Panel 2: Operational Details
+                      if (operationalDetailsVisible) {
+                        const operationalDetailsVisibleCount = Object.values(operationalDetailsConfig).filter(config => config.visible).length;
+                        panels.push(
+                          <DynamicPanel
+                            key="operational-details"
+                            panelId="operational-details"
+                            panelOrder={2}
+                            startingTabIndex={currentTabIndex}
+                            panelTitle={operationalDetailsTitle}
+                            panelConfig={operationalDetailsConfig}
+                            formName="operationalDetailsForm"
+                            initialData={operationalDetailsData}
+                            onTitleChange={setOperationalDetailsTitle}
+                            onWidthChange={setOperationalDetailsWidth}
+                            getUserPanelConfig={getUserPanelConfig}
+                            saveUserPanelConfig={saveUserPanelConfig}
+                            userId="current-user"
+                            panelWidth={operationalDetailsWidth}
+                          />
+                        );
+                        currentTabIndex += operationalDetailsVisibleCount;
+                      }
+                      return panels;
+                    })()}
                   </div>
+                  <div className='w-2/5 mb-8'>
+                    {(() => {
+                      let currentTabIndex = 1;
+                      const panels = [];
+                      
+                      // Panel 3: Billing Details
+                      if (billingDetailsVisible) {
+                        panels.push(
+                          <DynamicPanel
+                            key="billing-details"
+                            panelId="billing-details"
+                            panelOrder={3}
+                            startingTabIndex={currentTabIndex}
+                            panelTitle={billingDetailsTitle}
+                            panelConfig={billingDetailsConfig}
+                            formName="billingDetailsForm"
+                            initialData={billingDetailsData}
+                            onTitleChange={setBillingDetailsTitle}
+                            onWidthChange={setBillingDetailsWidth}
+                            getUserPanelConfig={getUserPanelConfig}
+                            saveUserPanelConfig={saveUserPanelConfig}
+                            userId="current-user"
+                            panelWidth={billingDetailsWidth}
+                          />
+                        );
+                      }
 
-                  <div className="w-2/5 mb-6">
-                    <div className="space-y-6">
-                      <DynamicPanel
-                        panelId="billing-snippets"
-                        panelTitle={billingDetailsTitle}
-                        panelIcon={<Banknote className="w-5 h-5 text-orange-500" />}
-                        panelConfig={billingDetailsConfig}
-                        initialData={billingDetailsData}
-                        onDataChange={(updatedData) => setBillingDetailsData(prev => ({ ...prev, ...updatedData }))}
-                        panelWidth="full"
-                        panelSubTitle={true}
-                      />
-                    </div>
-
+                      return panels;
+                    })()}
                   </div>
-
                 </div>
 
+                  {/* Show message when all panels are hidden */}
+                  {!basicDetailsVisible && !operationalDetailsVisible && !billingDetailsVisible && (
+                    <div className="bg-white p-8 rounded-lg shadow-sm text-center">
+                      <EyeOff className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-gray-700 mb-2">All panels are hidden</h3>
+                      <p className="text-gray-500 mb-4">Use the "Manage Panels" button above to show panels.</p>
+                    </div>
+                  )}
+
+                  {/* Debug Data Display */}
+                  {/* {(basicDetailsVisible || operationalDetailsVisible || billingDetailsVisible) && (
+                    <div className="bg-white p-6 rounded-lg shadow-sm">
+                      <h3 className="text-lg font-semibold mb-4">Current Form Data</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {basicDetailsVisible && (
+                          <div>
+                            <h4 className="font-medium text-gray-700 mb-2">{basicDetailsTitle}</h4>
+                            <pre className="text-xs bg-gray-100 p-3 rounded overflow-auto">
+                              {JSON.stringify(basicDetailsData, null, 2)}
+                            </pre>
+                          </div>
+                        )}
+                        {operationalDetailsVisible && (
+                          <div>
+                            <h4 className="font-medium text-gray-700 mb-2">{operationalDetailsTitle}</h4>
+                            <pre className="text-xs bg-gray-100 p-3 rounded overflow-auto">
+                              {JSON.stringify(operationalDetailsData, null, 2)}
+                            </pre>
+                          </div>
+                        )}
+                        {billingDetailsVisible && (
+                          <div>
+                            <h4 className="font-medium text-gray-700 mb-2">{billingDetailsTitle}</h4>
+                            <pre className="text-xs bg-gray-100 p-3 rounded overflow-auto">
+                              {JSON.stringify(billingDetailsData, null, 2)}
+                            </pre>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )} */}
               </div>
             )}
 

@@ -16,6 +16,17 @@ export interface FieldConfig {
   labelFlag?: boolean; // Flag to indicate if label should be displayed
   color?: string; // For card field type background color
   fieldColour?: string; // For card field type color
+  // Event handlers for field interactions
+  events?: {
+    onClick?: (event: React.MouseEvent, value: any) => void;
+    onChange?: (value: any, event: React.ChangeEvent) => void;
+    onFocus?: (event: React.FocusEvent) => void;
+    onBlur?: (event: React.FocusEvent) => void;
+    onKeyDown?: (event: React.KeyboardEvent) => void;
+    onKeyUp?: (event: React.KeyboardEvent) => void;
+    onMouseEnter?: (event: React.MouseEvent) => void;
+    onMouseLeave?: (event: React.MouseEvent) => void;
+  };
 }
 
 export interface PanelConfig {
@@ -37,9 +48,12 @@ export interface PanelSettings {
 
 export interface DynamicPanelProps {
   panelId: string;
+  panelOrder?: number; // Add panel order for tab navigation
+  startingTabIndex?: number; // Starting tabIndex for sequential navigation across panels
   panelTitle: string;
   panelIcon?: React.ReactNode;
   panelConfig: PanelConfig;
+  formName?: string; // Form name for the panel form element
   initialData?: Record<string, any>;
   onDataChange?: (updatedData: Record<string, any>) => void;
   onTitleChange?: (newTitle: string) => void;
