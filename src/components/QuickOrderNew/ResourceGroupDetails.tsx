@@ -36,6 +36,10 @@ import PlanAndActuals from './PlanAndActuals';
 import BulkUpload from '@/components/QuickOrderNew/BulkUpload';
 import jsonStore from '@/stores/jsonStore';
 import { format } from 'date-fns';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import ConfirmSwitch from '../../assets/images/ConfirmSwitch.png';
+import Attachments from './OrderForm/Attachments';
+
 
 interface ResourceGroupDetailsFormProps {
   isEditQuickOrder?: boolean
@@ -566,6 +570,8 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
   ];
 
   const [isMoreInfoOpen, setMoreInfoOpen] = useState(false);
+  const [isAttachmentsOpen, setAttachmentsOpen] = useState(false);
+  const [isSwitchModalOpen, setSwitchModalOpen] = useState(false);
 
   const handleStepClick = (step: number) => {
     setCurrentStep(step);
@@ -647,10 +653,10 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
                 <>
                   <h2 className="text-lg font-semibold">Resource Group Creation</h2>
                   <div className="flex items-center gap-4">
-                    <span className="rounded-lg border border-gray-300 p-2 hover:bg-gray-100">
+                    <span onClick={() => setSwitchModalOpen(true)} className="rounded-lg border border-gray-300 p-2 hover:bg-gray-100">
                       <BookmarkCheck className="w-5 h-5 text-gray-500 cursor-pointer" />
                     </span>
-                    <span className="rounded-lg border border-gray-300 p-2 hover:bg-gray-100">
+                    <span onClick={() => setAttachmentsOpen(true)} className="rounded-lg border border-gray-300 p-2 hover:bg-gray-100">
                       <FileText className="w-5 h-5 text-gray-500 cursor-pointer" />
                     </span>
                   </div>
@@ -870,6 +876,49 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
           <div className="mt-0 text-sm text-gray-600"><BulkUpload /></div>
         </div>
       </SideDrawer>
+
+      <SideDrawer isOpen={isAttachmentsOpen} onClose={() => setAttachmentsOpen(false)} width="80%" title="Attachments" isBack={false} badgeContent="QO/00001/2025" isBadgeRequired={true}>
+        <div className="">
+          <div className="mt-0 text-sm text-gray-600"><Attachments /></div>
+        </div>
+      </SideDrawer>
+
+      <Dialog open={isSwitchModalOpen} onOpenChange={setSwitchModalOpen}>
+        <DialogContent className="max-w-sm w-full p-0 rounded-xl text-xs">
+          <div className="flex flex-col items-center py-4 px-6">
+            {/* Icon */}
+            <div className="mb-4">
+              {/* Replace with your actual icon or image */}
+              <img src={ConfirmSwitch} alt="Switch Icon" className="w-20 h-20" />
+            </div>
+            {/* Title */}
+            <div className="font-semibold text-xl text-center mb-2">Confirm Switch?</div>
+            {/* Description */}
+            <div className="text-gray-500 text-center mb-6">
+              Any unsaved data from your current session will be lost, and you may need to re-enter it.
+            </div>
+            {/* Buttons */}
+            <div className="flex gap-4 w-full justify-center">
+              <button
+                className="border rounded px-6 py-2 text-gray-700 text-sm hover:bg-gray-100 flex-1"
+                onClick={() => setSwitchModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-blue-600 text-white rounded px-6 py-2 text-sm font-medium flex-1"
+                onClick={() => {
+                  // handle continue logic here
+                  setSwitchModalOpen(false);
+                }}
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+      
     </div>
   );
 };
