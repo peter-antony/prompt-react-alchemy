@@ -4,9 +4,9 @@ interface QcInputComboProps {
   label: string;
   dropdownOptions: string[];
   value: string;
-  onValueChange: (value: string) => void;
+  onValueChange?: (value: string) => void;
   selectedOption: string;
-  onOptionChange: (option: string) => void;
+  onOptionChange?: (option: string) => void;
 }
 
 export function InputDropDown({
