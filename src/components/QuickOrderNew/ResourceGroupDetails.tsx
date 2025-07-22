@@ -71,59 +71,45 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
   };
 
   const handleSaveDetails = () => {
-    // Only keep PascalCase keys for BasicDetails
-    const newBasicDetails = Object.fromEntries(
-      Object.entries(basicDetailsData).filter(([key]) =>
-        ["Resource", "ResourceType", "ServiceType", "SubSericeType"].includes(key)
-      )
-    );
-    // Only keep PascalCase keys for OperationalDetails
-    if (operationalDetailsData) {
-      const newOperationalDetails = Object.fromEntries(
-        Object.entries({
-          ...operationalDetailsData,
-          FromDate: (operationalDetailsData as any).FromDate ? format((operationalDetailsData as any).FromDate, 'dd/MM/yyyy') : '',
-          ToDate: (operationalDetailsData as any).ToDate ? format((operationalDetailsData as any).ToDate, 'dd/MM/yyyy') : '',
-        }).filter(([key]) =>
-          [
-            "OperationalLocation",
-            "DepartPoint",
-            "ArrivalPoint",
-            "FromDate",
-            "FromTime",
-            "ToDate",
-            "ToTime",
-            "Remarks"
-          ].includes(key)
-        )
-      );
-      jsonStore.setOperationalDetails(newOperationalDetails);
+    // To get the DynamicPanel form field values for formName="basicDetailsForm", you can use the DOM API:
+    const basicDetailsForm = document.forms['basicDetailsForm'];
+    const operationalDetailsForm = document.forms['operationalDetailsForm'];
+    const billingDetailsForm = document.forms['billingDetailsForm'];
+    let newBasicDetails: Record<string, any> = {};
+    if (basicDetailsForm) {
+      const formData = new FormData(basicDetailsForm);
+      for (let [key, value] of formData.entries()) {
+        newBasicDetails[key] = value;
+      }
     }
-    // Only keep PascalCase keys for BillingDetails
-    if (billingDetailsData) {
-      const newBillingDetails = Object.fromEntries(
-        Object.entries({
-          ...billingDetailsData,
-        }).filter(([key]) =>
-          [
-            "DraftBillNo",
-            "ContractPrice",
-            "NetAmount",
-            "BillingType",
-            "UnitPrice",
-            "BillingQty",
-            "Tariff",
-            "TariffType",
-            "Remarks",
-            "InteralOrder"
-          ].includes(key)
-        )
-      );
-      jsonStore.setBillingDetails(newBillingDetails);
+    let newOperationalDetails: Record<string, any> = {};
+
+    if (operationalDetailsForm) {
+      const formData = new FormData(operationalDetailsForm);
+      for (let [key, value] of formData.entries()) {
+        newOperationalDetails[key] = value;
+      }
     }
+    let newBillingDetails: Record<string, any> = {};
+
+    if (billingDetailsForm) {
+      
+      const formData = new FormData(billingDetailsForm);
+      for (let [key, value] of formData.entries()) {
+        console.log("[",key,"]=",value);
+        newBillingDetails[key] = value;
+      }
+    }
+    console.log("BASIC DETAILS-- inside RESOURCEGROUP  && ",newBasicDetails)
+   
+    // FromDate: (operationalDetailsData as any).FromDate ? format((operationalDetailsData as any).FromDate, 'dd/MM/yyyy') : '',
+    // ToDate: (operationalDetailsData as any).ToDate ? format((operationalDetailsData as any).ToDate, 'dd/MM/yyyy') : '',
+
+
     // Save to store
     jsonStore.setBasicDetails(newBasicDetails);
-    // jsonStore.setBillingDetails(newBillingDetails);
+    jsonStore.setOperationalDetails(newOperationalDetails);
+    jsonStore.setBillingDetails(newBillingDetails);
     const fullJson = jsonStore.getJsonData();
     console.log("FULL JSON :: ", fullJson);
     toast.success('Details saved successfully');
@@ -160,17 +146,18 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
   }
 
   function normalizeBillingDetails(data) {
+    // This function normalizes billing details data so it can be used as initial values for billingDetailsForm.
+    // It ensures the form fields are pre-filled with the correct values from the store.
+    if (!data || typeof data !== 'object') return {};
     return {
-      DraftBillNo: data.DraftBillNo,
-      ContractPrice: data.ContractPrice,
-      NetAmount: data.NetAmount,
-      // BillingType: data.BillingType,
-      UnitPrice: data.UnitPrice,
-      BillingQty: data.BillingQty,
-      Tariff: data.Tariff,
-      TariffType: data.TariffType,
-      Remarks: data.Remarks,
-      InteralOrder: data.InteralOrder
+      ContractPrice: data.ContractPrice ?? '',
+      NetAmount: data.NetAmount ?? '',
+      BillingType: data.BillingType ?? '',
+      UnitPrice: data.UnitPrice ?? { dropdown: '', input: '' },
+      BillingQty: data.BillingQty ?? '',
+      Tariff: data.Tariff ?? '',
+      TariffType: data.TariffType ?? '',
+      Remarks: data.Remarks ?? '',
     };
   }
 
@@ -416,7 +403,7 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
       id: 'BillingType',
       label: 'Billing Type',
       fieldType: 'select',
-      value: 'Wagon',
+      value: '',
       mandatory: true,
       visible: true,
       editable: true,
