@@ -135,14 +135,44 @@ const CardDetails: React.FC<CardDetailsProps> = ({ data,isEditQuickOrder }) => {
                             <Wrench className="w-4 h-4 text-gray-600" />
                             <span className="truncate">{item.repairType}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-gray-700 text-xs">
+                        <div className="flex items-center gap-2 text-gray-700 text-xs relative group">
                             <Calendar className="w-4 h-4 text-gray-600" />
-                            <span className="truncate">{item.date}</span>
+                            <span className="truncate cursor-pointer">
+                                {item.date}
+                            </span>
+                            <div className="absolute left-0 top-4 z-30 hidden group-hover:block min-w-[180px] max-w-xs bg-gray-900 text-white rounded-md shadow-xl border border-gray-200 text-xs">
+                                <div className="px-3 py-2">
+                                    <div className="font-semibold mb-1">From and To Date</div>
+                                    <div className="text-[11px] font-medium">{item.date}</div>
+                                </div>
+                            </div>
                         </div>
                         <div className="flex items-center gap-2 text-gray-700 text-xs">
                             <CirclePercent className="w-4 h-4 text-gray-600" />
                             <span className="truncate">{item.rateType}</span>
-                            <AlertCircle className="w-4 h-4 text-gray-600" />
+                            <div className="relative group inline-block">
+                                <AlertCircle className="w-4 h-4 text-gray-600 cursor-pointer" />
+                                <div className="absolute right-0 hidden top-5 z-30 group-hover:block min-w-[275px] max-w-xs bg-white rounded-md shadow-xl border border-gray-200 text-xs text-gray-700">
+                                    <div className="bg-gray-100 px-4 py-2 rounded-t-md font-semibold text-gray-800 border-b border-gray-200">
+                                        Rate per Unit-Buy Sell
+                                    </div>
+                                    <div className="px-4 py-3">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <div className="font-semibold text-gray-700">TAR_HR_DE_22_0016</div>
+                                            <div className="font-semibold text-gray-700">€ 1595.00</div>
+                                        </div>
+                                        <div className="flex justify-between items-center text-[11px] text-gray-400 mb-2">
+                                            <div>Tariff ID</div>
+                                            <div>Unit Price</div>
+                                        </div>
+
+                                        <div className="text-[11px] text-gray-400 mb-1 pt-2 border-t border-gray-300">Tariff Description</div>
+                                        <div className="text-xs text-gray-700 font-medium">
+                                            CR-SW (Guarding) FLAT RATE -ARMY-FRET SNCF
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div className="flex items-center gap-2 text-gray-700 text-xs col-span-2">
                             <MapPin className="w-4 h-4 text-gray-600" />
