@@ -1,4 +1,5 @@
 import { Info } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 
 const timelineData = [
   {
@@ -7,6 +8,7 @@ const timelineData = [
     date: "10/12/2024",
     time: "06:15 PM",
     status: "Customer Request",
+    info: "Created By Test User"
   },
   {
     number: 2,
@@ -14,6 +16,7 @@ const timelineData = [
     date: "08/12/2024",
     time: "08:30 AM",
     status: "Damaged",
+    info: "Updated By QA User"
   },
   {
     number: 1,
@@ -21,6 +24,7 @@ const timelineData = [
     date: "07/12/2024",
     time: "10:00 AM",
     status: "Customer Request",
+    info: "Created By Ramco User"
   },
 ];
 
@@ -28,6 +32,7 @@ export default function AmendmentHistory() {
   return (
     <div className="bg-[#f8fafd] min-h-screen flex flex-col items-start px-8 py-6">
       <div className="relative w-full">
+        <TooltipProvider>
         {timelineData.map((item, idx) => (
           <div key={item.number} className="flex items-start last:mb-0">
             {/* Timeline line */}
@@ -45,7 +50,25 @@ export default function AmendmentHistory() {
                 <span className="font-semibold text-gray-800 text-lg" style={{ fontSize: "15px" }}>
                   {item.user}
                 </span>
-                <Info className="w-4 h-4 text-gray-400" />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span><Info className="w-4 h-4 text-gray-400 cursor-pointer" /></span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" align="center" className="bg-gray-800 text-white px-4 py-2 rounded shadow text-left whitespace-pre-line">
+                    {item.info.startsWith('Created By') || item.info.startsWith('Updated By') ? (
+                      <div>
+                        <span className="block text-sm font-semibold mb-1">
+                          {item.info.split(' ')[0]} {item.info.split(' ')[1]}
+                        </span>
+                        <span className="block text-xs font-normal">
+                          {item.info.replace(/^Created By |^Updated By /, '')}
+                        </span>
+                      </div>
+                    ) : (
+                      item.info
+                    )}
+                  </TooltipContent>
+                </Tooltip>
               </div>
               <div className="text-sm text-gray-500 ">
                 {item.date} <span className="ml-2">{item.time}</span>
@@ -56,6 +79,7 @@ export default function AmendmentHistory() {
             </div>
           </div>
         ))}
+        </TooltipProvider>
       </div>
     </div>
   );
