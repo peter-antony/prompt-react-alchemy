@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { AppSidebar } from './AppSidebar';
 import { AppHeader } from './AppHeader';
 import { AppFooter } from './AppFooter';
+import { useFooterStore } from '@/stores/footerStore';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -10,6 +11,8 @@ interface AppLayoutProps {
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { config } = useFooterStore();
+
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
@@ -25,13 +28,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             <AppHeader />
           </div>
           
-          <main className="flex-1 overflow-auto pb-0 mt-16">
+          <main className={`flex-1 overflow-auto mt-16 ${config.visible ? 'pb-20' : ''}`}>
             {children}
           </main>
 
-          <div className="relative">
-            <AppFooter />
-          </div>
+          <AppFooter />
         </div>
       </div>
     </div>

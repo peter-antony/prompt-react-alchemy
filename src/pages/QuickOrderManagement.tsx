@@ -14,6 +14,7 @@ import { SideDrawer } from '@/components/Common/SideDrawer';
 import BulkUpload from '@/components/QuickOrderNew/BulkUpload';
 import { PlanAndActualDetails } from '@/components/QuickOrderNew/PlanAndActualDetails';
 import jsonStore from '@/stores/jsonStore';
+import { useFooterStore } from '@/stores/footerStore';
 
 interface SampleData {
   QuickUniqueID: any;
@@ -21,11 +22,11 @@ interface SampleData {
   QuickOrderDate: string;
   Status: string;
   CustomerOrVendor: any;
-      Customer_Supplier_RefNo: any;
-      Contract: string;
-      OrderType: string;
-      TotalNet: number;
-  tripBillingStatus?: string;  
+  Customer_Supplier_RefNo: any;
+  Contract: string;
+  OrderType: string;
+  TotalNet: number;
+  tripBillingStatus?: string;
   departurePointDetails?: string;
   arrivalPointDetails?: string;
   customerDetails?: Array<{
@@ -44,7 +45,38 @@ const QuickOrderManagement = () => {
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
   const gridState = useSmartGridState();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  
+  const { setFooter, resetFooter } = useFooterStore();
+
+  useEffect(() => {
+    setFooter({
+      visible: true,
+      pageName: 'Quick_Order',
+      leftButtons: [
+        {
+          label: "CIM/CUV Report",
+          onClick: () => console.log("CIM/CUV Report"),
+          type: "Icon",
+          iconName: 'BookText'
+        },
+      ],
+      rightButtons: [
+        {
+          label: "Cancel",
+          onClick: () => console.log("Cancel clicked"),
+          // disabled: true,
+          type: 'Button'
+        },
+        {
+          label: "Confirm",
+          onClick: () => console.log("Confirm clicked"),
+          // disabled: true,
+          type: "Button",
+        },
+      ],
+    });
+    return () => resetFooter();
+  }, [setFooter, resetFooter]);
+
   const initialColumns: GridColumnConfig[] = [
     {
       key: 'QuickOrderNo',
@@ -78,7 +110,7 @@ const QuickOrderManagement = () => {
       sortable: true,
       editable: false,
       subRow: false
-    },    
+    },
     {
       key: 'Customer_Supplier_RefNo',
       label: 'Cust/Sup.Ref.No.',
@@ -113,7 +145,7 @@ const QuickOrderManagement = () => {
       editable: false,
       subRow: false
     },
-    
+
   ];
 
   // const initialColumns: GridColumnConfig[] = [
@@ -237,6 +269,7 @@ const QuickOrderManagement = () => {
     console.log('Initializing columns in QuickOrderManagement');
     gridState.setColumns(initialColumns);
     gridState.setGridData(processedData);
+    console.log(gridState.filters);
   }, []);
 
   const breadcrumbItems = [
@@ -249,10 +282,10 @@ const QuickOrderManagement = () => {
   useEffect(() => {
     console.log('Columns changed in QuickOrderManagement:', gridState.columns);
     const oldQuickOrder = jsonStore.getQuickOrder();
-    console.log("QUICK ORDER OBJECT IN LIST PAGE : ",oldQuickOrder)
+    console.log("QUICK ORDER OBJECT IN LIST PAGE : ", oldQuickOrder)
     console.log('Sub-row columns:', gridState.columns.filter(col => col.subRow).map(col => col.key));
   }, [gridState.columns, gridState.forceUpdate]);
-  
+
   const { toast } = useToast();
 
   const sampleData: SampleData[] = [
@@ -608,7 +641,7 @@ const QuickOrderManagement = () => {
       'Cancelled': 'bg-red-100 text-red-800 border-red-300',
       'Deleted': 'bg-red-100 text-red-800 border-red-300',
       'Save': 'bg-green-100 text-green-800 border-green-300 rounded-2xl',
-      
+
       // Trip Billing Status colors
       'Confirmed': 'bg-orange-100 text-orange-800 border-orange-300',
       'Not Eligible': 'bg-red-100 text-red-800 border-red-300',
@@ -672,15 +705,15 @@ const QuickOrderManagement = () => {
   const handleUpdate = async (updatedRow: any) => {
     console.log('Updating row:', updatedRow);
     // Update the grid data
-    gridState.setGridData(prev => 
-      prev.map((row, index) => 
+    gridState.setGridData(prev =>
+      prev.map((row, index) =>
         index === updatedRow.index ? { ...row, ...updatedRow } : row
       )
     );
-    
+
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 500));
-    
+
     toast({
       title: "Success",
       description: "Trip plan updated successfully"
@@ -708,54 +741,55 @@ const QuickOrderManagement = () => {
     );
   };
 
-   const [isMoreInfoOpen, setMoreInfoOpen] = useState(false);
+  const [isMoreInfoOpen, setMoreInfoOpen] = useState(false);
 
 
   return (
-    <AppLayout>
-      <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto p-4 px-6 space-y-6">
-          <div className="hidden md:block">
-            <Breadcrumb items={breadcrumbItems} />
-          </div>
+    <>
+      <AppLayout>
+        <div className="min-h-screen bg-gray-50">
+          <div className="container-fluid mx-auto p-4 px-6 space-y-6">
+            <div className="hidden md:block">
+              <Breadcrumb items={breadcrumbItems} />
+            </div>
 
-          {/* Grid Container */}
-          <div className="rounded-lg mt-4">
-            <SmartGrid
-              key={`grid-${gridState.forceUpdate}`}
-              parentPage="quickOrder"
-              columns={gridState.columns}
-              data={gridState.gridData.length > 0 ? gridState.gridData : processedData}
-              editableColumns={['customerSub']}
-              paginationMode="pagination"
-              onLinkClick={handleLinkClick}
-              onUpdate={handleUpdate}
-              onSubRowToggle={gridState.handleSubRowToggle}
-              selectedRows={selectedRows}
-              onSelectionChange={handleRowSelection}
-              rowClassName={(row: any, index: number) => 
-                selectedRows.has(index) ? 'smart-grid-row-selected' : ''
-              }
-              nestedRowRenderer={renderSubRow}
-              configurableButtons={configurableButtons}
-              showDefaultConfigurableButton={false}
-              gridTitle="Quick Order"
-              recordCount={gridState.gridData.length > 0 ? gridState.gridData.length : processedData.length}
-              showCreateButton={true}
-              searchPlaceholder="Search all columns..."
-            />
-            {/* SideDrawer for PlanAndActualDetails */}
-            <SideDrawer
-              isOpen={isDrawerOpen}
-              onClose={() => setIsDrawerOpen(false)}
-              title="Plan and Actual Details"
-              isBack={false}
-              width='85%'
-            >
-              <PlanAndActualDetails onCloseDrawer={() => setIsDrawerOpen(false)} />
-            </SideDrawer>
-            {/* Footer with action buttons matching the screenshot style */}
-            {/* <div className="flex items-center justify-between p-4 border-t bg-gray-50/50">
+            {/* Grid Container */}
+            <div className="rounded-lg mt-4">
+              <SmartGrid
+                key={`grid-${gridState.forceUpdate}`}
+                parentPage="quickOrder"
+                columns={gridState.columns}
+                data={gridState.gridData.length > 0 ? gridState.gridData : processedData}
+                editableColumns={['customerSub']}
+                paginationMode="pagination"
+                onLinkClick={handleLinkClick}
+                onUpdate={handleUpdate}
+                onSubRowToggle={gridState.handleSubRowToggle}
+                selectedRows={selectedRows}
+                onSelectionChange={handleRowSelection}
+                rowClassName={(row: any, index: number) =>
+                  selectedRows.has(index) ? 'smart-grid-row-selected' : ''
+                }
+                nestedRowRenderer={renderSubRow}
+                configurableButtons={configurableButtons}
+                showDefaultConfigurableButton={false}
+                gridTitle="Quick Order"
+                recordCount={gridState.gridData.length > 0 ? gridState.gridData.length : processedData.length}
+                showCreateButton={true}
+                searchPlaceholder="Search all columns..."
+              />
+              {/* SideDrawer for PlanAndActualDetails */}
+              <SideDrawer
+                isOpen={isDrawerOpen}
+                onClose={() => setIsDrawerOpen(false)}
+                title="Plan and Actual Details"
+                isBack={false}
+                width='85%'
+              >
+                <PlanAndActualDetails onCloseDrawer={() => setIsDrawerOpen(false)} />
+              </SideDrawer>
+              {/* Footer with action buttons matching the screenshot style */}
+              {/* <div className="flex items-center justify-between p-4 border-t bg-gray-50/50">
               <div className="flex items-center space-x-3">
                 <Button 
                   variant="outline" 
@@ -784,17 +818,18 @@ const QuickOrderManagement = () => {
                 Cancel
               </Button>
             </div> */}
-          </div>
+            </div>
 
-          
-        </div>
-        <SideDrawer isOpen={isMoreInfoOpen} onClose={() => setMoreInfoOpen(false)} width="50%" title="Add Files" isBack={false}>
-          <div className="">
-            <div className="mt-0 text-sm text-gray-600"><BulkUpload /></div>
+
           </div>
-        </SideDrawer>
-      </div>
-    </AppLayout>
+          <SideDrawer isOpen={isMoreInfoOpen} onClose={() => setMoreInfoOpen(false)} width="50%" title="Add Files" isBack={false}>
+            <div className="">
+              <div className="mt-0 text-sm text-gray-600"><BulkUpload /></div>
+            </div>
+          </SideDrawer>
+        </div>
+      </AppLayout>
+    </>
   );
 };
 

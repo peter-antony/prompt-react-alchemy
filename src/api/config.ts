@@ -14,6 +14,9 @@ export const API_ENDPOINTS = {
     LOGOUT: '/auth/logout',
     PROFILE: '/auth/profile',
   },
+  QUICK_ORDERS: {
+    LIST: '/QuickOrders'
+  },
   // Trip management
   TRIPS: {
     LIST: '/trips',

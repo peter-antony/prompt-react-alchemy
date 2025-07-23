@@ -16,6 +16,8 @@ import {
 import { Breadcrumb } from "../components/Breadcrumb";
 import { AppLayout } from "@/components/AppLayout";
 import { useNavigate } from "react-router-dom";
+import { tripService } from "@/api/services";
+import { useFooterStore } from "@/stores/footerStore";
 
 interface TripPlanData {
   id: string;
@@ -35,6 +37,7 @@ const TripPlansSearchHub = () => {
 
   const gridState = useSmartGridState();
   const { toast } = useToast();
+  const { setFooter, resetFooter } = useFooterStore();
 
   // Search Panel Configuration
   const searchPanelConfig: PanelConfig = {
@@ -125,8 +128,57 @@ const TripPlansSearchHub = () => {
   // Initialize columns and data
   useEffect(() => {
     gridState.setColumns(columns);
-    gridState.setGridData(processedData);
+    tripService.getTrips()
+    .then((data: any) => {
+      const processedData = data.map((row: any) => ({
+          ...row,
+          status: {
+            value: row.status,
+            variant: getStatusColor(row.status),
+          },
+          tripBillingStatus: {
+            value: row.tripBillingStatus,
+            variant: getStatusColor(row.tripBillingStatus),
+          },
+        }));
+        gridState.setGridData(processedData);
+    })
+    .catch((error: any) =>{
+      console.log(error);
+      gridState.setGridData([]);
+    }) 
+    .finally(() => console.log('Trip finally'));
   }, []);
+
+  useEffect(() => {
+    setFooter({
+      visible: true,
+      pageName: 'Trip_Execution',
+      leftButtons: [
+        {
+          label: "CIM/CUV Report",
+          onClick: () => console.log("CIM/CUV Report"),
+          type: "Icon",
+          iconName: 'BookText'
+        },
+        {
+          label: "Dropdown Menu",
+          onClick: () => console.log("Menu"),
+          type: "Icon",
+          iconName: 'EllipsisVertical'
+        },
+      ],
+      rightButtons: [
+        {
+          label: "Cancel",
+          onClick: () => console.log("Cancel clicked"),
+          // disabled: true,
+          type: 'Button'
+        },
+      ],
+    });
+    return () => resetFooter();
+  }, [setFooter, resetFooter]);
 
   const breadcrumbItems = [
     { label: "Home", href: "/dashboard", active: false },
@@ -243,7 +295,7 @@ const TripPlansSearchHub = () => {
     },
   ];
 
-  const sampleData: TripPlanData[] = [
+  const sampleNoAPIData: TripPlanData[] = [
     {
       id: "TRIP00000001",
       status: "Released",
@@ -321,20 +373,7 @@ const TripPlansSearchHub = () => {
       arrivalPoint: "CUR-25",
       customer: "+3",
       draftBill: "DB/000234",
-    },
-    {
-      id: "TRIP00000007",
-      status: "Under Execution",
-      tripBillingStatus: "Revenue Leakage",
-      plannedStartEndDateTime:
-        "25-Mar-2025 11:22:34 PM\n27-Mar-2025 11:22:34 PM",
-      actualStartEndDateTime:
-        "25-Mar-2025 11:22:34 PM\n27-Mar-2025 11:22:34 PM",
-      departurePoint: "VLA-70",
-      arrivalPoint: "CUR-25",
-      customer: "+3",
-      draftBill: "DB/000234",
-    },
+    }
   ];
 
   const getStatusColor = (status: string) => {
@@ -354,8 +393,8 @@ const TripPlansSearchHub = () => {
     return statusColors[status] || "bg-gray-100 text-gray-800 border-gray-300";
   };
 
-  const processedData = useMemo(() => {
-    return sampleData.map((row) => ({
+  const processedNoAPIData = useMemo(() => {
+    return sampleNoAPIData.map((row) => ({
       ...row,
       status: {
         value: row.status,
@@ -475,7 +514,7 @@ const TripPlansSearchHub = () => {
     <>
       <AppLayout>
         <div className="min-h-screen bg-gray-50">
-          <div className="container mx-auto p-4 px-6 space-y-6">
+          <div className="container-fluid mx-auto p-4 px-6 space-y-6">
             <div className="hidden md:block">
               <Breadcrumb items={breadcrumbItems} />
             </div>
@@ -488,7 +527,7 @@ const TripPlansSearchHub = () => {
                 data={
                   gridState.gridData.length > 0
                     ? gridState.gridData
-                    : processedData
+                    : processedNoAPIData
                 }
                 paginationMode="pagination"
                 onLinkClick={handleLinkClick}
@@ -506,7 +545,7 @@ const TripPlansSearchHub = () => {
                 recordCount={
                   gridState.gridData.length > 0
                     ? gridState.gridData.length
-                    : processedData.length
+                    : processedNoAPIData.length
                 }
               />
               {/* SideDrawer for PlanAndActualDetails */}
@@ -520,7 +559,7 @@ const TripPlansSearchHub = () => {
               <PlanAndActualDetails onCloseDrawer={() => setIsDrawerOpen(false)} />
             </SideDrawer> */}
               {/* Footer with action buttons matching the screenshot style */}
-              <div className="flex items-center justify-between p-4 border-t bg-gray-50/50">
+              {/* <div className="flex items-center justify-between p-4 border-t bg-gray-50/50">
                 <div className="flex items-center space-x-3">
                   <Button
                     variant="outline"
@@ -548,7 +587,7 @@ const TripPlansSearchHub = () => {
                 >
                   Cancel
                 </Button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
