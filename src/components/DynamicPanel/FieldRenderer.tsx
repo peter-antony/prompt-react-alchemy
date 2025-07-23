@@ -291,7 +291,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
               
               return (
                 <div>
-                  <div className="text-xs text-blue-600 mb-1">TabIndex: {tabIndex}</div>
+                  {/* <div className="text-xs text-blue-600 mb-1">TabIndex: {tabIndex}</div> */}
                   <InputDropdown
                     value={fieldValue}
                     onChange={(newValue) => {
