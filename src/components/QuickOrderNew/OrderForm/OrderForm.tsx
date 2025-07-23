@@ -348,7 +348,7 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
     QCUserDefined1: {
       id: 'QCUserDefined1',
       label: 'QC Userdefined 1',
-      fieldType: 'inputDropdown',
+      fieldType: 'inputdropdown',
       width: 'half',
       value: { dropdown: '', input: '' },
       mandatory: false,
@@ -476,7 +476,7 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
     PrimaryDocTypeandNo: {
       id: 'PrimaryDocType',
       label: 'Primary Doc Type and No.',
-      fieldType: 'inputDropdown',
+      fieldType: 'inputdropdown',
       width: 'full',
       value: { dropdown: '', input: '' },
       mandatory: false,
@@ -491,7 +491,7 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
     SecondaryDocTypeandNo: {
       id: 'SecondaryDocType',
       label: 'Secondary Doc Type and No.',
-      fieldType: 'inputDropdown',
+      fieldType: 'inputdropdown',
       width: 'full',
       value: { dropdown: '', input: '' },
       mandatory: false,
@@ -540,7 +540,7 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
     QCUserdefined2: {
       id: 'QCUserdefined2',
       label: 'QC Userdefined 2',
-      fieldType: 'inputDropdown',
+      fieldType: 'inputdropdown',
       width: 'half',
       value: { dropdown: '', input: '' },
       mandatory: false,
@@ -555,7 +555,7 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
     QCUserdefined3: {
       id: 'QCUserdefined2',
       label: 'QC Userdefined 2',
-      fieldType: 'inputDropdown',
+      fieldType: 'inputdropdown',
       width: 'half',
       value: { dropdown: '', input: '' },
       mandatory: false,

@@ -185,7 +185,7 @@ export const EnhancedFieldVisibilityModal: React.FC<EnhancedFieldVisibilityModal
       'select': 'Select',
       'search': 'Search',
       'currency': 'Currency',
-      'inputDropdown': 'InputDropdown',
+      'inputdropdown': 'inputdropdown',
       'date': 'Date',
       'time': 'Time',
       'textarea': 'Textarea'

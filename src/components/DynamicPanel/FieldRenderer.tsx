@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Controller, Control } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { InputDropDown } from '../Common/InputDropDown';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Search, Clock } from 'lucide-react';
@@ -17,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
+import { InputDropdown } from '../ui/input-dropdown';
 
 interface FieldRendererProps {
   config: FieldConfig;
@@ -280,31 +280,39 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
         />
       );
 
-    case 'inputDropdown':
-      return (
-        <Controller
-          name={fieldId}
-          control={control}
-          render={({ field }) => {
-            const eventHandlers = createEventHandlers(field);
-            return (
-              <InputDropDown
-                label={config.label}
-                selectedOption={field.value?.dropdown || ''}
-                onOptionChange={dropdown =>
-                  field.onChange({ ...field.value, dropdown })
-                }
-                value={field.value?.input || ''}
-                onValueChange={input =>
-                  field.onChange({ ...field.value, input })
-                }
-                {...eventHandlers}
-                dropdownOptions={options?.map(opt => opt.label) || []} />
-            );
-          }}
-        />
-      );
-
+      case 'inputdropdown':
+        return (
+          <Controller
+            name={fieldId}
+            control={control}
+            render={({ field }) => {
+              const eventHandlers = createEventHandlers(field);
+              const fieldValue = field.value || {};
+              
+              return (
+                <div>
+                  <div className="text-xs text-blue-600 mb-1">TabIndex: {tabIndex}</div>
+                  <InputDropdown
+                    value={fieldValue}
+                    onChange={(newValue) => {
+                      field.onChange(newValue);
+                      events?.onChange?.(newValue, { target: { value: newValue } } as any);
+                    }}
+                    options={options}
+                    placeholder={placeholder}
+                    tabIndex={tabIndex}
+                    onDropdownClick={events?.onClick ? (e) => events.onClick!(e, fieldValue) : undefined}
+                    onInputClick={events?.onClick ? (e) => events.onClick!(e, fieldValue) : undefined}
+                    onFocus={events?.onFocus}
+                    onBlur={events?.onBlur}
+                    onKeyDown={events?.onKeyDown}
+                    onKeyUp={events?.onKeyUp}
+                  />
+                </div>
+              );
+            }}
+          />
+        );
 
     case 'search':
       return (
@@ -346,7 +354,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
 
             return (
               <div
-                className="border rounded-lg p-4 shadow-sm transition-all duration-200 hover:shadow-md"
+                className="border-0 rounded-lg p-4 shadow-sm transition-all duration-200 hover:shadow-md"
                 style={color ? cardStyle : {}}
                 onClick={events?.onClick ? (e) => events.onClick!(e, field.value) : undefined}
                 onMouseEnter={events?.onMouseEnter}

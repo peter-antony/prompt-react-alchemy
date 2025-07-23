@@ -2,7 +2,7 @@
 export interface FieldConfig {
   id: string;
   label: string;
-  fieldType: 'text' | 'select' | 'search' | 'currency' | 'inputDropdown' | 'date' | 'time' | 'textarea' | 'radio' | 'combo' | 'card';
+  fieldType: 'text' | 'select' | 'search' | 'currency' | 'inputdropdown' | 'date' | 'time' | 'textarea' | 'radio' | 'combo' | 'card';
   value: any;
   mandatory: boolean;
   visible: boolean;
@@ -66,7 +66,7 @@ export interface DynamicPanelProps {
   collapsible?: boolean;
   showPreview?: boolean;
   className?: string;
-  panelSubTitle?: boolean;
+  panelSubTitle?: string;
 }
 
 export interface FieldVisibilityConfig {
