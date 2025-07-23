@@ -76,7 +76,7 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({
                             </button>
                         </div>
                         {/* Content */}
-                        <div className="overflow-y-auto content-scroll h-full">
+                        <div className="h-full">
                             {children}
                         </div>
                     </motion.div>

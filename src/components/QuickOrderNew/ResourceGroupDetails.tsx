@@ -37,7 +37,7 @@ import BulkUpload from '@/components/QuickOrderNew/BulkUpload';
 import jsonStore from '@/stores/jsonStore';
 import { format } from 'date-fns';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import ConfirmSwitch from '../../assets/images/ConfirmSwitch.png';
+
 import Attachments from './OrderForm/Attachments';
 
 
@@ -427,7 +427,7 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
     UnitPrice: {
       id: 'UnitPrice',
       label: 'Unit Price',
-      fieldType: 'inputDropdown',
+      fieldType: 'inputdropdown',
       width: 'half',
       value: { dropdown: '', input: '1395.00' },
       mandatory: false,
@@ -647,15 +647,15 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
           </div> */}
 
           {/* Main Content */}
-          <div className="flex-1 bg-gray-50 px-6 py-4 w-4/5 h-full overflow-y-auto">
+          <div className="flex-1 bg-gray-50 px-6 py-4 w-4/5 h-full content-scroll">
             <div className="flex items-center justify-between mb-4">
               {currentStep === 1 && (
                 <>
                   <h2 className="text-lg font-semibold">Resource Group Creation</h2>
                   <div className="flex items-center gap-4">
-                    <span onClick={() => setSwitchModalOpen(true)} className="rounded-lg border border-gray-300 p-2 hover:bg-gray-100">
+                    {/* <span onClick={() => setSwitchModalOpen(true)} className="rounded-lg border border-gray-300 p-2 hover:bg-gray-100">
                       <BookmarkCheck className="w-5 h-5 text-gray-500 cursor-pointer" />
-                    </span>
+                    </span> */}
                     <span onClick={() => setAttachmentsOpen(true)} className="rounded-lg border border-gray-300 p-2 hover:bg-gray-100">
                       <FileText className="w-5 h-5 text-gray-500 cursor-pointer" />
                     </span>
@@ -696,6 +696,7 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
                             key="basic-details"
                             panelId="basic-details"
                             panelOrder={1}
+                            panelIcon={<Wrench className="w-5 h-5 text-lime-500" />}
                             startingTabIndex={currentTabIndex}
                             panelTitle={basicDetailsTitle}
                             panelConfig={basicDetailsConfig}
@@ -720,6 +721,7 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
                             key="operational-details"
                             panelId="operational-details"
                             panelOrder={2}
+                            panelIcon={<Bookmark className="w-5 h-5 text-blue-500" />}
                             startingTabIndex={currentTabIndex}
                             panelTitle={operationalDetailsTitle}
                             panelConfig={operationalDetailsConfig}
@@ -750,6 +752,7 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
                             key="billing-details"
                             panelId="billing-details"
                             panelOrder={3}
+                            panelIcon={<Banknote className="w-5 h-5 text-orange-500" />}
                             startingTabIndex={currentTabIndex}
                             panelTitle={billingDetailsTitle}
                             panelConfig={billingDetailsConfig}
@@ -761,6 +764,7 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
                             saveUserPanelConfig={saveUserPanelConfig}
                             userId="current-user"
                             panelWidth={billingDetailsWidth}
+                            panelSubTitle={billingDetailsTitle}
                           />
                         );
                       }
@@ -883,42 +887,6 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
         </div>
       </SideDrawer>
 
-      <Dialog open={isSwitchModalOpen} onOpenChange={setSwitchModalOpen}>
-        <DialogContent className="max-w-sm w-full p-0 rounded-xl text-xs">
-          <div className="flex flex-col items-center py-4 px-6">
-            {/* Icon */}
-            <div className="mb-4">
-              {/* Replace with your actual icon or image */}
-              <img src={ConfirmSwitch} alt="Switch Icon" className="w-20 h-20" />
-            </div>
-            {/* Title */}
-            <div className="font-semibold text-xl text-center mb-2">Confirm Switch?</div>
-            {/* Description */}
-            <div className="text-gray-500 text-center mb-6">
-              Any unsaved data from your current session will be lost, and you may need to re-enter it.
-            </div>
-            {/* Buttons */}
-            <div className="flex gap-4 w-full justify-center">
-              <button
-                className="border rounded px-6 py-2 text-gray-700 text-sm hover:bg-gray-100 flex-1"
-                onClick={() => setSwitchModalOpen(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="bg-blue-600 text-white rounded px-6 py-2 text-sm font-medium flex-1"
-                onClick={() => {
-                  // handle continue logic here
-                  setSwitchModalOpen(false);
-                }}
-              >
-                Continue
-              </button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-      
     </div>
   );
 };

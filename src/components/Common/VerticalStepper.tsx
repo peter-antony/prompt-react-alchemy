@@ -19,7 +19,7 @@ interface VerticalStepperProps {
 
 export const VerticalStepper: React.FC<VerticalStepperProps> = ({ steps, activeStep, onStepClick }) => {
   return (
-    <div className="flex flex-col gap-0 py-8 px-6 w-72 bg-white border-r min-h-screen">
+    <div className="flex flex-col gap-0 py-4 px-6 w-72 bg-white border-r min-h-screen">
       {steps.map((step, idx) => (
         <div key={step.label} 
           onClick={() => onStepClick && onStepClick(idx + 1)} 

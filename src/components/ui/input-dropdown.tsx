@@ -62,7 +62,7 @@ const InputDropdown = React.forwardRef<HTMLDivElement, InputDropdownProps>(
           <select
             value={dropdownValue}
             onChange={handleDropdownChange}
-            className="h-10 px-3 text-sm rounded-l-md border border-r-0 border-input bg-background focus:border-ring focus:ring-1 focus:ring-ring focus:z-50 focus:relative focus:outline-none appearance-none min-w-[60px]"
+            className="h-8 px-3 text-sm rounded-l-md border border-r border-input bg-background focus:border-ring focus:ring-1 focus:ring-ring focus:z-50 focus:relative focus:outline-none appearance-none min-w-[60px]"
             tabIndex={tabIndex}
             onClick={onDropdownClick}
             onFocus={onFocus}

@@ -134,6 +134,12 @@ body{
   background-color: #dbeafe !important;
 }
 
+.content-scroll{
+  min-height: 0px;
+  max-height: calc(100vh - 64px); /* adjust 64px if your header/footer is different */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 .content-scroll::-webkit-scrollbar{
   width: 0px;
 }

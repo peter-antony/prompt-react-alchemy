@@ -196,7 +196,7 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
     wagonQWagonQuantityuantity: {
       id: "WagonQuantity",
       label: "Wagon Quantity",
-      fieldType: "inputDropdown",
+      fieldType: "inputdropdown",
       width: 'third',
       value: { dropdown: 'EA', input: '5' },
       mandatory: false,
@@ -211,7 +211,7 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
     WagonTareWeight: {
       id: "WagonTareWeight",
       label: "Wagon Tare Weight",
-      fieldType: "inputDropdown",
+      fieldType: "inputdropdown",
       width: 'third',
       placeholder: "Enter value",
       value: { dropdown: 'TON', input: '13' },
@@ -228,7 +228,7 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
     WagonGrossWeight: {
       id: "WagonGrossWeight",
       label: "Wagon Gross Weight",
-      fieldType: 'inputDropdown',
+      fieldType: 'inputdropdown',
       width: 'third',
       mandatory: false,
       visible: true,
@@ -244,7 +244,7 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
     WagonLength: {
       id: "WagonLength",
       label: "Wagon Length",
-      fieldType: "inputDropdown",
+      fieldType: "inputdropdown",
       width: 'third',
       mandatory: false,
       visible: true,
@@ -300,7 +300,7 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
     ContainerQuantity: {
       id: "ContainerQuantity",
       label: "Container Quantity",
-      fieldType: "inputDropdown",
+      fieldType: "inputdropdown",
       width: 'third',
       mandatory: false,
       visible: true,
@@ -315,7 +315,7 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
     ContainerTareWeight: {
       id: "ContainerTareWeight",
       label: "Container Tare Weight",
-      fieldType: "inputDropdown",
+      fieldType: "inputdropdown",
       width: 'third',
       mandatory: false,
       visible: true,
@@ -331,7 +331,7 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
     ContainerLoadWeight: {
       id: "ContainerLoadWeight",
       label: "Container Load Weight",
-      fieldType: "inputDropdown",
+      fieldType: "inputdropdown",
       width: 'third',
       value: { dropdown: "TON", input: "TON" },
       inputType: "number",
@@ -376,7 +376,7 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
     ProductQuantity: {
       id: "ProductQuantity",
       label: "Product Quantity",
-      fieldType: "inputDropdown",
+      fieldType: "inputdropdown",
       width: 'third',
       mandatory: false,
       visible: true,
@@ -466,7 +466,7 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
     THUQuantity: {
       id: "THUQuantity",
       label: "THU Quantity",
-      fieldType: "inputDropdown",
+      fieldType: "inputdropdown",
       width: 'third',
       mandatory: false,
       visible: true,
@@ -481,7 +481,7 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
     THUWeight: {
       id: "THUWeight",
       label: "THU Weight",
-      fieldType: "inputDropdown",
+      fieldType: "inputdropdown",
       width: 'third',
       inputType: "number",
       mandatory: false,
@@ -652,7 +652,7 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
     QCUserDefined1: {
       id: "QCUserDefined1",
       label: "QC Userdefined 1",
-      fieldType: "inputDropdown",
+      fieldType: "inputdropdown",
       width: 'third',
       value: { dropdown: '', input: '' },
       mandatory: false,
@@ -670,7 +670,7 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
     QCUserDefined2: {
       id: "QCUserDefined2",
       label: "QC Userdefined 2",
-      fieldType: "inputDropdown",
+      fieldType: "inputdropdown",
       width: 'third',
       mandatory: false,
       visible: true,
@@ -687,7 +687,7 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
     QCUserDefined3: {
       id: "QCUserDefined3",
       label: "QC Userdefined 3",
-      fieldType: "inputDropdown",
+      fieldType: "inputdropdown",
       width: 'third',
       inputType: "number",
       mandatory: false,
@@ -885,7 +885,7 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
         {/* Left Side - Stepper and Main Content */}
         <div className="flex-1 flex">
           {/* Vertical Stepper */}
-          <div className="w-80 p-6 border-r min-h-[500px]">
+          <div className="w-80 px-6 py-4 border-r min-h-[500px]">
             <div className="">
               <div className="flex flex-col items-start cursor-pointer gap-2">
                 <div className="flex-1">
@@ -983,7 +983,7 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 bg-gray-50 px-6 py-4 h-full overflow-y-auto">
+          <div className="flex-1 bg-gray-50 px-6 py-4 h-full content-scroll">
             <div
               className="flex items-center justify-between"
               style={{ marginBottom: "1.5rem" }}
@@ -1027,111 +1027,146 @@ export const PlanAndActualDetails = ({ onCloseDrawer, isEditQuickOrder }: PlanAn
                 {/* <div className="grid grid-cols-12 gap-6"> */}
                 <div className="flex gap-6 mb-6">
                   <div className="w-full">
-                    {wagonDetailsVisible && (
-                      <DynamicPanel
-                        panelId="wagon-details"
-                        panelTitle={wagonDetailsTitle}
-                        panelIcon={<Bus className="w-5 h-5 text-green-600" />}
-                        panelConfig={wagonDetailsConfig}
-                        initialData={wagonDetailsData}
-                        onDataChange={(updatedData) => setWagonDetailsData(prev => ({ ...prev, ...updatedData }))}
-                        onTitleChange={setWagonDetailsTitle}
-                        // onWidthChange={setBasicDetailsWidth}
-                        getUserPanelConfig={getUserPanelConfig}
-                        saveUserPanelConfig={handleSaveUserPanelConfig}
-                        userId="current-user"
-                      // panelWidth={basicDetailsWidth}
-                      />
-                    )}
+                    {(() => {
+                      let currentTabIndex = 1;
+                      const panels = [];
+                      if (wagonDetailsVisible) {
+                        const wagonDetailsVisibleCount = Object.values(wagonDetailsVisible).filter(config => config.visible).length;
+                        panels.push(
+                        <DynamicPanel
+                          key="wagon-details"
+                          panelId="wagon-details"
+                          panelOrder={1}
+                          panelIcon={<Bus className="w-5 h-5 text-green-600" />}
+                          startingTabIndex={currentTabIndex}
+                          panelTitle={wagonDetailsTitle}
+                          panelConfig={wagonDetailsConfig}
+                          formName="wagonDetailsForm"
+                          initialData={wagonDetailsData}
+                          onTitleChange={setWagonDetailsTitle}
+                          // onWidthChange={setBasicDetailsWidth}
+                          getUserPanelConfig={getUserPanelConfig}
+                          saveUserPanelConfig={handleSaveUserPanelConfig}
+                          userId="current-user"
+                          // panelWidth={basicDetailsWidth}
+                        />
+                      );
+                        currentTabIndex += wagonDetailsVisibleCount;
+                      }
 
-                    {containerDetailsConfig && (
-                      <DynamicPanel
-                        panelId="container-details"
-                        panelTitle="Container Details"
-                        panelIcon={
-                          <Container className="w-5 h-5 text-purple-600" />
-                        }
-                        panelConfig={containerDetailsConfig}
-                        initialData={containerDetailsData}
-                        onDataChange={(updatedData) => setContainerDetailsData(prev => ({ ...prev, ...updatedData }))}
-                        onTitleChange={setContainerDetailsTitle}
-                        getUserPanelConfig={getUserPanelConfig}
-                        saveUserPanelConfig={handleSaveUserPanelConfig}
-                        userId="current-user"
-                      />
-                    )}
+                      if (containerDetailsConfig) {
+                        const containerDetailsVisibleCount = Object.values(containerDetailsConfig).filter(config => config.visible).length;
+                        panels.push(
+                        <DynamicPanel
+                          key="container-details"
+                          panelId="container-details"
+                          panelOrder={2}
+                          panelTitle={containerDetailsTitle}
+                          panelIcon={<Container className="w-5 h-5 text-purple-600" />}
+                          panelConfig={containerDetailsConfig}
+                          startingTabIndex={currentTabIndex}
+                          initialData={containerDetailsData}
+                          formName="containerDetailsForm"
+                          onTitleChange={setContainerDetailsTitle}
+                          getUserPanelConfig={getUserPanelConfig}
+                          saveUserPanelConfig={handleSaveUserPanelConfig}
+                          userId="current-user"
+                        />
+                      );
+                        currentTabIndex += containerDetailsVisibleCount;
+                      }
 
-                    {productDetailsConfig && (
-                      <DynamicPanel
-                        panelId="product-details"
-                        panelTitle="Product Details"
-                        panelIcon={<Package className="w-5 h-5 text-red-600" />}
-                        panelConfig={productDetailsConfig}
-                        initialData={productDetailsData}
-                        onDataChange={(updatedData) => setProductDetailsData(prev => ({ ...prev, ...updatedData }))}
-                        onTitleChange={setProductDetailsTitle}
-                        getUserPanelConfig={getUserPanelConfig}
-                        saveUserPanelConfig={handleSaveUserPanelConfig}
-                        userId="current-user"
-                      />
-                    )}
+                      if (productDetailsConfig) {
+                        const productDetailsVisibleCount = Object.values(productDetailsConfig).filter(config => config.visible).length;
+                        panels.push(
+                        <DynamicPanel
+                          key="product-details"
+                          panelId="product-details"
+                          panelOrder={3}
+                          panelTitle={productDetailsTitle}
+                          panelIcon={<Package className="w-5 h-5 text-red-600" />}
+                          panelConfig={productDetailsConfig}
+                          startingTabIndex={currentTabIndex}
+                          initialData={productDetailsData}
+                          formName="productDetailsForm"
+                          onTitleChange={setProductDetailsTitle}
+                          getUserPanelConfig={getUserPanelConfig}
+                          saveUserPanelConfig={handleSaveUserPanelConfig}
+                          userId="current-user"
+                        />
+                      );
+                        currentTabIndex += productDetailsVisibleCount;
+                      }
 
-                    {thuDetailsConfig && (
-                      <DynamicPanel
-                        panelId="thu-details"
-                        panelTitle="THU Details"
-                        panelIcon={
-                          <BaggageClaim className="w-5 h-5 text-green-500" />
-                        }
-                        panelConfig={thuDetailsConfig}
-                        initialData={thuDetailsData}
-                        onDataChange={(updatedData) => setTHUDetailsData(prev => ({ ...prev, ...updatedData }))}
-                        onTitleChange={setTHUDetailsTitle}
-                        getUserPanelConfig={getUserPanelConfig}
-                        saveUserPanelConfig={handleSaveUserPanelConfig}
-                        userId="current-user"
-                      />
-                    )}
+                      if (thuDetailsConfig) {
+                        const thuDetailsVisibleCount = Object.values(thuDetailsConfig).filter(config => config.visible).length;
+                        panels.push(
+                        <DynamicPanel
+                          key = "thu-details"
+                          panelId="thu-details"
+                          panelOrder={4}
+                          panelTitle={thuDetailsTitle}
+                          panelIcon={<BaggageClaim className="w-5 h-5 text-green-500" />}
+                          panelConfig={thuDetailsConfig}
+                          startingTabIndex={currentTabIndex}
+                          initialData={thuDetailsData}
+                          formName="thuDetailsForm"
+                          onTitleChange={setTHUDetailsTitle}
+                          getUserPanelConfig={getUserPanelConfig}
+                          saveUserPanelConfig={handleSaveUserPanelConfig}
+                          userId="current-user"
+                        />
+                      );
+                        currentTabIndex += thuDetailsVisibleCount;
+                      }
 
-                    {journeyDetailsConfig && (
-                      <DynamicPanel
-                        panelId="journey-details"
-                        panelTitle="Journey and Scheduling Details"
-                        panelIcon={
-                          <CalendarCheck
-                            className="w-5 h-5"
-                            style={{ color: "#00BCD4" }}
+                      if (journeyDetailsConfig) {
+                        const journeyDetailsVisibleCount = Object.values(journeyDetailsConfig).filter(config => config.visible).length;
+                        panels.push(
+                        <DynamicPanel
+                          key = "journey-details"
+                          panelId="journey-details"
+                          panelOrder={5}
+                          panelTitle="Journey and Scheduling Details"
+                          panelIcon={<CalendarCheck className="w-5 h-5" style={{ color: "#00BCD4" }}/>}
+                          panelConfig={journeyDetailsConfig}
+                          startingTabIndex={currentTabIndex}
+                          initialData={journeyDetailsData}
+                          formName="journeyDetailsForm"
+                          onTitleChange={setJourneyDetailsTitle}
+                          getUserPanelConfig={getUserPanelConfig}
+                          saveUserPanelConfig={handleSaveUserPanelConfig}
+                          userId="current-user"
+                        />
+                      );
+                        currentTabIndex += journeyDetailsVisibleCount;
+                      }
+
+                      if (otherDetailsConfig) {
+                        const otherDetailsVisibleCount = Object.values(otherDetailsConfig).filter(config => config.visible).length;
+                        panels.push(
+                          <DynamicPanel
+                            key = "other-details"
+                            panelId="other-details"
+                            panelOrder={6}
+                            panelTitle="Other Details"
+                            panelIcon={<Info className="w-5 h-5" style={{ color: "brown" }}/>}
+                            panelConfig={otherDetailsConfig}
+                            initialData={otherDetailsData}
+                            startingTabIndex={currentTabIndex}
+                            formName="otherDetailsForm"
+                            onTitleChange={setOtherDetailsTitle}
+                            getUserPanelConfig={getUserPanelConfig}
+                            saveUserPanelConfig={handleSaveUserPanelConfig}
+                            userId="current-user"
                           />
+                        );
+                          currentTabIndex += otherDetailsVisibleCount;
                         }
-                        panelConfig={journeyDetailsConfig}
-                        initialData={journeyDetailsData}
-                        onDataChange={(updatedData) => setJourneyDetailsData(prev => ({ ...prev, ...updatedData }))}
-                        onTitleChange={setJourneyDetailsTitle}
-                        getUserPanelConfig={getUserPanelConfig}
-                        saveUserPanelConfig={handleSaveUserPanelConfig}
-                        userId="current-user"
-                      />
-                    )}
 
-                    {otherDetailsConfig && (
-                      <DynamicPanel
-                        panelId="other-details"
-                        panelTitle="Other Details"
-                        panelIcon={
-                          <Info
-                            className="w-5 h-5"
-                            style={{ color: "brown" }}
-                          />
-                        }
-                        panelConfig={otherDetailsConfig}
-                        initialData={otherDetailsData}
-                        onDataChange={(updatedData) => setOtherDetailsData(prev => ({ ...prev, ...updatedData }))}
-                        onTitleChange={setOtherDetailsTitle}
-                        getUserPanelConfig={getUserPanelConfig}
-                        saveUserPanelConfig={handleSaveUserPanelConfig}
-                        userId="current-user"
-                      />
-                    )}
+
+                      return panels;
+                    })()}
                   </div>
                 </div>
               </div>
