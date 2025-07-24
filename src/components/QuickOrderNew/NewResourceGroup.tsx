@@ -63,6 +63,12 @@ const NewResourceGroup = ({ onAddResource, isEditQuickOrder }: NewResourceGroupP
       status: "Under Amendment",
     },
   ];
+
+  const openResourceGroup = () =>{
+    console.log("openResourceGroup");
+    setMoreInfoOpen(true);
+    // document.body.style.overflow = 'hidden';
+  }
   useEffect(() => {
     const rg = jsonStore.getQuickOrder();
     console.log("ResourceGroup >> > >", rg)
@@ -71,8 +77,6 @@ const NewResourceGroup = ({ onAddResource, isEditQuickOrder }: NewResourceGroupP
     } else {
       // alert("Create Resource")
     }
-
-    console.log("isMoreInfoOpen ", isMoreInfoOpen);
   }, [])
   return (
     <>
@@ -91,7 +95,7 @@ const NewResourceGroup = ({ onAddResource, isEditQuickOrder }: NewResourceGroupP
             Click the "add" button to create a new resource group.
           </p>
 
-          <Button onClick={() => setMoreInfoOpen(true)} className="bg-blue-600 hover:bg-blue-700">
+          <Button onClick={openResourceGroup} className="bg-blue-600 hover:bg-blue-700">
             {/* <Plus className="w-4 h-4 mr-2" /> */}
             Add
           </Button>
@@ -113,7 +117,7 @@ const NewResourceGroup = ({ onAddResource, isEditQuickOrder }: NewResourceGroupP
                 />
                 <Search className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-600" />
               </div>
-              <Button onClick={() => setMoreInfoOpen(true)} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 bg-gray-100 text-gray-600 p-0 border border-gray-300">
+              <Button onClick={openResourceGroup} className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 bg-gray-100 text-gray-600 p-0 border border-gray-300">
                 <Plus className="w-4 h-4" />
               </Button>
             </div>

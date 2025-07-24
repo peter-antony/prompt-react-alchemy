@@ -54,13 +54,13 @@ export default function AmendmentHistory() {
                   <TooltipTrigger asChild>
                     <span><Info className="w-4 h-4 text-gray-400 cursor-pointer" /></span>
                   </TooltipTrigger>
-                  <TooltipContent side="top" align="center" className="bg-gray-800 text-white px-4 py-2 rounded shadow text-left whitespace-pre-line">
+                  <TooltipContent side="top" align="center" className="bg-gray-800 text-white px-3 py-2 rounded-lg shadow text-left whitespace-pre-line">
                     {item.info.startsWith('Created By') || item.info.startsWith('Updated By') ? (
                       <div>
-                        <span className="block text-sm font-semibold mb-1">
+                        <span className="block text-xs font-semibold">
                           {item.info.split(' ')[0]} {item.info.split(' ')[1]}
                         </span>
-                        <span className="block text-xs font-normal">
+                        <span className="block text-[11px] font-normal">
                           {item.info.replace(/^Created By |^Updated By /, '')}
                         </span>
                       </div>

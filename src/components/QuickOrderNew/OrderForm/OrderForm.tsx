@@ -648,7 +648,7 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
         <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setAttachmentsOpen(true)}>
           <Paperclip className="w-5 h-5 text-gray-600" />
         </button>
-        <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={(e) => onConfirm()}>
+        <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={(e) => setHistoryOpen(true)}>
           <BookX className="w-5 h-5 text-gray-600" />
         </button>
         <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100" onClick={() => setLinkedOrdersOpen(true)}>
@@ -666,11 +666,13 @@ const OrderForm = ({ onSaveDraft, onConfirm, onCancel, isEditQuickOrder }: Order
         <div className="">
           <div className="mt-0 text-sm text-gray-600">
             <DynamicPanel
+              key="More-Info"
               panelId="More-Info"
+              panelOrder={1}
               panelTitle={moreInfoTitle}
               panelConfig={moreInfoPanelConfig}
               initialData={moreInfoData}
-              onDataChange={handleMoreInfoDataChange}
+              formName="moreInfoForm"
               onTitleChange={setmoreInfoTitle}
               getUserPanelConfig={getUserPanelConfig}
               saveUserPanelConfig={saveUserPanelConfig}

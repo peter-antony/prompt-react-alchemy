@@ -13,7 +13,7 @@ import {
   MapPin,
   Link as LinkIcon,
   HousePlug, Box, BaggageClaim, Truck,
-  CloudUpload, EyeOff
+  CloudUpload, EyeOff, Filter
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,7 +39,8 @@ import { format } from 'date-fns';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 import Attachments from './OrderForm/Attachments';
-
+import CardDetails, { CardDetailsItem } from '../Common/Card-View-Details';
+import { SimpleDropDown } from "../Common/SimpleDropDown";
 
 interface ResourceGroupDetailsFormProps {
   isEditQuickOrder?: boolean
@@ -571,7 +572,7 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
 
   const [isMoreInfoOpen, setMoreInfoOpen] = useState(false);
   const [isAttachmentsOpen, setAttachmentsOpen] = useState(false);
-  const [isSwitchModalOpen, setSwitchModalOpen] = useState(false);
+  const [isGroupLevelModalOpen, setGroupLevelModalOpen] = useState(false);
 
   const handleStepClick = (step: number) => {
     setCurrentStep(step);
@@ -604,6 +605,65 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
     }
   };
 
+  const cardData: CardDetailsItem[] = [
+    {
+      id: "1",
+      title: "R01 - Wagon Rentals",
+      subtitle: "Vehicle",
+      wagons: "10 Wagons",
+      price: "€ 45595.00",
+      trainType: "Block Train Conventional",
+      repairType: "Repair",
+      date: "12-Mar-2025 to 12-Mar-2025",
+      rateType: "Rate Per Unit-Buy Sell",
+      location: "Frankfurt Station A - Frankfurt Station B",
+      draftBill: "DB/000234",
+      status: "Approved",
+    },
+    {
+      id: "2",
+      title: "R01 - Wagon Rentals",
+      subtitle: "Vehicle",
+      wagons: "10 Wagons",
+      price: "€ 45595.00",
+      trainType: "Block Train Conventional",
+      repairType: "Repair",
+      date: "12-Mar-2025 to 12-Mar-2025",
+      rateType: "Rate Per Unit-Buy Sell",
+      location: "Frankfurt Station A - Frankfurt Station B",
+      draftBill: "DB/000234",
+      status: "Failed",
+    },
+    {
+      id: "3",
+      title: "R01 - Wagon Rentals",
+      subtitle: "Vehicle",
+      wagons: "10 Wagons",
+      price: "€ 45595.00",
+      trainType: "Block Train Conventional",
+      repairType: "Repair",
+      date: "12-Mar-2025 to 12-Mar-2025",
+      rateType: "Rate Per Unit-Buy Sell",
+      location: "Frankfurt Station A - Frankfurt Station B",
+      draftBill: "DB/000234",
+      status: "Under Amendment",
+    },
+  ];
+
+  const resourceGroups = [
+    {
+      id: 1,
+      name: "QO/00001/2025",
+      seqNo: 1, // Optional
+      default: "Y", // Optional
+      description: "R01 - Wagon Rentals", // Optional
+    },
+  ];
+
+  const handleInputChange = (field: string, value: string) => {
+    // Handle input change logic here
+    console.log(`Field: ${field}, Value: ${value}`);
+  };
 
   return (
     <div className="">
@@ -653,9 +713,9 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
                 <>
                   <h2 className="text-lg font-semibold">Resource Group Creation</h2>
                   <div className="flex items-center gap-4">
-                    {/* <span onClick={() => setSwitchModalOpen(true)} className="rounded-lg border border-gray-300 p-2 hover:bg-gray-100">
+                    <span onClick={() => setGroupLevelModalOpen(true)} className="rounded-lg border border-gray-300 p-2 hover:bg-gray-100">
                       <BookmarkCheck className="w-5 h-5 text-gray-500 cursor-pointer" />
-                    </span> */}
+                    </span>
                     <span onClick={() => setAttachmentsOpen(true)} className="rounded-lg border border-gray-300 p-2 hover:bg-gray-100">
                       <FileText className="w-5 h-5 text-gray-500 cursor-pointer" />
                     </span>
@@ -884,6 +944,43 @@ export const ResourceGroupDetailsForm = ({ isEditQuickOrder }: ResourceGroupDeta
       <SideDrawer isOpen={isAttachmentsOpen} onClose={() => setAttachmentsOpen(false)} width="80%" title="Attachments" isBack={false} badgeContent="QO/00001/2025" isBadgeRequired={true}>
         <div className="">
           <div className="mt-0 text-sm text-gray-600"><Attachments /></div>
+        </div>
+      </SideDrawer>
+
+      <SideDrawer isOpen={isGroupLevelModalOpen} onClose={() => setGroupLevelModalOpen(false)} width="80%" title="Group Level Details" isBack={false}>
+        <div className="mt-3 px-4">
+          <div className="w-80 mb-3">
+            <SimpleDropDown
+              list={resourceGroups}
+              value={resourceGroups[0].description}
+              onValueChange={(value) =>
+                handleInputChange("resourceGroup", value)
+              }
+            />
+          </div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              Resource Group Details
+              {/* <span className="bg-blue-100 text-blue-600 text-xs font-semibold px-2 py-0.5 rounded-full">3</span> */}
+            </h2>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <Input
+                  name='grid-search-input'
+                  placeholder="Search"
+                  className="border border-gray-300 rounded text-sm placeholder-gray-400 px-2 py-1 pl-3 w-64 h-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  style={{ width: 200 }}
+                />
+                <Search className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-600" />
+              </div>
+              <Button  className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 bg-gray-50 text-gray-600 p-0 border border-gray-300">
+                <Filter className="w-5 h-5 text-gray-500" />
+              </Button>
+            </div>
+          </div>
+          <div className="mt-4 mb-6">
+            <CardDetails data={cardData} isEditQuickOrder={isEditQuickOrder} />
+          </div>
         </div>
       </SideDrawer>
 
